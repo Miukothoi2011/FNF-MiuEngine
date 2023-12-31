@@ -159,20 +159,20 @@ class VisualsUISubState extends BaseOptionsMenu
 			['Default', 'VS Nonsense V2', 'Doki Doki+', 'Leather Engine', "Mic'd Up", 'FPS Plus', 'SB Engine', "OS 'Engine'"]);
 		addOption(option);
 		
-		var option:Option = new Option('Smooth Health'
+		var option:Option = new Option('Smooth Health',
 			"?",
 			'smoothHealth',
 			'bool');
 		addOption(option);
 		
-		var option:Option = new Option('Smooth Health Type'
+		var option:Option = new Option('Smooth Health Type',
 			"?",
 			'smoothHealthType',
 			'string',
 			['Golden Apple 1.5', '?']);
 		addOption(option);
 		
-		var option:Option = new Option('Icon Bounce Type'
+		var option:Option = new Option('Icon Bounce Type',
 			"?",
 			'iconBounceType',
 			'string',

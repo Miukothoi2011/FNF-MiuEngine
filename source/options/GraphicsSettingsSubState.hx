@@ -45,17 +45,17 @@ class GraphicsSettingsSubState extends BaseOptionsMenu
 			'bool');
 		addOption(option);
 		
-		#if !html5 
-		#if desktop
+		//#if !html5 
+		//#if desktop
 		//different res cant really be done on browser lol
-		var option:Option = new Option('Resolution: ',
-			"What resolution do you want the game to run in?",
-			'resolution',
-			'string',
+		//var option:Option = new Option('Resolution: ',
+			//"What resolution do you want the game to run in?",
+			//'resolution',
+			//'string',
 			//9p,     18p,    36p, 	   72p,       120p,      144p,      270p       360p,      540p,      720p,       1080p (HD),  1440p (FHD),  2160p (UHD, 4K) yeah i went a bit too far with these
-			['16x9', '32x18', '64x36', '128x72', '214x120', '256x144', '480x270', '640x360', '960x540', '1280x720', '1920x1080', '2560x1440', '3840x2160']);
-		addOption(option);
-		option.onChange = onChangeResolution;
+			//['16x9', '32x18', '64x36', '128x72', '214x120', '256x144', '480x270', '640x360', '960x540', '1280x720', '1920x1080', '2560x1440', '3840x2160']);
+		//addOption(option);
+		//option.onChange = onChangeResolution;
 		#end
 		#end
 
