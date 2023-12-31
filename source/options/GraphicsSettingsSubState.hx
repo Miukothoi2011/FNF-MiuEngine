@@ -56,8 +56,8 @@ class GraphicsSettingsSubState extends BaseOptionsMenu
 			//['16x9', '32x18', '64x36', '128x72', '214x120', '256x144', '480x270', '640x360', '960x540', '1280x720', '1920x1080', '2560x1440', '3840x2160']);
 		//addOption(option);
 		//option.onChange = onChangeResolution;
-		#end
-		#end
+		//#end
+		//#end
 
 		#if !html5 //Apparently other framerates isn't correctly supported on Browser? Probably it has some V-Sync shit enabled by default, idk
 		var option:Option = new Option('Framerate',
