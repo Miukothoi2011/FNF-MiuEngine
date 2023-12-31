@@ -24,6 +24,7 @@ import states.TitleState;
 	public var framerate:Int = 60;
 	public var camZooms:Bool = true;
 	public var hideHud:Bool = false;
+	public var controllerMode:Bool = #if android true #else false #end;
 	public var noteOffset:Int = 0;
 	public var arrowRGB:Array<Array<FlxColor>> = [
 		[0xFFC24B99, 0xFFFFFFFF, 0xFF3C1F56],
@@ -75,6 +76,11 @@ import states.TitleState;
 	public var safeFrames:Float = 10;
 	public var guitarHeroSustains:Bool = true;
 	public var discordRPC:Bool = true;
+	public var bfIconStyle:String = 'Default';
+	public var smoothHealth:Bool = true;
+	public var smoothHealthType:String = 'Golden Apple 1.5';
+	public var iconBounceType:String = 'Psych Engine (New)';
+	public var resolution:String = '1280x720';
 }
 
 class ClientPrefs {
