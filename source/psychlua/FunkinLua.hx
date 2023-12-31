@@ -1,4 +1,5 @@
 package psychlua;
+package shaders;
 
 import backend.WeekData;
 import backend.Highscore;
@@ -29,6 +30,8 @@ import states.FreeplayState;
 import substates.PauseSubState;
 import substates.GameOverSubstate;
 
+import Shaders;
+
 import psychlua.LuaUtils;
 import psychlua.LuaUtils.LuaTweenOptions;
 #if SScript
@@ -36,8 +39,6 @@ import psychlua.HScript;
 #end
 import psychlua.DebugLuaText;
 import psychlua.ModchartSprite;
-
-import shaders.Shaders;
 
 import flixel.input.keyboard.FlxKey;
 import flixel.input.gamepad.FlxGamepadInputID;
