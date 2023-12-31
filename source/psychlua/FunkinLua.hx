@@ -11,7 +11,6 @@ import openfl.display.BitmapData;
 import flixel.FlxBasic;
 import flixel.FlxObject;
 import flixel.addons.transition.FlxTransitionableState;
-import shaders.Shaders;
 
 #if (!flash && sys)
 import flixel.addons.display.FlxRuntimeShader;
@@ -38,6 +37,8 @@ import psychlua.HScript;
 #end
 import psychlua.DebugLuaText;
 import psychlua.ModchartSprite;
+
+import shaders.Shaders;
 
 import flixel.input.keyboard.FlxKey;
 import flixel.input.gamepad.FlxGamepadInputID;
