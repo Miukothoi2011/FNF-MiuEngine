@@ -1,5 +1,4 @@
 package psychlua;
-package shaders;
 
 import backend.WeekData;
 import backend.Highscore;
