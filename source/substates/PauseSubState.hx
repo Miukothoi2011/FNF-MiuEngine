@@ -301,7 +301,7 @@ class PauseSubState extends MusicBeatSubstate
 				case "Change Gameplay Settings":
 					persistentUpdate = false;
 					openSubState(new GameplayChangersSubstate());
-					GameplayChangersSubstate.data.inThePauseMenu = true;
+					GameplayChangersSubstate.inThePauseMenu = true;
 				case 'Toggle Botplay':
 					PlayState.instance.cpuControlled = !PlayState.instance.cpuControlled;
 					PlayState.changedDifficulty = true;
