@@ -486,12 +486,12 @@ class ChartingState extends MusicBeatState
 		clear_notes.color = FlxColor.RED;
 		clear_notes.label.color = FlxColor.WHITE;
 
-		var stepperBPM:FlxUINumericStepper = new FlxUINumericStepper(10, 70, 1, 1, 1, 100000000000000000000000, 3);
+		var stepperBPM:FlxUINumericStepper = new FlxUINumericStepper(10, 70, 1, 1, 1, 100000000000000, 3);
 		stepperBPM.value = Conductor.bpm;
 		stepperBPM.name = 'song_bpm';
 		blockPressWhileTypingOnStepper.push(stepperBPM);
 
-		var stepperSpeed:FlxUINumericStepper = new FlxUINumericStepper(10, stepperBPM.y + 35, 0.1, 1, 0.1, 100000000000000000000000, 2);
+		var stepperSpeed:FlxUINumericStepper = new FlxUINumericStepper(10, stepperBPM.y + 35, 0.1, 1, 0.1, 100000000000000, 2);
 		stepperSpeed.value = _song.speed;
 		stepperSpeed.name = 'song_speed';
 		blockPressWhileTypingOnStepper.push(stepperSpeed);
@@ -2167,7 +2167,8 @@ class ChartingState extends MusicBeatState
 		"\nSection: " + curSec +
 		"\n\nBeat: " + Std.string(curDecBeat).substring(0,4) +
 		"\n\nStep: " + curStep +
-		"\n\nBeat Snap: " + quantization + "th";
+		"\n\nBeat Snap: " + quantization + "th" +
+		"\n\nNote Count";
 
 		var playedSound:Array<Bool> = [false, false, false, false]; //Prevents ouchy GF sex sounds
 		curRenderedNotes.forEachAlive(function(note:Note) {
