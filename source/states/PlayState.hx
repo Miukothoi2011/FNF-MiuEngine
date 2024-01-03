@@ -190,9 +190,6 @@ class PlayState extends MusicBeatState
 	public static var changedDifficulty:Bool = false;
 	public static var chartingMode:Bool = false;
 	public static var playerIsCheating:Bool = false; //Whether the player is cheating. Enables if you change BOTPLAY or Practice Mode in the Pause menu
-	
-	public var fcStrings:Array<String> = ['No Play', 'PFC', 'SFC', 'GFC', 'BFC', 'FC', 'SDCB', 'Clear', 'TDCB', 'QDCB'];
-	public var hitStrings:Array<String> = ['Perfect!!!', 'Sick!!', 'Good!', 'Bad.', 'Shit.', 'Miss..'];
 
 	//Gameplay settings
 	public var healthGain:Float = 1;
@@ -2391,9 +2388,7 @@ class PlayState extends MusicBeatState
 						FlxG.save.flush();
 					}
 					changedDifficulty = false;
-				}
-				else
-				{
+				} else {
 					var difficulty:String = Difficulty.getFilePath();
 
 					trace('LOADING NEXT SONG');
@@ -2409,9 +2404,7 @@ class PlayState extends MusicBeatState
 					cancelMusicFadeTween();
 					LoadingState.loadAndSwitchState(new PlayState());
 				}
-			}
-			else
-			{
+			} else {
 				trace('WENT BACK TO FREEPLAY??');
 				Mods.loadTopMod();
 				#if desktop DiscordClient.resetClientID(); #end
@@ -2634,7 +2627,7 @@ class PlayState extends MusicBeatState
 			//Prevents crash specifically on debug without needing to try catch shit
 			@:privateAccess if (!FlxG.keys._keyListMap.exists(eventKey)) return;
 			#end
-
+			
 			if(FlxG.keys.checkStatus(eventKey, JUST_PRESSED)) keyPressed(key);
 		}
 		if (!cpuControlled && startedCountdown && !paused && key > -1 && !softlocked && (FlxG.keys.checkStatus(eventKey, JUST_PRESSED) || ClientPrefs.controllerMode))
