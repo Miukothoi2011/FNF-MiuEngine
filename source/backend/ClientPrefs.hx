@@ -81,6 +81,7 @@ import states.TitleState;
 	public var smoothHealthType:String = 'Golden Apple 1.5';
 	public var iconBounceType:String = 'Psych Engine (New)';
 	public var resolution:String = '1280x720';
+	public var ezSpam:Bool = false;
 }
 
 class ClientPrefs {

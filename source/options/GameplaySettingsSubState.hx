@@ -103,8 +103,14 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 			'float');
 		option.scrollSpeed = 5;
 		option.minValue = 2;
-		option.maxValue = 10;
+		option.maxValue = 20;
 		option.changeValue = 0.1;
+		addOption(option);
+		
+		var option:Option = new Option('More Spammable Inputs',
+			'If checked, the input system is more spammable.',
+			'ezSpam',
+			'bool');
 		addOption(option);
 
 		var option:Option = new Option('Sustains as One Note',
