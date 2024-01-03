@@ -12,12 +12,15 @@ import states.StoryMenuState;
 import states.FreeplayState;
 import options.OptionsState;
 
+import GameplayChangersSubstate;
+
 class PauseSubState extends MusicBeatSubstate
 {
 	var grpMenuShit:FlxTypedGroup<Alphabet>;
 
 	var menuItems:Array<String> = [];
-	var menuItemsOG:Array<String> = ['Resume', 'Restart Song', 'Change Difficulty', 'Options', 'Exit to menu'];
+	var menuItemsOG:Array<String> = ['Resume', 'Restart Song', 'Change Gameplay Settings', 'Change Difficulty', #if android 'Chart Editor', #end 'Options', 'Exit to menu'];
+	var menuItemsExit:Array<String> = [(PlayState.isStoryMode ? 'Exit to Story Menu' : 'Exit to Freeplay'), 'Exit to Main Menu', 'Exit Game', 'Back'];
 	var difficultyChoices = [];
 	var curSelected:Int = 0;
 
@@ -26,6 +29,8 @@ class PauseSubState extends MusicBeatSubstate
 	var skipTimeText:FlxText;
 	var skipTimeTracker:Alphabet;
 	var curTime:Float = Math.max(0, Conductor.songPosition);
+	//var botplayText:FlxText;
+	public static var requireRestart:Bool = false;
 
 	var missingTextBG:FlxSprite;
 	var missingText:FlxText;
@@ -36,6 +41,9 @@ class PauseSubState extends MusicBeatSubstate
 	{
 		super();
 		if(Difficulty.list.length < 2) menuItemsOG.remove('Change Difficulty'); //No need to change difficulty if there is only one!
+		#if android
+		menuItemsOG.remove('Change Gameplay Settings');
+		#end
 
 		if(PlayState.chartingMode)
 		{
@@ -98,7 +106,8 @@ class PauseSubState extends MusicBeatSubstate
 		levelDifficulty.updateHitbox();
 		add(levelDifficulty);
 
-		var blueballedTxt:FlxText = new FlxText(20, 15 + 64, 0, "Blueballed: " + PlayState.deathCounter, 32);
+		//var blueballedTxt:FlxText = new FlxText(20, 15 + 64, 0, "Blueballed: " + PlayState.deathCounter, 32); //i replace "Blueballed" text to "Death Count" -Miukothoi2011
+		var blueballedTxt:FlxText = new FlxText(20, 15 + 64, 0, "Death Count: " + PlayState.deathCounter, 32);
 		blueballedTxt.scrollFactor.set();
 		blueballedTxt.setFormat(Paths.font('vcr.ttf'), 32);
 		blueballedTxt.updateHitbox();
@@ -111,6 +120,14 @@ class PauseSubState extends MusicBeatSubstate
 		practiceText.updateHitbox();
 		practiceText.visible = PlayState.instance.practiceMode;
 		add(practiceText);
+		
+		botplayText = new FlxText(20, 15 + 128, 0, "PRACTICE MODE", 32);
+		botplayText.scrollFactor.set();
+		botplayText.setFormat(Paths.font('vcr.ttf'), 32);
+		botplayText.x = FlxG.width - (practiceText.width + 20);
+		botplayText.updateHitbox();
+		botplayText.visible = PlayState.instance.cpuControlled;
+		add(botplayText);
 
 		var chartingText:FlxText = new FlxText(20, 15 + 101, 0, "CHARTING MODE", 32);
 		chartingText.scrollFactor.set();
@@ -248,6 +265,7 @@ class PauseSubState extends MusicBeatSubstate
 				regenMenu();
 			}
 
+			if (menuItems == menuItemsOG) {
 			switch (daSelected)
 			{
 				case "Resume":
@@ -285,6 +303,14 @@ class PauseSubState extends MusicBeatSubstate
 					PlayState.instance.notes.clear();
 					PlayState.instance.unspawnNotes = [];
 					PlayState.instance.finishSong(true);
+				case 'Chart Editor':
+					MusicBeatState.switchState(new editors.ChartingState());
+					MusicBeatState.windowNameSuffix = " - Chart Editor";
+					PlayState.chartingMode = true;
+				case "Change Gameplay Settings":
+					persistentUpdate = false;
+					openSubState(new GameplayChangersSubstate());
+					GameplayChangersSubstate.inThePauseMenu = true;
 				case 'Toggle Botplay':
 					PlayState.instance.cpuControlled = !PlayState.instance.cpuControlled;
 					PlayState.changedDifficulty = true;
@@ -302,7 +328,14 @@ class PauseSubState extends MusicBeatSubstate
 						FlxG.sound.music.time = pauseMusic.time;
 					}
 					OptionsState.onPlayState = true;
-				case "Exit to menu":
+				case "Exit":
+					menuItems = menuItemsExit;
+					regenMenu();
+				}
+			}
+			if (menuItems == menuItemsExit) {
+			switch(daSelected) {
+			case "Exit to Story Menu", "Exit to Freeplay":
 					#if desktop DiscordClient.resetClientID(); #end
 					PlayState.deathCounter = 0;
 					PlayState.seenCutscene = false;
@@ -318,6 +351,29 @@ class PauseSubState extends MusicBeatSubstate
 					PlayState.changedDifficulty = false;
 					PlayState.chartingMode = false;
 					FlxG.camera.followLerp = 0;
+			case "Exit to Main Menu":
+					#if desktop DiscordClient.resetClientID(); #end
+					PlayState.deathCounter = 0;
+					PlayState.seenCutscene = false;
+
+					WeekData.loadTheFirstEnabledMod();
+						MusicBeatState.switchState(new MainMenuState());
+					PlayState.cancelMusicFadeTween();
+					FlxG.sound.playMusic(Paths.music('freakyMenu-' + ClientPrefs.daMenuMusic));
+					PlayState.changedDifficulty = false;
+					PlayState.chartingMode = false;
+			case "Exit Game":
+					#if desktop DiscordClient.resetClientID(); #end
+					trace ("Exiting game...");
+					openfl.system.System.exit(0);
+			case "Back":
+					menuItems = menuItemsOG;
+					regenMenu();
+			case "Exit to your Mother":
+					trace ("YO MAMA");
+					var aLittleCrashing:FlxSprite = null;
+					aLittleCrashing.destroy();
+				}
 			}
 		}
 	}

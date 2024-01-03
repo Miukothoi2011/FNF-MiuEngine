@@ -146,6 +146,8 @@ class ChartingState extends MusicBeatState
 	var zoomTxt:FlxText;
 
 	var zoomList:Array<Float> = [
+		0.0625,
+		0.125,
 		0.25,
 		0.5,
 		1,
@@ -156,7 +158,12 @@ class ChartingState extends MusicBeatState
 		8,
 		12,
 		16,
-		24
+		24,
+		32,
+		48,
+		64,
+		128,
+		192
 	];
 	var curZoom:Int = 2;
 
@@ -181,7 +188,9 @@ class ChartingState extends MusicBeatState
 		48,
 		64,
 		96,
-		192
+		192,
+		384,
+		768
 	];
 
 	var text:String = "";
@@ -330,18 +339,24 @@ class ChartingState extends MusicBeatState
 		\nALT + Left Bracket / Right Bracket - Reset Song Playback Rate" +
 		#end
 		"\nHold Shift to move 4x faster
+		\nHold CTRL to move 4x slower
 		\nHold Control and click on an arrow to select it
+		\nHold Alt and click on a note to change it to the selected note type
+		\nHold CTRL and use the Mouse Wheel to decrease/increase the note's sustain length
 		\nZ/X - Zoom in/out
+		\nCTRL + Z - Undo
 		\n
+		\n(Hold) CTRL + Left/Right - Shift the currently selected note
 		\nEsc - Test your chart inside Chart Editor
 		\nEnter - Play your chart
+		\nShift + Enter - Play your chart at the current section
 		\nQ/E - Decrease/Increase Note Sustain Length
 		\nSpace - Stop/Resume song";
 
 		var tipTextArray:Array<String> = text.split('\n');
 		for (i in 0...tipTextArray.length) {
-			var tipText:FlxText = new FlxText(UI_box.x, UI_box.y + UI_box.height + 8, 0, tipTextArray[i], 16);
-			tipText.y += i * 12;
+			var tipText:FlxText = new FlxText(UI_box.x, UI_box.y + UI_box.height + 8, 0, tipTextArray[i], 20);
+			tipText.y += i * 8;
 			tipText.setFormat(Paths.font("vcr.ttf"), 14, FlxColor.WHITE, LEFT/*, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK*/);
 			//tipText.borderSize = 2;
 			tipText.scrollFactor.set();
@@ -471,12 +486,12 @@ class ChartingState extends MusicBeatState
 		clear_notes.color = FlxColor.RED;
 		clear_notes.label.color = FlxColor.WHITE;
 
-		var stepperBPM:FlxUINumericStepper = new FlxUINumericStepper(10, 70, 1, 1, 1, 400, 3);
+		var stepperBPM:FlxUINumericStepper = new FlxUINumericStepper(10, 70, 1, 1, 1, 100000000000000000000000, 3);
 		stepperBPM.value = Conductor.bpm;
 		stepperBPM.name = 'song_bpm';
 		blockPressWhileTypingOnStepper.push(stepperBPM);
 
-		var stepperSpeed:FlxUINumericStepper = new FlxUINumericStepper(10, stepperBPM.y + 35, 0.1, 1, 0.1, 10, 2);
+		var stepperSpeed:FlxUINumericStepper = new FlxUINumericStepper(10, stepperBPM.y + 35, 0.1, 1, 0.1, 100000000000000000000000, 2);
 		stepperSpeed.value = _song.speed;
 		stepperSpeed.name = 'song_speed';
 		blockPressWhileTypingOnStepper.push(stepperSpeed);
@@ -953,6 +968,43 @@ class ChartingState extends MusicBeatState
 		tab_group_note.add(noteTypeDropDown);
 
 		UI_box.addGroup(tab_group_note);
+	}
+	
+	var check_stackActive:FlxUICheckBox;
+	var stepperStackNum:FlxUINumericStepper;
+	var stepperStackOffset:FlxUINumericStepper;
+	var stepperStackSideOffset:FlxUINumericStepper;
+
+	function addNoteStackingUI():Void
+	{
+		var tab_group_stacking = new FlxUI(null, UI_box);
+		tab_group_stacking.name = 'Note Spamming';
+
+		check_stackActive = new FlxUICheckBox(10, 10, null, null, "Enable EZ Spam Mode", 100);
+		check_stackActive.name = 'check_stackActive';
+
+		stepperStackNum = new FlxUINumericStepper(10, 30, 1, 1, 0, 999999, 4);
+		stepperStackNum.name = 'stack_count';
+		blockPressWhileTypingOnStepper.push(stepperStackNum);
+
+		stepperStackOffset = new FlxUINumericStepper(10, 50, 1, 1, 0, 8192, 4);
+		stepperStackOffset.name = 'stack_offset';
+		blockPressWhileTypingOnStepper.push(stepperStackOffset);
+
+		stepperStackSideOffset = new FlxUINumericStepper(10, 70, 1, 0, -9999, 9999);
+		stepperStackSideOffset.name = 'stack_sideways';
+		blockPressWhileTypingOnStepper.push(stepperStackSideOffset);
+
+		tab_group_stacking.add(check_stackActive);
+		tab_group_stacking.add(stepperStackNum);
+		tab_group_stacking.add(stepperStackOffset);
+		tab_group_stacking.add(stepperStackSideOffset);
+		
+		tab_group_stacking.add(new FlxText(100, 30, 0, "Spam Count"));
+		tab_group_stacking.add(new FlxText(100, 50, 0, "Spam Multiplier"));
+		tab_group_stacking.add(new FlxText(100, 70, 0, "Spam Scroll Amount"));
+
+		UI_box.addGroup(tab_group_stacking);
 	}
 
 	var eventDropDown:FlxUIDropDownMenu;
@@ -1745,7 +1797,7 @@ class ChartingState extends MusicBeatState
 
 		if (!blockInput)
 		{
-			if (FlxG.keys.justPressed.ESCAPE)
+			if (FlxG.keys.justPressed.ESCAPE #if android || virtualPad.buttonB.justPressed #end)
 			{
 				FlxG.sound.music.pause();
 				if(vocals != null) vocals.pause();
@@ -1756,13 +1808,16 @@ class ChartingState extends MusicBeatState
 				playtestingOnComplete = FlxG.sound.music.onComplete;
 				openSubState(new states.editors.EditorPlayState(playbackSpeed));
 			}
-			if (FlxG.keys.justPressed.ENTER)
+			if (FlxG.keys.justPressed.ENTER #if android || virtualPad.buttonA.justPressed #end)
 			{
 				autosaveSong();
 				FlxG.mouse.visible = false;
 				PlayState.SONG = _song;
 				FlxG.sound.music.stop();
 				if(vocals != null) vocals.stop();
+				if (FlxG.keys.pressed.SHIFT) {
+					PlayState.startOnTime = sectionStartTime();
+				}
 
 				//if(_song.stage == null) _song.stage = stageDropDown.selectedLabel;
 				StageData.loadDirectory(_song);
@@ -1781,7 +1836,7 @@ class ChartingState extends MusicBeatState
 			}
 
 
-			if (FlxG.keys.justPressed.BACKSPACE) {
+			if (FlxG.keys.justPressed.BACKSPACE #if android || FlxG.android.justReleased.BACK #end) {
 				// Protect against lost data when quickly leaving the chart editor.
 				autosaveSong();
 				PlayState.chartingMode = false;
@@ -1794,15 +1849,41 @@ class ChartingState extends MusicBeatState
 			if(FlxG.keys.justPressed.Z && FlxG.keys.pressed.CONTROL) {
 				undo();
 			}
+			
+			#if android 
+			if (virtualPad.buttonV.justPressed) {
+				undo();
+			}
+			#end
 
-			if(FlxG.keys.justPressed.Z && curZoom > 0 && !FlxG.keys.pressed.CONTROL) {
+			if(FlxG.keys.justPressed.Z && curZoom > 0 && !FlxG.keys.pressed.CONTROL #if android || virtualPad.buttonZ.justPressed && curZoom > 0 #end) {
 				--curZoom;
 				updateZoom();
 			}
-			if(FlxG.keys.justPressed.X && curZoom < zoomList.length-1) {
+			if(FlxG.keys.justPressed.X #if android || virtualPad.buttonC.justPressed #end && curZoom < zoomList.length-1) {
 				curZoom++;
 				updateZoom();
 			}
+			
+			if (FlxG.keys.pressed.C && !FlxG.keys.pressed.CONTROL)
+				if (!FlxG.mouse.overlaps(curRenderedNotes)) //lmao cant place notes when your cursor already overlaps one
+					if (FlxG.mouse.x > gridBG.x
+						&& FlxG.mouse.x < gridBG.x + gridBG.width
+						&& FlxG.mouse.y > gridBG.y
+						&& FlxG.mouse.y < gridBG.y + gridBG.height)
+							if (!FlxG.keys.pressed.CONTROL) //stop crashing
+								addNote(); //allows you to draw notes by holding C
+			if (FlxG.keys.pressed.C && FlxG.keys.pressed.CONTROL)
+				if (FlxG.mouse.overlaps(curRenderedNotes))
+					if (FlxG.mouse.x > gridBG.x
+						&& FlxG.mouse.x < gridBG.x + gridBG.width
+						&& FlxG.mouse.y > gridBG.y
+						&& FlxG.mouse.y < gridBG.y + gridBG.height)
+							curRenderedNotes.forEach(function(note:Note)
+							{
+								if (FlxG.mouse.overlaps(note))
+									deleteNote(note); //mass deletion of notes
+							});
 
 			if (FlxG.keys.justPressed.TAB)
 			{

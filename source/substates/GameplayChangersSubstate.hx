@@ -12,9 +12,13 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 	private var grpOptions:FlxTypedGroup<Alphabet>;
 	private var checkboxGroup:FlxTypedGroup<CheckboxThingie>;
 	private var grpTexts:FlxTypedGroup<AttachedText>;
+	public static var inThePauseMenu:Bool = false;
+	public var pauseState:PauseSubState;
 
 	function getOptions()
 	{
+		var skip:Bool = inThePauseMenu;
+		
 		var goption:GameplayOption = new GameplayOption('Scroll Type', 'scrolltype', 'string', 'multiplicative', ["multiplicative", "constant"]);
 		optionsArray.push(goption);
 
@@ -26,38 +30,38 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 		if (goption.getValue() != "constant")
 		{
 			option.displayFormat = '%vX';
-			option.maxValue = 3;
+			option.maxValue = 100;
 		}
 		else
 		{
 			option.displayFormat = "%v";
-			option.maxValue = 6;
+			option.maxValue = 200;
 		}
 		optionsArray.push(option);
 
 		#if FLX_PITCH
 		var option:GameplayOption = new GameplayOption('Playback Rate', 'songspeed', 'float', 1);
-		option.scrollSpeed = 1;
-		option.minValue = 0.5;
-		option.maxValue = 3.0;
-		option.changeValue = 0.05;
+		option.scrollSpeed = 3;
+		option.minValue = 0.01;
+		option.maxValue = 30;
+		option.changeValue = 0.01;
 		option.displayFormat = '%vX';
 		option.decimals = 2;
 		optionsArray.push(option);
 		#end
 
 		var option:GameplayOption = new GameplayOption('Health Gain Multiplier', 'healthgain', 'float', 1);
-		option.scrollSpeed = 2.5;
-		option.minValue = 0;
-		option.maxValue = 5;
+		option.scrollSpeed = 5;
+		option.minValue = -5;
+		option.maxValue = 50;
 		option.changeValue = 0.1;
 		option.displayFormat = '%vX';
 		optionsArray.push(option);
 
 		var option:GameplayOption = new GameplayOption('Health Loss Multiplier', 'healthloss', 'float', 1);
 		option.scrollSpeed = 2.5;
-		option.minValue = 0.5;
-		option.maxValue = 5;
+		option.minValue = -5;
+		option.maxValue = 50;
 		option.changeValue = 0.1;
 		option.displayFormat = '%vX';
 		optionsArray.push(option);
@@ -130,6 +134,14 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 
 		changeSelection();
 		reloadCheckboxes();
+	}
+	
+	override function destroy() {
+		if (inThePauseMenu)  {
+			PlayState.instance.changeTheSettingsBitch();
+			inThePauseMenu = false;
+		}
+		super.destroy();
 	}
 
 	var nextAccept:Int = 5;
@@ -312,6 +324,31 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 			FlxG.sound.play(Paths.sound('scrollMenu'));
 		}
 		holdTime = 0;
+	}
+	
+	function onChangePractice()
+	{
+		if(inThePauseMenu)
+		{
+			trace ("you really thought you would get away with it, invalidated your score");
+			PlayState.playerIsCheating = true;
+		}
+	}
+	function onChangeChartOption()
+	{
+		if(inThePauseMenu)
+		{
+			trace ("HEY! You changed an option that requires a chart restart!");
+			PauseSubState.requireRestart = true;
+		}
+	}
+	function onChangeBotplay()
+	{
+		if(inThePauseMenu)
+		{
+			trace ("you really thought you would get away with it, invalidated your score");
+			PlayState.playerIsCheating = true;
+		}
 	}
 	
 	function changeSelection(change:Int = 0)

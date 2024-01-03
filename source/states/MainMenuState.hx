@@ -9,7 +9,7 @@ import options.OptionsState;
 
 class MainMenuState extends MusicBeatState
 {
-	public static var miuEngineVersion:String = '0.1.0b (Beta 1)'; // Miu Engine by Miukothoi2011
+	public static var miuEngineVersion:String = '0.1.0b2'; // Miu Engine by Miukothoi2011
 	public static var psychEngineVersion:String = '0.7.2h'; // This is also used for Discord RPC
 	public static var curSelected:Int = 0;
 

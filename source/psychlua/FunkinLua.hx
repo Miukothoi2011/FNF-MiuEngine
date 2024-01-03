@@ -1,5 +1,4 @@
 package psychlua;
-package shaders;
 
 import backend.WeekData;
 import backend.Highscore;
@@ -29,8 +28,6 @@ import states.FreeplayState;
 
 import substates.PauseSubState;
 import substates.GameOverSubstate;
-
-import Shaders;
 
 import psychlua.LuaUtils;
 import psychlua.LuaUtils.LuaTweenOptions;
