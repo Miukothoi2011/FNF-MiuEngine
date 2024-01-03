@@ -138,7 +138,6 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 	
 	override function destroy() {
 		if (inThePauseMenu)  {
-			PlayState.instance.changeTheSettingsBitch();
 			inThePauseMenu = false;
 		}
 		super.destroy();

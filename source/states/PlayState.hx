@@ -547,16 +547,6 @@ class PlayState extends MusicBeatState
 		iconP2.visible = !ClientPrefs.data.hideHud;
 		iconP2.alpha = ClientPrefs.data.healthBarAlpha;
 		uiGroup.add(iconP2);
-		
-		if (SONG.player1 == 'bf' || SONG.player1 == 'boyfriend') {
-			if (ClientPrefs.bfIconStyle == 'VS Nonsense V2') iconP1.changeIcon('bfnonsense'); 
-			if (ClientPrefs.bfIconStyle == 'Doki Doki+') iconP1.changeIcon('bfdoki'); 
-			if (ClientPrefs.bfIconStyle == 'Leather Engine') iconP1.changeIcon('bfleather'); 
-			if (ClientPrefs.bfIconStyle == "Mic'd Up") iconP1.changeIcon('bfmup'); 
-			if (ClientPrefs.bfIconStyle == "FPS Plus") iconP1.changeIcon('bffps'); 
-			if (ClientPrefs.bfIconStyle == "SB Engine") iconP1.changeIcon('bfsb'); 
-			if (ClientPrefs.bfIconStyle == "OS 'Engine'") iconP1.changeIcon('bfos'); 
-		}
 
 		scoreTxt = new FlxText(0, healthBar.y + 40, FlxG.width, "", 20);
 		scoreTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -2344,7 +2334,7 @@ class PlayState extends MusicBeatState
 		var ret:Dynamic = callOnScripts('onEndSong', null, true);
 		if(ret != FunkinLua.Function_Stop && !transitioning)
 		{
-			if (!cpuControlled && !playerIsCheating && ClientPrefs.safeFrames <= 10)
+			if (!cpuControlled && !playerIsCheating && ClientPrefs.data.safeFrames <= 10)
 			{
 				#if !switch
 				var percent:Float = ratingPercent;

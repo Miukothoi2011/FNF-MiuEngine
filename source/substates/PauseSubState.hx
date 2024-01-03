@@ -12,7 +12,7 @@ import states.StoryMenuState;
 import states.FreeplayState;
 import options.OptionsState;
 
-import GameplayChangersSubstate;
+import substates.GameplayChangersSubstate;
 
 class PauseSubState extends MusicBeatSubstate
 {
@@ -120,14 +120,6 @@ class PauseSubState extends MusicBeatSubstate
 		practiceText.updateHitbox();
 		practiceText.visible = PlayState.instance.practiceMode;
 		add(practiceText);
-		
-		botplayText = new FlxText(20, 15 + 128, 0, "PRACTICE MODE", 32);
-		botplayText.scrollFactor.set();
-		botplayText.setFormat(Paths.font('vcr.ttf'), 32);
-		botplayText.x = FlxG.width - (practiceText.width + 20);
-		botplayText.updateHitbox();
-		botplayText.visible = PlayState.instance.cpuControlled;
-		add(botplayText);
 
 		var chartingText:FlxText = new FlxText(20, 15 + 101, 0, "CHARTING MODE", 32);
 		chartingText.scrollFactor.set();
@@ -304,13 +296,12 @@ class PauseSubState extends MusicBeatSubstate
 					PlayState.instance.unspawnNotes = [];
 					PlayState.instance.finishSong(true);
 				case 'Chart Editor':
-					MusicBeatState.switchState(new editors.ChartingState());
-					MusicBeatState.windowNameSuffix = " - Chart Editor";
+					MusicBeatState.switchState(new states.editors.ChartingState());
 					PlayState.chartingMode = true;
 				case "Change Gameplay Settings":
 					persistentUpdate = false;
-					openSubState(new GameplayChangersSubstate());
-					GameplayChangersSubstate.inThePauseMenu = true;
+					openSubState(new substates.GameplayChangersSubstate());
+					substates.GameplayChangersSubstate.data.inThePauseMenu = true;
 				case 'Toggle Botplay':
 					PlayState.instance.cpuControlled = !PlayState.instance.cpuControlled;
 					PlayState.changedDifficulty = true;
@@ -356,10 +347,9 @@ class PauseSubState extends MusicBeatSubstate
 					PlayState.deathCounter = 0;
 					PlayState.seenCutscene = false;
 
-					WeekData.loadTheFirstEnabledMod();
-						MusicBeatState.switchState(new MainMenuState());
+					MusicBeatState.switchState(new states.MainMenuState());
 					PlayState.cancelMusicFadeTween();
-					FlxG.sound.playMusic(Paths.music('freakyMenu-' + ClientPrefs.daMenuMusic));
+					FlxG.sound.playMusic(Paths.music('freakyMenu');
 					PlayState.changedDifficulty = false;
 					PlayState.chartingMode = false;
 			case "Exit Game":
