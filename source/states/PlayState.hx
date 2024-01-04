@@ -925,12 +925,9 @@ class PlayState extends MusicBeatState
 	public function changeTheSettingsBitch() {
 		healthGain = ClientPrefs.getGameplaySetting('healthgain', 1);
 		healthLoss = ClientPrefs.getGameplaySetting('healthloss', 1);
-		hpDrainLevel = ClientPrefs.getGameplaySetting('drainlevel', 1);
 		instakillOnMiss = ClientPrefs.getGameplaySetting('instakill', false);
-		sickOnly = ClientPrefs.getGameplaySetting('onlySicks', false);
 		practiceMode = ClientPrefs.getGameplaySetting('practice', false);
 		cpuControlled = ClientPrefs.getGameplaySetting('botplay', false);
-		opponentChart = ClientPrefs.getGameplaySetting('opponentplay', false);
 		playbackRate = ClientPrefs.getGameplaySetting('songspeed', 1);
 		songSpeedType = ClientPrefs.getGameplaySetting('scrolltype','multiplicative');
 
