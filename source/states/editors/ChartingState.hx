@@ -165,7 +165,7 @@ class ChartingState extends MusicBeatState
 		128,
 		192
 	];
-	var curZoom:Int = 2;
+	var curZoom:Int = 4;
 
 	private var blockPressWhileTypingOn:Array<FlxUIInputText> = [];
 	private var blockPressWhileTypingOnStepper:Array<FlxUINumericStepper> = [];
@@ -2168,7 +2168,7 @@ class ChartingState extends MusicBeatState
 		"\n\nBeat: " + Std.string(curDecBeat).substring(0,4) +
 		"\n\nStep: " + curStep +
 		"\n\nBeat Snap: " + quantization + "th" +
-		"\n\nNote Count";
+		"\n\nNote Count: ";
 
 		var playedSound:Array<Bool> = [false, false, false, false]; //Prevents ouchy GF sex sounds
 		curRenderedNotes.forEachAlive(function(note:Note) {

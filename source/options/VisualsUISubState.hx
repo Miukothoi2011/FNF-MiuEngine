@@ -152,32 +152,32 @@ class VisualsUISubState extends BaseOptionsMenu
 			'bool');
 		addOption(option);
 		
-		var option:Option = new Option('BF Icon Style',
-			"You want choose BF icon style?",
-			'bfIconStyle',
-			'string',
-			['Default', 'VS Nonsense V2', 'Doki Doki+', 'Leather Engine', "Mic'd Up", 'FPS Plus', 'SB Engine', "OS 'Engine'"]);
-		addOption(option);
+		//var option:Option = new Option('BF Icon Style:',
+			//"You want choose BF icon style?",
+			//'bfIconStyle',
+			//'string',
+			//['Default', 'VS Nonsense V2', 'Doki Doki+', 'Leather Engine', "Mic'd Up", 'FPS Plus', 'SB Engine', "OS 'Engine'"]);
+		//addOption(option);
 		
-		var option:Option = new Option('Smooth Health',
-			"?",
-			'smoothHealth',
-			'bool');
-		addOption(option);
+		//var option:Option = new Option('Smooth Health',
+			//"?",
+			//'smoothHealth',
+			//'bool');
+		//addOption(option);
 		
-		var option:Option = new Option('Smooth Health Type',
-			"?",
-			'smoothHealthType',
-			'string',
-			['Golden Apple 1.5', '?']);
-		addOption(option);
+		//var option:Option = new Option('Smooth Health Type:',
+			//"?",
+			//'smoothHealthType',
+			//'string',
+			//['Golden Apple 1.5', '?']);
+		//addOption(option);
 		
-		var option:Option = new Option('Icon Bounce Type',
-			"?",
-			'iconBounceType',
-			'string',
-			['Psych Engine (New)', 'Psych Engine (Old)', 'Golden Apple', 'Dave And Bambi', 'VS Steve', 'Leather Engine']);
-		addOption(option);
+		//var option:Option = new Option('Icon Bounce Type:',
+			//"?",
+			//'iconBounceType',
+			//'string',
+			//['Psych Engine (New)', 'Psych Engine (Old)', 'Golden Apple', 'Dave And Bambi', 'VS Steve', 'Leather Engine']);
+		//addOption(option);
 
 		super();
 		add(notes);

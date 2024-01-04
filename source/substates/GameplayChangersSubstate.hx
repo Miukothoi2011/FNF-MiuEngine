@@ -24,7 +24,7 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 
 		var option:GameplayOption = new GameplayOption('Scroll Speed', 'scrollspeed', 'float', 1);
 		option.scrollSpeed = 2.0;
-		option.minValue = 0.35;
+		option.minValue = 0.1;
 		option.changeValue = 0.05;
 		option.decimals = 2;
 		if (goption.getValue() != "constant")
@@ -138,6 +138,7 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 	
 	override function destroy() {
 		if (inThePauseMenu)  {
+			PlayState.instance.changeTheSettingsBitch();
 			inThePauseMenu = false;
 		}
 		super.destroy();
