@@ -1,5 +1,9 @@
-# Friday Night Funkin' - Psych Engine
-Engine originally used on [Mind Games Mod](https://gamebanana.com/mods/301107), intended to be a fix for the vanilla version's many issues while keeping the casual play aspect of it. Also aiming to be an easier alternative to newbie coders.
+# Friday Night Funkin' - Miu Engine
+Engine are fork from Psych Engine (0.7.2h)
+
+### NOTE: This engine is in BETA stage, and i not a Professional Haxe lang coder i stil in lot for fail code.
+
+If you want downloads build, go to ["Actions"](https://github.com/Miuthoi123/FNF-MiuEngine/actions) tabs or go to ["Releases"](https://github.com/Miuthoi123/FNF-MiuEngine/releases) (i to lazy to upload on Releases pls wait it)
 
 ## Installation:
 
