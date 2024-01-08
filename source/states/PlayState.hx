@@ -1,5 +1,4 @@
 package states;
-package shaders;
 
 import backend.Highscore;
 import backend.StageData;
@@ -20,7 +19,6 @@ import flixel.animation.FlxAnimationController;
 import lime.utils.Assets;
 import openfl.utils.Assets as OpenFlAssets;
 import openfl.events.KeyboardEvent;
-import openfl.filters.BitmapFilter;
 import haxe.Json;
 
 import cutscenes.CutsceneHandler;
@@ -34,11 +32,12 @@ import states.editors.CharacterEditorState;
 import substates.PauseSubState;
 import substates.GameOverSubstate;
 
-import shaders.Shaders;
-
 #if !flash
 import flixel.addons.display.FlxRuntimeShader;
 import openfl.filters.ShaderFilter;
+import openfl.filters.BitmapFilter;
+import openfl.display.Shader;
+import shaders.Shaders;
 #end
 
 #if VIDEOS_ALLOWED
