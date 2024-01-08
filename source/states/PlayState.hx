@@ -19,6 +19,7 @@ import flixel.animation.FlxAnimationController;
 import lime.utils.Assets;
 import openfl.utils.Assets as OpenFlAssets;
 import openfl.events.KeyboardEvent;
+import openfl.filters.BitmapFilter;
 import haxe.Json;
 
 import cutscenes.CutsceneHandler;
@@ -31,6 +32,8 @@ import states.editors.CharacterEditorState;
 
 import substates.PauseSubState;
 import substates.GameOverSubstate;
+
+import shaders.Shaders;
 
 #if !flash
 import flixel.addons.display.FlxRuntimeShader;
@@ -80,6 +83,11 @@ class PlayState extends MusicBeatState
 {
 	public static var STRUM_X = 42;
 	public static var STRUM_X_MIDDLESCROLL = -278;
+
+	public var shader_chromatic_abberation:ChromaticAberrationEffect;
+	public var camGameShaders:Array<ShaderEffect> = [];
+	public var camHUDShaders:Array<ShaderEffect> = [];
+	public var camOtherShaders:Array<ShaderEffect> = [];
 
 	public static var ratingStuff:Array<Dynamic> = [
 		['You Suck!', 0.2], //From 0% to 19%
@@ -133,6 +141,7 @@ class PlayState extends MusicBeatState
 	public var boyfriendGroup:FlxSpriteGroup;
 	public var dadGroup:FlxSpriteGroup;
 	public var gfGroup:FlxSpriteGroup;
+	public var shaderUpdates:Array<Float->Void> = [];
 	public static var curStage:String = '';
 	public static var stageUI:String = "normal";
 	public static var isPixelStage(get, never):Bool;
@@ -210,8 +219,11 @@ class PlayState extends MusicBeatState
 	public var camOther:FlxCamera;
 	public var cameraSpeed:Float = 1;
 
+	public var songNps:Int = 0;
+	public var oppoNps:Int = 0;
 	public var songScore:Int = 0;
 	public var songHits:Int = 0;
+	public var oppoHits:Int = 0;
 	public var songMisses:Int = 0;
 	public var scoreTxt:FlxText;
 	var timeTxt:FlxText;
@@ -552,7 +564,7 @@ class PlayState extends MusicBeatState
 		scoreTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		scoreTxt.scrollFactor.set();
 		scoreTxt.borderSize = 1.25;
-		scoreTxt.visible = !ClientPrefs.data.hideHud;
+		scoreTxt.visible = !ClientPrefs.data.hideHud && !ClientPrefs.data.hideScoreTxt;
 		updateScore(false);
 		uiGroup.add(scoreTxt);
 
@@ -815,6 +827,90 @@ class PlayState extends MusicBeatState
 			if(doPush) initHScript(scriptFile);
 		}
 		#end
+	}
+
+	public function addShaderToCamera(cam:String,effect:Dynamic){//STOLE FROM ANDROMEDA	// actually i got it from old psych engine
+		switch(cam.toLowerCase()) {
+			case 'camhud' | 'hud':
+				camHUDShaders.push(effect);
+				var newCamEffects:Array<BitmapFilter>=[]; // IT SHUTS HAXE UP IDK WHY BUT WHATEVER IDK WHY I CANT JUST ARRAY<SHADERFILTER>
+				for(i in camHUDShaders){
+					newCamEffects.push(new ShaderFilter(i.shader));
+				}
+				camHUD.setFilters(newCamEffects);
+			case 'camother' | 'other':
+				camOtherShaders.push(effect);
+				var newCamEffects:Array<BitmapFilter>=[]; // IT SHUTS HAXE UP IDK WHY BUT WHATEVER IDK WHY I CANT JUST ARRAY<SHADERFILTER>
+				for(i in camOtherShaders){
+					newCamEffects.push(new ShaderFilter(i.shader));
+				}
+				camOther.setFilters(newCamEffects);
+			case 'camgame' | 'game':
+				camGameShaders.push(effect);
+				var newCamEffects:Array<BitmapFilter>=[]; // IT SHUTS HAXE UP IDK WHY BUT WHATEVER IDK WHY I CANT JUST ARRAY<SHADERFILTER>
+				for(i in camGameShaders){
+					newCamEffects.push(new ShaderFilter(i.shader));
+				}
+				camGame.setFilters(newCamEffects);
+			default:
+				if(modchartSprites.exists(cam)) {
+					Reflect.setProperty(modchartSprites.get(cam),"shader",effect.shader);
+				} else if(modchartTexts.exists(cam)) {
+					Reflect.setProperty(modchartTexts.get(cam),"shader",effect.shader);
+				} else {
+					var OBJ = Reflect.getProperty(PlayState.instance,cam);
+					Reflect.setProperty(OBJ,"shader", effect.shader);
+				}
+		}
+	}
+
+	public function removeShaderFromCamera(cam:String,effect:ShaderEffect){
+		switch(cam.toLowerCase()) {
+			case 'camhud' | 'hud': 
+				camHUDShaders.remove(effect);
+				var newCamEffects:Array<BitmapFilter>=[];
+		for(i in camHUDShaders){
+			newCamEffects.push(new ShaderFilter(i.shader));
+		}
+		camHUD.setFilters(newCamEffects);
+			case 'camother' | 'other': 
+				camOtherShaders.remove(effect);
+				var newCamEffects:Array<BitmapFilter>=[];
+				for(i in camOtherShaders){
+					newCamEffects.push(new ShaderFilter(i.shader));
+				}
+				camOther.setFilters(newCamEffects);
+			default: 
+				if(modchartSprites.exists(cam)) {
+					Reflect.setProperty(modchartSprites.get(cam),"shader",null);
+				} else if(modchartTexts.exists(cam)) {
+					Reflect.setProperty(modchartTexts.get(cam),"shader",null);
+				} else {
+					var OBJ = Reflect.getProperty(PlayState.instance,cam);
+					Reflect.setProperty(OBJ,"shader", null);
+				}
+		}
+	}
+
+	public function clearShaderFromCamera(cam:String){ 
+		switch(cam.toLowerCase()) {
+			case 'camhud' | 'hud': 
+				camHUDShaders = [];
+				var newCamEffects:Array<BitmapFilter>=[];
+				camHUD.setFilters(newCamEffects);
+			case 'camother' | 'other': 
+				camOtherShaders = [];
+				var newCamEffects:Array<BitmapFilter>=[];
+				camOther.setFilters(newCamEffects);
+			case 'camgame' | 'game': 
+				camGameShaders = [];
+				var newCamEffects:Array<BitmapFilter>=[];
+				camGame.setFilters(newCamEffects);
+			default: 
+				camGameShaders = [];
+				var newCamEffects:Array<BitmapFilter>=[];
+				camGame.setFilters(newCamEffects);
+		}
 	}
 
 	public function getLuaObject(tag:String, text:Bool=true):FlxSprite {
@@ -1153,12 +1249,18 @@ class PlayState extends MusicBeatState
 			str += ' (${percent}%) - ${ratingFC}';
 		}
 
-		var tempScore:String = 'Score: ${songScore}'
-		+ (!instakillOnMiss ? ' | Misses: ${songMisses}' : "")
-		+ ' | Rating: ${str}';
-		// "tempScore" variable is used to prevent another memory leak, just in case
-		// "\n" here prevents the text from being cut off by beat zooms
-		scoreTxt.text = '${tempScore}\n';
+		if (!practiceMode && !cpuControlled) {
+			var tempScore:String = 'Score: ${songScore}'
+			+ (!instakillOnMiss ? ' | Misses: ${songMisses}' : "")
+			+ ' | Rating: ${str}';
+			// "tempScore" variable is used to prevent another memory leak, just in case
+			// "\n" here prevents the text from being cut off by beat zooms
+			scoreTxt.text = '${tempScore}\n';
+		} else if (cpuControlled) {
+			scoreTxt.text = 'BOTPLAY'
+		} else if (practiceMode) {
+			scoreTxt.text = 'Misses: ${songMisses}' + ' | Practice Mode'
+		}
 
 		if (!miss && !cpuControlled)
 			doScoreBop();
@@ -1833,11 +1935,15 @@ class PlayState extends MusicBeatState
 		setOnScripts('cameraY', camFollow.y);
 		setOnScripts('botPlay', cpuControlled);
 		callOnScripts('onUpdatePost', [elapsed]);
+		for (i in shaderUpdates){
+			i(elapsed);
+		}
 	}
 
 	// Health icon updaters
 	public dynamic function updateIconsScale(elapsed:Float)
 	{
+		if (ClientPrefs.data.iconBoppingType == 'Psych Engine (New)') {
 		var mult:Float = FlxMath.lerp(1, iconP1.scale.x, FlxMath.bound(1 - (elapsed * 9 * playbackRate), 0, 1));
 		iconP1.scale.set(mult, mult);
 		iconP1.updateHitbox();
@@ -1845,6 +1951,17 @@ class PlayState extends MusicBeatState
 		var mult:Float = FlxMath.lerp(1, iconP2.scale.x, FlxMath.bound(1 - (elapsed * 9 * playbackRate), 0, 1));
 		iconP2.scale.set(mult, mult);
 		iconP2.updateHitbox();
+		}
+		
+		if (ClientPrefs.data.iconBoppingType == 'Psych Engine (Old)') {
+		iconP1.setGraphicSize(Std.int(FlxMath.lerp(150, iconP1.width, CoolUtil.boundTo(1 - (elapsed * 30 * playbackRate), 0, 1))));
+		iconP2.setGraphicSize(Std.int(FlxMath.lerp(150, iconP2.width, CoolUtil.boundTo(1 - (elapsed * 30 * playbackRate), 0, 1))));
+		}
+		
+		if (ClientPrefs.data.iconBoppingType == 'Golden Apple') {
+		iconP1.centerOffsets();
+		iconP2.centerOffsets();
+		}
 	}
 
 	public dynamic function updateIconsPosition()
@@ -2515,6 +2632,12 @@ class PlayState extends MusicBeatState
 				totalPlayed++;
 				RecalculateRating(false);
 			}
+		} else {
+			if(note.ratingDisabled)
+			{
+				songHits++;
+				RecalculateRating(false);
+			}
 		}
 
 		var uiPrefix:String = "";
@@ -2546,7 +2669,7 @@ class PlayState extends MusicBeatState
 		comboSpr.x = placement;
 		comboSpr.acceleration.y = FlxG.random.int(200, 300) * playbackRate * playbackRate;
 		comboSpr.velocity.y -= FlxG.random.int(140, 160) * playbackRate;
-		comboSpr.visible = (!ClientPrefs.data.hideHud && showCombo);
+		comboSpr.visible = (!ClientPrefs.data.hideHud && ClientPrefs.data.showUnusedCombo);
 		comboSpr.x += ClientPrefs.data.comboOffset[0];
 		comboSpr.y -= ClientPrefs.data.comboOffset[1];
 		comboSpr.antialiasing = antialias;
@@ -2579,7 +2702,7 @@ class PlayState extends MusicBeatState
 
 		var daLoop:Int = 0;
 		var xThing:Float = 0;
-		if (showCombo)
+		if (ClientPrefs.data.showUnusedCombo)
 			comboGroup.add(comboSpr);
 
 		for (i in seperatedScore)
@@ -2948,6 +3071,7 @@ class PlayState extends MusicBeatState
 
 		vocals.volume = 1;
 		strumPlayAnim(true, Std.int(Math.abs(note.noteData)), Conductor.stepCrochet * 1.25 / 1000 / playbackRate);
+		
 		note.hitByOpponent = true;
 		
 		var result:Dynamic = callOnLuas('opponentNoteHitPost', [notes.members.indexOf(note), Math.abs(note.noteData), note.noteType, note.isSustainNote]);
@@ -2984,7 +3108,6 @@ class PlayState extends MusicBeatState
 						}
 				}
 			}
-
 			noteMiss(note);
 			if(!note.noteSplashData.disabled && !note.isSustainNote) spawnNoteSplashOnNote(note);
 			if(!note.isSustainNote) invalidateNote(note);
@@ -3130,15 +3253,77 @@ class PlayState extends MusicBeatState
 			//trace('BEAT HIT: ' + curBeat + ', LAST HIT: ' + lastBeatHit);
 			return;
 		}
+		
+		if(ClientPrefs.data.timeBounce)
+		{
+			if(timeTxtTween != null) {
+				timeTxtTween.cancel();
+			}
+			timeTxt.scale.x = 1.075;
+			timeTxt.scale.y = 1.075;
+			timeTxtTween = FlxTween.tween(timeTxt.scale, {x: 1, y: 1}, 0.2, {
+				onComplete: function(twn:FlxTween) {
+					timeTxtTween = null;
+				}
+			});
+		}
 
 		if (generatedMusic)
 			notes.sort(FlxSort.byY, ClientPrefs.data.downScroll ? FlxSort.ASCENDING : FlxSort.DESCENDING);
 
-		iconP1.scale.set(1.2, 1.2);
-		iconP2.scale.set(1.2, 1.2);
+		if(ClientPrefs.data.iconBopping) {
+			if (ClientPrefs.data.iconBoppingType == 'Psych Engine (New)') {
+				iconP1.scale.set(1.2, 1.2);
+				iconP2.scale.set(1.2, 1.2);
 
-		iconP1.updateHitbox();
-		iconP2.updateHitbox();
+				iconP1.updateHitbox();
+				iconP2.updateHitbox();
+			}
+			
+			if (ClientPrefs.data.iconBoppingType == 'Psych Engine (Old)') {
+				iconP1.setGraphicSize(Std.int(iconP1.width + 30));
+				iconP2.setGraphicSize(Std.int(iconP2.width + 30));
+
+				iconP1.updateHitbox();
+				iconP2.updateHitbox();
+			}
+			
+			if (curBeat % gfSpeed == 0 && ClientPrefs.iconBounceType == 'Golden Apple') {
+			curBeat % (gfSpeed * 2) == 0 * playbackRate ? {
+			iconP1.scale.set(1.1, 0.8);
+			iconP2.scale.set(1.1, 1.3);
+
+			FlxTween.angle(iconP1, -15, 0, Conductor.crochet / 1300 / playbackRate, {ease: FlxEase.quadOut});
+			FlxTween.angle(iconP2, 15, 0, Conductor.crochet / 1300 / playbackRate, {ease: FlxEase.quadOut});
+			} : {
+			iconP1.scale.set(1.1, 1.3);
+			iconP2.scale.set(1.1, 0.8);
+
+			FlxTween.angle(iconP2, -15, 0, Conductor.crochet / 1300 / playbackRate, {ease: FlxEase.quadOut});
+			FlxTween.angle(iconP1, 15, 0, Conductor.crochet / 1300 / playbackRate, {ease: FlxEase.quadOut});
+			}
+
+			FlxTween.tween(iconP1, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+			FlxTween.tween(iconP2, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+
+			iconP1.updateHitbox();
+			iconP2.updateHitbox();
+			} 
+		} else { // if iconBopping is disabled
+			if (ClientPrefs.data.iconBoppingType == 'Psych Engine (New)') {
+				iconP1.scale.set(0, 0);
+				iconP2.scale.set(0, 0);
+
+				iconP1.updateHitbox();
+				iconP2.updateHitbox();
+			} else { if iconBoppingType is anthoer than Psych Engine (New)
+				iconP1.scale.set(0, 0);
+				iconP2.scale.set(0, 0);
+
+				iconP1.updateHitbox();
+				iconP2.updateHitbox();
+			}
+		}
 
 		characterBopper(curBeat);
 

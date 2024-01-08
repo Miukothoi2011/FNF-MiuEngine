@@ -9,7 +9,7 @@ import options.OptionsState;
 
 class MainMenuState extends MusicBeatState
 {
-	public static var miuEngineVersion:String = '0.1.0b2'; // Miu Engine by Miukothoi2011
+	public static var miuEngineVersion:String = '0.1.0b3'; // Miu Engine by Miukothoi2011
 	public static var psychEngineVersion:String = '0.7.2h'; // This is also used for Discord RPC
 	public static var curSelected:Int = 0;
 
@@ -88,7 +88,7 @@ class MainMenuState extends MusicBeatState
 			menuItem.screenCenter(X);
 		}
 
-		var miuVer:FlxText = new FlxText(12, FlxG.height - 64, 0, "Miu Engine v" + miuEngineVersion, 12);
+		var miuVer:FlxText = new FlxText(12, FlxG.height - 64, 0, "Miu Engine v" + miuEngineVersion + " - Modded Psych Engine", 12);
 		miuVer.scrollFactor.set();
 		miuVer.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(miuVer);

@@ -548,46 +548,49 @@ class TitleState extends MusicBeatState
 					FlxG.sound.playMusic(Paths.music('freakyMenu'), 0);
 					FlxG.sound.music.fadeIn(4, 0, 0.7);
 				case 2:
+					createCoolText(['Miu Engine by'], 40);
+					addMoreText('Miukothoi2011');
+				case 4:
 					#if PSYCH_WATERMARKS
 					createCoolText(['Psych Engine by'], 40);
 					#else
 					createCoolText(['ninjamuffin99', 'phantomArcade', 'kawaisprite', 'evilsk8er']);
 					#end
-				case 4:
+				case 5:
 					#if PSYCH_WATERMARKS
 					addMoreText('Shadow Mario', 40);
 					addMoreText('Riveren', 40);
 					#else
 					addMoreText('present');
 					#end
-				case 5:
-					deleteCoolText();
 				case 6:
+					deleteCoolText();
+				case 8:
 					#if PSYCH_WATERMARKS
 					createCoolText(['Not associated', 'with'], -40);
 					#else
 					createCoolText(['In association', 'with'], -40);
 					#end
-				case 8:
+				case 9:
 					addMoreText('newgrounds', -40);
 					ngSpr.visible = true;
-				case 9:
+				case 10:
 					deleteCoolText();
 					ngSpr.visible = false;
-				case 10:
-					createCoolText([curWacky[0]]);
 				case 12:
-					addMoreText(curWacky[1]);
+					createCoolText([curWacky[0]]);
 				case 13:
-					deleteCoolText();
+					addMoreText(curWacky[1]);
 				case 14:
-					addMoreText('Friday');
+					deleteCoolText();
 				case 15:
-					addMoreText('Night');
+					addMoreText('Friday');
 				case 16:
+					addMoreText('Night');
+				case 17:
 					addMoreText('Funkin'); // credTextShit.text += '\nFunkin';
 
-				case 17:
+				case 18:
 					skipIntro();
 			}
 		}

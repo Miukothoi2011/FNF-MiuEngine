@@ -172,13 +172,61 @@ class VisualsUISubState extends BaseOptionsMenu
 			//['Golden Apple 1.5', '?']);
 		//addOption(option);
 		
-		//var option:Option = new Option('Icon Bounce Type:',
-			//"?",
-			//'iconBounceType',
-			//'string',
-			//['Psych Engine (New)', 'Psych Engine (Old)', 'Golden Apple', 'Dave And Bambi', 'VS Steve', 'Leather Engine']);
-		//addOption(option);
+		var option:Option = new Option('Icon Bopping',
+			"?",
+			'iconBopping',
+			'bool');
+		addOption(option);
+		
+		var option:Option = new Option('Icon Bopping Type:',
+			"?",
+			'iconBoppingType',
+			'string',
+			['Psych Engine (New)', 'Psych Engine (Old)', 'Golden Apple', 'Dave And Bambi', 'VS Steve', 'Leather Engine']);
+		addOption(option);
 
+		var option:Option = new Option('Chars & BG', //Name
+			'If unchecked, gameplay will only show the HUD.', //Description
+			'charsAndBG', //Save data variable name
+			'bool'); //Variable type
+		addOption(option);
+
+		var option:Option = new Option('Light Opponent Strums',
+			"If this is unchecked, the Opponent strums won't light up when the Opponent hits a note.",
+			'opponentLightStrum',
+			'bool');
+		addOption(option);
+
+		var option:Option = new Option('Light Botplay Strums',
+			"If this is unchecked, the Player strums won't light when Botplay is active.",
+			'botLightStrum',
+			'bool');
+		addOption(option);
+
+		var option:Option = new Option('Light Player Strums',
+			"If this is unchecked, then uh.. the player strums won't light up.\nit's as simple as that.",
+			'playerLightStrum',
+			'bool');
+		addOption(option);
+		
+		var option:Option = new Option('Hide ScoreTxt',
+			"?",
+			'hideScoreTxt',
+			'bool');
+		addOption(option);
+		
+		var option:Option = new Option('Show Unused Combo Popup',
+			"?",
+			'showUnusedCombo',
+			'bool');
+		addOption(option);
+		
+		var option:Option = new Option('Time Bounce',
+			"?",
+			'timeBounce',
+			'bool');
+		addOption(option);
+		
 		super();
 		add(notes);
 	}

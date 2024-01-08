@@ -472,6 +472,15 @@ class Paths
 	inline static public function modsTxt(key:String) {
 		return modFolders('images/' + key + '.txt');
 	}
+	
+	inline static public function modsShaderFragment(key:String, ?library:String)
+	{
+		return modFolders('shaders/'+key+'.frag');
+	}
+	inline static public function modsShaderVertex(key:String, ?library:String)
+	{
+		return modFolders('shaders/'+key+'.vert');
+	}
 
 	/* Goes unused for now
 

@@ -37,18 +37,23 @@ class HealthIcon extends FlxSprite
 				loadGraphic(graphic, true, Math.floor(graphic.width / 3), Math.floor(graphic.height));
 				iconOffsets[0] = (width - 150) / 3;
 				iconOffsets[1] = (height - 150) / 3;
-				iconOffsets[1] = (height - 150) / 3;
-			} else {
+				iconOffsets[2] = (height - 150) / 3;
+			} else if (width == 300) {
 				loadGraphic(graphic, true, Math.floor(graphic.width / 2), Math.floor(graphic.height));
 				iconOffsets[0] = (width - 150) / 2;
 				iconOffsets[1] = (height - 150) / 2;
+			} else {
+				loadGraphic(graphic, true, Math.floor(graphic.width / 1), Math.floor(graphic.height));
+				iconOffsets[0] = (width - 150) / 1;
 			}
 			updateHitbox();
 
 			if (width2 == 450) {
 				animation.add(char, [0, 1, 2], 0, false, isPlayer);
-			} else {
+			} else if (width2 == 300) {
 				animation.add(char, [0, 1], 0, false, isPlayer);
+			} else {
+				animation.add(char, [0], 0, false, isPlayer);
 			}
 			animation.play(char);
 			this.char = char;
@@ -65,6 +70,7 @@ class HealthIcon extends FlxSprite
 		super.updateHitbox();
 		offset.x = iconOffsets[0];
 		offset.y = iconOffsets[1];
+		offset.x = iconOffsets[2];
 	}
 
 	public function getCharacter():String {

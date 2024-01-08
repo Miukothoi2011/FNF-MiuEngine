@@ -6,6 +6,8 @@ import flixel.input.gamepad.FlxGamepadInputID;
 
 import states.TitleState;
 
+import shaders.Shaders;
+
 // Add a variable here and it will get automatically saved
 @:structInit class SaveVariables {
 	public var downScroll:Bool = false;
@@ -18,6 +20,19 @@ import states.TitleState;
 	public var noteSkin:String = 'Default';
 	public var splashSkin:String = 'Psych';
 	public var splashAlpha:Float = 0.6;
+	public var smoothHealth:Bool = false;
+	public var smoothHealthType:String = 'Golden Apple 1.5';
+	public var resolution:String = '1280x720';
+	public var ezSpam:Bool = false;
+	public var charsAndBG:Bool = true;
+	public var opponentLightStrum:Bool = true;
+	public var botLightStrum:Bool = true;
+	public var playerLightStrum:Bool = true;
+	public var hideScoreTxt:Bool = false;
+	public var showNotes:Bool = true;
+	public var showUnusedCombo:Bool = false;
+	public var iconBopping:Bool = true;
+	public var iconBoppingType:String = 'Psych Engine (New)';
 	public var lowQuality:Bool = false;
 	public var shaders:Bool = true;
 	public var cacheOnGPU:Bool = #if !switch false #else true #end; //From Stilic
@@ -76,11 +91,6 @@ import states.TitleState;
 	public var safeFrames:Float = 10;
 	public var guitarHeroSustains:Bool = true;
 	public var discordRPC:Bool = true;
-	public var smoothHealth:Bool = true;
-	public var smoothHealthType:String = 'Golden Apple 1.5';
-	public var iconBounceType:String = 'Psych Engine (New)';
-	public var resolution:String = '1280x720';
-	public var ezSpam:Bool = false;
 }
 
 class ClientPrefs {
