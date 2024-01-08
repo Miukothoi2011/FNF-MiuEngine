@@ -11,9 +11,24 @@ class CoolUtil
 		trace(snap);
 		return (m / snap);
 	}
+	
+	#if desktop
+	public static var resW:Float = 1;
+	public static var resH:Float = 1;
+	public static var baseW:Float = 1;
+	public static var baseH:Float = 1;
+	inline public static function resetResScale(wid:Int = 1280, height:Int = 720) {
+		resW = wid/baseW;
+		resH = height/baseH;
+	}
+	#end
 
 	inline public static function capitalize(text:String)
 		return text.charAt(0).toUpperCase() + text.substr(1).toLowerCase();
+		
+	inline public static function boundTo(value:Float, min:Float, max:Float):Float {
+		return Math.max(min, Math.min(max, value));
+	}
 
 	inline public static function coolTextFile(path:String):Array<String>
 	{
