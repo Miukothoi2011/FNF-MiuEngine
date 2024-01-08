@@ -1257,9 +1257,9 @@ class PlayState extends MusicBeatState
 			// "\n" here prevents the text from being cut off by beat zooms
 			scoreTxt.text = '${tempScore}\n';
 		} else if (cpuControlled) {
-			scoreTxt.text = 'BOTPLAY'
+			scoreTxt.text = 'BOTPLAY';
 		} else if (practiceMode) {
-			scoreTxt.text = 'Misses: ${songMisses}' + ' | Practice Mode'
+			scoreTxt.text = 'Misses: ${songMisses}' + ' | Practice Mode';
 		}
 
 		if (!miss && !cpuControlled)
