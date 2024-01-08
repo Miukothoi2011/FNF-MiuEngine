@@ -3279,7 +3279,6 @@ class PlayState extends MusicBeatState
 				iconP1.updateHitbox();
 				iconP2.updateHitbox();
 			}
-			
 			if (ClientPrefs.data.iconBoppingType == 'Psych Engine (Old)') {
 				iconP1.setGraphicSize(Std.int(iconP1.width + 30));
 				iconP2.setGraphicSize(Std.int(iconP2.width + 30));
@@ -3287,7 +3286,6 @@ class PlayState extends MusicBeatState
 				iconP1.updateHitbox();
 				iconP2.updateHitbox();
 			}
-			
 			if (curBeat % gfSpeed == 0 && ClientPrefs.iconBounceType == 'Golden Apple') {
 			curBeat % (gfSpeed * 2) == 0 * playbackRate ? {
 			iconP1.scale.set(1.1, 0.8);
@@ -3316,7 +3314,7 @@ class PlayState extends MusicBeatState
 
 				iconP1.updateHitbox();
 				iconP2.updateHitbox();
-			} else { if iconBoppingType is anthoer than Psych Engine (New)
+			} else { // if iconBoppingType is anthoer than Psych Engine (New)
 				iconP1.scale.set(0, 0);
 				iconP2.scale.set(0, 0);
 
