@@ -1,4 +1,5 @@
 package states;
+package shaders;
 
 import backend.Highscore;
 import backend.StageData;
@@ -226,8 +227,11 @@ class PlayState extends MusicBeatState
 	public var oppoHits:Int = 0;
 	public var songMisses:Int = 0;
 	public var scoreTxt:FlxText;
+	var hitTxt:FlxText;
 	var timeTxt:FlxText;
+	var timeTxtTween:FlxTween;
 	var scoreTxtTween:FlxTween;
+	var judgementCounter:FlxText;
 
 	public static var campaignScore:Int = 0;
 	public static var campaignMisses:Int = 0;
@@ -3286,7 +3290,7 @@ class PlayState extends MusicBeatState
 				iconP1.updateHitbox();
 				iconP2.updateHitbox();
 			}
-			if (curBeat % gfSpeed == 0 && ClientPrefs.iconBounceType == 'Golden Apple') {
+			if (curBeat % gfSpeed == 0 && ClientPrefs.iconBoppingType == 'Golden Apple') {
 			curBeat % (gfSpeed * 2) == 0 * playbackRate ? {
 			iconP1.scale.set(1.1, 0.8);
 			iconP2.scale.set(1.1, 1.3);
