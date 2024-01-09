@@ -380,6 +380,7 @@ class ChartingState extends MusicBeatState
 		addNoteUI();
 		addEventsUI();
 		addChartingUI();
+		addNoteStackingUI();
 		addDataUI();
 		updateHeads();
 		updateWaveform();
