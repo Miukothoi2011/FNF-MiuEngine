@@ -184,7 +184,15 @@ class PlayState extends MusicBeatState
 
 	public var gfSpeed:Int = 1;
 	public var health(default, set):Float = 1;
+	public var totalNotesPlayed:Float = 0;
 	public var combo:Int = 0;
+	public var maxCombo:Float = 0;
+	
+	var notesAddedCount:Int = 0;
+    var notesToRemoveCount:Int = 0;
+    var oppNotesToRemoveCount:Int = 0;
+	public var iconBopsThisFrame:Int = 0;
+	public var iconBopsTotal:Int = 0;
 
 	public var healthBar:Bar;
 	public var timeBar:Bar;
