@@ -3256,20 +3256,6 @@ class PlayState extends MusicBeatState
 			//trace('BEAT HIT: ' + curBeat + ', LAST HIT: ' + lastBeatHit);
 			return;
 		}
-		
-		if(ClientPrefs.data.timeBounce)
-		{
-			if(timeTxtTween != null) {
-				timeTxtTween.cancel();
-			}
-			timeTxt.scale.x = 1.075;
-			timeTxt.scale.y = 1.075;
-			timeTxtTween = FlxTween.tween(timeTxt.scale, {x: 1, y: 1}, 0.2, {
-				onComplete: function(twn:FlxTween) {
-					timeTxtTween = null;
-				}
-			});
-		}
 
 		if (generatedMusic)
 			notes.sort(FlxSort.byY, ClientPrefs.data.downScroll ? FlxSort.ASCENDING : FlxSort.DESCENDING);
@@ -3289,7 +3275,7 @@ class PlayState extends MusicBeatState
 				iconP1.updateHitbox();
 				iconP2.updateHitbox();
 			}
-			if (curBeat % gfSpeed == 0 && ClientPrefs.iconBoppingType == 'Golden Apple') {
+			if (curBeat % gfSpeed == 0 && ClientPrefs.data.iconBoppingType == 'Golden Apple') {
 			curBeat % (gfSpeed * 2) == 0 * playbackRate ? {
 			iconP1.scale.set(1.1, 0.8);
 			iconP2.scale.set(1.1, 1.3);
