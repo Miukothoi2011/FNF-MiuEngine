@@ -32,7 +32,7 @@ import shaders.Shaders;
 	public var showNotes:Bool = true;
 	public var showUnusedCombo:Bool = false;
 	public var iconBopping:Bool = true;
-	public var iconBoppingType:String = 'Psych Engine (New)';
+	public var iconBoppingType:String = 'Golden Apple';
 	public var timeBounce:Bool = true;
 	public var lowQuality:Bool = false;
 	public var shaders:Bool = true;

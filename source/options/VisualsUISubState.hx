@@ -182,7 +182,7 @@ class VisualsUISubState extends BaseOptionsMenu
 			"?",
 			'iconBoppingType',
 			'string',
-			['Psych Engine (New)', 'Psych Engine (Old)', 'Golden Apple', 'Dave And Bambi', 'VS Steve', 'Leather Engine']);
+			['New Psych', 'Old Psych', 'Golden Apple', 'Dave And Bambi', 'VS Steve', 'Leather Engine']);
 		addOption(option);
 
 		var option:Option = new Option('Chars & BG', //Name

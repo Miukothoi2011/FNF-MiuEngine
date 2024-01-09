@@ -1946,7 +1946,7 @@ class PlayState extends MusicBeatState
 	// Health icon updaters
 	public dynamic function updateIconsScale(elapsed:Float)
 	{
-		if (ClientPrefs.data.iconBoppingType == 'Psych Engine (New)') {
+		if (ClientPrefs.data.iconBoppingType == 'New Psych') {
 		var mult:Float = FlxMath.lerp(1, iconP1.scale.x, FlxMath.bound(1 - (elapsed * 9 * playbackRate), 0, 1));
 		iconP1.scale.set(mult, mult);
 		iconP1.updateHitbox();
@@ -1956,7 +1956,7 @@ class PlayState extends MusicBeatState
 		iconP2.updateHitbox();
 		}
 		
-		if (ClientPrefs.data.iconBoppingType == 'Psych Engine (Old)') {
+		if (ClientPrefs.data.iconBoppingType == 'Old Psych') {
 		iconP1.setGraphicSize(Std.int(FlxMath.lerp(150, iconP1.width, CoolUtil.boundTo(1 - (elapsed * 30 * playbackRate), 0, 1))));
 		iconP2.setGraphicSize(Std.int(FlxMath.lerp(150, iconP2.width, CoolUtil.boundTo(1 - (elapsed * 30 * playbackRate), 0, 1))));
 		}
@@ -3261,14 +3261,14 @@ class PlayState extends MusicBeatState
 			notes.sort(FlxSort.byY, ClientPrefs.data.downScroll ? FlxSort.ASCENDING : FlxSort.DESCENDING);
 
 		if(ClientPrefs.data.iconBopping) {
-			if (ClientPrefs.data.iconBoppingType == 'Psych Engine (New)') {
+			if (ClientPrefs.data.iconBoppingType == 'New Psych') {
 				iconP1.scale.set(1.2, 1.2);
 				iconP2.scale.set(1.2, 1.2);
 
 				iconP1.updateHitbox();
 				iconP2.updateHitbox();
 			}
-			if (ClientPrefs.data.iconBoppingType == 'Psych Engine (Old)') {
+			if (ClientPrefs.data.iconBoppingType == 'Old Psych') {
 				iconP1.setGraphicSize(Std.int(iconP1.width + 30));
 				iconP2.setGraphicSize(Std.int(iconP2.width + 30));
 
@@ -3295,15 +3295,38 @@ class PlayState extends MusicBeatState
 
 			iconP1.updateHitbox();
 			iconP2.updateHitbox();
+			}
+			if (ClientPrefs.data.iconBoppingType == 'Golden Apple') {
+			FlxTween.cancelTweensOf(iconP1);
+			FlxTween.cancelTweensOf(iconP2);
+			iconBopsTotal % 2 == 0 * playbackRate ? {
+			iconP1.scale.set(1.1, 0.8);
+			iconP2.scale.set(1.1, 1.3);
+
+			FlxTween.angle(iconP1, -15, 0, Conductor.crochet / 1300 / playbackRate, {ease: FlxEase.quadOut});
+			FlxTween.angle(iconP2, 15, 0, Conductor.crochet / 1300 / playbackRate, {ease: FlxEase.quadOut});
+			} : {
+			iconP1.scale.set(1.1, 1.3);
+			iconP2.scale.set(1.1, 0.8);
+
+			FlxTween.angle(iconP2, -15, 0, Conductor.crochet / 1300 / playbackRate, {ease: FlxEase.quadOut});
+			FlxTween.angle(iconP1, 15, 0, Conductor.crochet / 1300 / playbackRate, {ease: FlxEase.quadOut});
+			}
+
+			FlxTween.tween(iconP1, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+			FlxTween.tween(iconP2, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+
+			iconP1.updateHitbox();
+			iconP2.updateHitbox();
 			} 
 		} else { // if iconBopping is disabled
-			if (ClientPrefs.data.iconBoppingType == 'Psych Engine (New)') {
+			if (ClientPrefs.data.iconBoppingType == 'New Psych') {
 				iconP1.scale.set(0, 0);
 				iconP2.scale.set(0, 0);
 
 				iconP1.updateHitbox();
 				iconP2.updateHitbox();
-			} else { // if iconBoppingType is anthoer than Psych Engine (New)
+			} else { // if iconBoppingType is anthoer than New Psych
 				iconP1.scale.set(0, 0);
 				iconP2.scale.set(0, 0);
 
