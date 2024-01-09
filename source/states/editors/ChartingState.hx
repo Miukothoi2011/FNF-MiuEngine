@@ -174,7 +174,7 @@ class ChartingState extends MusicBeatState
 		160,
 		192
 	];
-	var curZoom:Int = 32;
+	var curZoom:Int = 8;
 
 	private var blockPressWhileTypingOn:Array<FlxUIInputText> = [];
 	private var blockPressWhileTypingOnStepper:Array<FlxUINumericStepper> = [];
