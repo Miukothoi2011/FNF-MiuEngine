@@ -354,7 +354,8 @@ class ChartingState extends MusicBeatState
 		\nHold Alt and click on a note to change it to the selected note type
 		\nHold CTRL and use the Mouse Wheel to decrease/increase the note's sustain length
 		\nZ/X - Zoom in/out
-		\nCTRL + Z - Undo
+		\nC - Add note repeatly if mouse move on place note
+		\nCTRL + C - Remove note repeatly if mouse move on place note having note placed
 		\n
 		\n(Hold) CTRL + Left/Right - Shift the currently selected note
 		\nEsc - Test your chart inside Chart Editor
