@@ -840,86 +840,80 @@ class PlayState extends MusicBeatState
 		#end
 	}
 
-	public function addShaderToCamera(cam:String,effect:Dynamic){//STOLE FROM ANDROMEDA	// actually i got it from old psych engine
-		switch(cam.toLowerCase()) {
+	public function addLuaShaderToCamera(cam:String, effect:ShaderEffect) { // STOLE FROM ANDROMEDA
+		switch (cam.toLowerCase()) {
 			case 'camhud' | 'hud':
 				camHUDShaders.push(effect);
-				var newCamEffects:Array<BitmapFilter>=[]; // IT SHUTS HAXE UP IDK WHY BUT WHATEVER IDK WHY I CANT JUST ARRAY<SHADERFILTER>
-				for(i in camHUDShaders){
+				var newCamEffects:Array<BitmapFilter> = []; // IT SHUTS HAXE UP IDK WHY BUT WHATEVER IDK WHY I CANT JUST ARRAY<SHADERFILTER>
+				for (i in camHUDShaders) {
 					newCamEffects.push(new ShaderFilter(i.shader));
 				}
 				camHUD.setFilters(newCamEffects);
 			case 'camother' | 'other':
 				camOtherShaders.push(effect);
-				var newCamEffects:Array<BitmapFilter>=[]; // IT SHUTS HAXE UP IDK WHY BUT WHATEVER IDK WHY I CANT JUST ARRAY<SHADERFILTER>
-				for(i in camOtherShaders){
+				var newCamEffects:Array<BitmapFilter> = []; // IT SHUTS HAXE UP IDK WHY BUT WHATEVER IDK WHY I CANT JUST ARRAY<SHADERFILTER>
+				for (i in camOtherShaders) {
 					newCamEffects.push(new ShaderFilter(i.shader));
 				}
 				camOther.setFilters(newCamEffects);
 			case 'camgame' | 'game':
 				camGameShaders.push(effect);
-				var newCamEffects:Array<BitmapFilter>=[]; // IT SHUTS HAXE UP IDK WHY BUT WHATEVER IDK WHY I CANT JUST ARRAY<SHADERFILTER>
-				for(i in camGameShaders){
+				var newCamEffects:Array<BitmapFilter> = []; // IT SHUTS HAXE UP IDK WHY BUT WHATEVER IDK WHY I CANT JUST ARRAY<SHADERFILTER>
+				for (i in camGameShaders) {
 					newCamEffects.push(new ShaderFilter(i.shader));
 				}
 				camGame.setFilters(newCamEffects);
 			default:
-				if(modchartSprites.exists(cam)) {
-					Reflect.setProperty(modchartSprites.get(cam),"shader",effect.shader);
-				} else if(modchartTexts.exists(cam)) {
-					Reflect.setProperty(modchartTexts.get(cam),"shader",effect.shader);
+				if (modchartSprites.exists(cam)) {
+					Reflect.setProperty(modchartSprites.get(cam), "shader", effect.shader);
+				} else if (modchartTexts.exists(cam)) {
+					Reflect.setProperty(modchartTexts.get(cam), "shader", effect.shader);
 				} else {
-					var OBJ = Reflect.getProperty(PlayState.instance,cam);
-					Reflect.setProperty(OBJ,"shader", effect.shader);
+					var OBJ = Reflect.getProperty(PlayState.instance, cam);
+					Reflect.setProperty(OBJ, "shader", effect.shader);
 				}
 		}
 	}
 
-	public function removeShaderFromCamera(cam:String,effect:ShaderEffect){
-		switch(cam.toLowerCase()) {
-			case 'camhud' | 'hud': 
+	public function removeShaderFromCamera(cam:String, effect:ShaderEffect) {
+		switch (cam.toLowerCase()) {
+			case 'camhud' | 'hud':
 				camHUDShaders.remove(effect);
-				var newCamEffects:Array<BitmapFilter>=[];
-		for(i in camHUDShaders){
-			newCamEffects.push(new ShaderFilter(i.shader));
-		}
-		camHUD.setFilters(newCamEffects);
-			case 'camother' | 'other': 
+				var newCamEffects:Array<BitmapFilter> = [];
+				for (i in camHUDShaders) {
+					newCamEffects.push(new ShaderFilter(i.shader));
+				}
+				camHUD.setFilters(newCamEffects);
+			case 'camother' | 'other':
 				camOtherShaders.remove(effect);
-				var newCamEffects:Array<BitmapFilter>=[];
-				for(i in camOtherShaders){
+				var newCamEffects:Array<BitmapFilter> = [];
+				for (i in camOtherShaders) {
 					newCamEffects.push(new ShaderFilter(i.shader));
 				}
 				camOther.setFilters(newCamEffects);
-			default: 
-				if(modchartSprites.exists(cam)) {
-					Reflect.setProperty(modchartSprites.get(cam),"shader",null);
-				} else if(modchartTexts.exists(cam)) {
-					Reflect.setProperty(modchartTexts.get(cam),"shader",null);
-				} else {
-					var OBJ = Reflect.getProperty(PlayState.instance,cam);
-					Reflect.setProperty(OBJ,"shader", null);
+			default:
+				camGameShaders.remove(effect);
+				var newCamEffects:Array<BitmapFilter> = [];
+				for (i in camGameShaders) {
+					newCamEffects.push(new ShaderFilter(i.shader));
 				}
+				camGame.setFilters(newCamEffects);
 		}
 	}
 
-	public function clearShaderFromCamera(cam:String){ 
-		switch(cam.toLowerCase()) {
-			case 'camhud' | 'hud': 
+	public function clearShaderFromCamera(cam:String) {
+		switch (cam.toLowerCase()) {
+			case 'camhud' | 'hud':
 				camHUDShaders = [];
-				var newCamEffects:Array<BitmapFilter>=[];
+				var newCamEffects:Array<BitmapFilter> = [];
 				camHUD.setFilters(newCamEffects);
-			case 'camother' | 'other': 
+			case 'camother' | 'other':
 				camOtherShaders = [];
-				var newCamEffects:Array<BitmapFilter>=[];
+				var newCamEffects:Array<BitmapFilter> = [];
 				camOther.setFilters(newCamEffects);
-			case 'camgame' | 'game': 
+			default:
 				camGameShaders = [];
-				var newCamEffects:Array<BitmapFilter>=[];
-				camGame.setFilters(newCamEffects);
-			default: 
-				camGameShaders = [];
-				var newCamEffects:Array<BitmapFilter>=[];
+				var newCamEffects:Array<BitmapFilter> = [];
 				camGame.setFilters(newCamEffects);
 		}
 	}
@@ -3279,9 +3273,6 @@ class PlayState extends MusicBeatState
 			if (ClientPrefs.data.iconBoppingType == 'Old Psych') {
 				iconP1.setGraphicSize(Std.int(iconP1.width + 30));
 				iconP2.setGraphicSize(Std.int(iconP2.width + 30));
-
-				iconP1.updateHitbox();
-				iconP2.updateHitbox();
 			}
 			if (curBeat % gfSpeed == 0 && ClientPrefs.data.iconBoppingType == 'Golden Apple') {
 			curBeat % (gfSpeed * 2) == 0 * playbackRate ? {
@@ -3317,8 +3308,8 @@ class PlayState extends MusicBeatState
 			iconP1.scale.set(1.1, 1.3);
 			iconP2.scale.set(1.1, 0.8);
 
-			FlxTween.angle(iconP2, -15, 0, Conductor.crochet / 1300 / playbackRate, {ease: FlxEase.quadOut});
 			FlxTween.angle(iconP1, 15, 0, Conductor.crochet / 1300 / playbackRate, {ease: FlxEase.quadOut});
+			FlxTween.angle(iconP2, -15, 0, Conductor.crochet / 1300 / playbackRate, {ease: FlxEase.quadOut});
 			}
 
 			FlxTween.tween(iconP1, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});

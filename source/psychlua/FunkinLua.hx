@@ -1,4 +1,5 @@
 package psychlua;
+package shaders;
 
 import backend.WeekData;
 import backend.Highscore;
@@ -7,12 +8,15 @@ import backend.Song;
 import openfl.Lib;
 import openfl.utils.Assets;
 import openfl.display.BitmapData;
+import openfl.filters.BitmapFilter;
 import flixel.FlxBasic;
 import flixel.FlxObject;
 import flixel.addons.transition.FlxTransitionableState;
+import flixel.addons.effects.FlxTrail;
 
 #if (!flash && sys)
 import flixel.addons.display.FlxRuntimeShader;
+import openfl.filters.ShaderFilter;
 #end
 
 import cutscenes.DialogueBoxPsych;
@@ -41,6 +45,8 @@ import flixel.input.keyboard.FlxKey;
 import flixel.input.gamepad.FlxGamepadInputID;
 
 import haxe.Json;
+
+import shaders.Shaders;
 
 class FunkinLua {
 	public static var Function_Stop:Dynamic = "##PSYCHLUA_FUNCTIONSTOP";
@@ -1480,7 +1486,87 @@ class FunkinLua {
 			}
 		});
 		#end
-
+		
+		//SHADER SHIT
+		if (ClientPrefs.data.shaders) {
+		Lua_helper.add_callback(lua, "addChromaticAbberationEffect", function(camera:String,chromeOffset:Float = 0.005) {
+			
+			PlayState.instance.addShaderToCamera(camera, new ChromaticAberrationEffect(chromeOffset));
+			
+		});
+		
+		Lua_helper.add_callback(lua, "addScanlineEffect", function(camera:String,lockAlpha:Bool=false) {
+			
+			PlayState.instance.addShaderToCamera(camera, new ScanlineEffect(lockAlpha));
+			
+		});
+		Lua_helper.add_callback(lua, "addGrainEffect", function(camera:String,grainSize:Float,lumAmount:Float,lockAlpha:Bool=false) {
+			
+			PlayState.instance.addShaderToCamera(camera, new GrainEffect(grainSize,lumAmount,lockAlpha));
+			
+		});
+		Lua_helper.add_callback(lua, "addTiltshiftEffect", function(camera:String,blurAmount:Float,center:Float) {
+			
+			PlayState.instance.addShaderToCamera(camera, new TiltshiftEffect(blurAmount,center));
+			
+		});
+		Lua_helper.add_callback(lua, "addVCREffect", function(camera:String,glitchFactor:Float = 0.0,distortion:Bool=true,perspectiveOn:Bool=true,vignetteMoving:Bool=true) {
+			
+			PlayState.instance.addShaderToCamera(camera, new VCRDistortionEffect(glitchFactor,distortion,perspectiveOn,vignetteMoving));
+			
+		});
+		
+		// shader clear
+		
+		Lua_helper.add_callback(lua, "clearShadersFromCamera", function(cameraName)
+		{
+			cameraFromString(cameraName).setFilters([]);
+		});	
+					
+		Lua_helper.add_callback(lua, "addGlitchEffect", function(camera:String,waveSpeed:Float = 0.1,waveFrq:Float = 0.1,waveAmp:Float = 0.1) {
+			
+			PlayState.instance.addShaderToCamera(camera, new GlitchEffect(waveSpeed,waveFrq,waveAmp));
+			
+		});
+		Lua_helper.add_callback(lua, "addPulseEffect", function(camera:String,waveSpeed:Float = 0.1,waveFrq:Float = 0.1,waveAmp:Float = 0.1) {
+			
+			PlayState.instance.addShaderToCamera(camera, new PulseEffect(waveSpeed,waveFrq,waveAmp));
+			
+		});
+		Lua_helper.add_callback(lua, "addDistortionEffect", function(camera:String,waveSpeed:Float = 0.1,waveFrq:Float = 0.1,waveAmp:Float = 0.1) {
+			
+			PlayState.instance.addShaderToCamera(camera, new DistortBGEffect(waveSpeed,waveFrq,waveAmp));
+			
+		});
+		Lua_helper.add_callback(lua, "addInvertEffect", function(camera:String,lockAlpha:Bool=false) {
+			
+			PlayState.instance.addShaderToCamera(camera, new InvertColorsEffect(lockAlpha));
+			
+		});
+		Lua_helper.add_callback(lua, "addGreyscaleEffect", function(camera:String) { //for dem funkies
+			
+			PlayState.instance.addShaderToCamera(camera, new GreyscaleEffect());
+			
+		});
+		Lua_helper.add_callback(lua, "addGrayscaleEffect", function(camera:String) { //for dem funkies
+			
+			PlayState.instance.addShaderToCamera(camera, new GreyscaleEffect());
+			
+		});
+		Lua_helper.add_callback(lua, "add3DEffect", function(camera:String,xrotation:Float=0,yrotation:Float=0,zrotation:Float=0,depth:Float=0) { //for dem funkies
+			
+			PlayState.instance.addShaderToCamera(camera, new ThreeDEffect(xrotation,yrotation,zrotation,depth));
+			
+		});
+		Lua_helper.add_callback(lua, "addBloomEffect", function(camera:String,intensity:Float = 0.35,blurSize:Float=1.0) {
+			
+			PlayState.instance.addShaderToCamera(camera, new BloomEffect(blurSize/512.0,intensity));
+			
+		});
+		Lua_helper.add_callback(lua, "clearEffects", function(camera:String) {
+			PlayState.instance.clearShaderFromCamera(camera);
+		});
+		}
 		// mod settings
 		#if MODS_ALLOWED
 		addLocalCallback("getModSetting", function(saveTag:String, ?modName:String = null) {
@@ -1660,6 +1746,14 @@ class FunkinLua {
 			luaTrace('$funcName: Couldnt find object: $vars', false, false, FlxColor.RED);
 		}
 		#end
+	}
+
+	function cameraFromString(cam:String):FlxCamera {
+		switch(cam.toLowerCase()) {
+			case 'camhud' | 'hud': return PlayState.instance.camHUD;
+			case 'camother' | 'other': return PlayState.instance.camOther;
+		}
+		return PlayState.instance.camGame;
 	}
 
 	public static function luaTrace(text:String, ignoreCheck:Bool = false, deprecated:Bool = false, color:FlxColor = FlxColor.WHITE) {
