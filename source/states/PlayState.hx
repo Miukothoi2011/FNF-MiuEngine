@@ -1948,6 +1948,7 @@ class PlayState extends MusicBeatState
 	// Health icon updaters
 	public dynamic function updateIconsScale(elapsed:Float)
 	{
+		if(ClientPrefs.data.iconBopping) {
 		if (ClientPrefs.data.iconBoppingType == 'New Psych') {
 		var mult:Float = FlxMath.lerp(1, iconP1.scale.x, FlxMath.bound(1 - (elapsed * 9 * playbackRate), 0, 1));
 		iconP1.scale.set(mult, mult);
@@ -1967,18 +1968,22 @@ class PlayState extends MusicBeatState
 		iconP1.centerOffsets();
 		iconP2.centerOffsets();
 		}
+		} else {
+		iconP1.setGraphicSize(Std.int(FlxMath.lerp(150, iconP1.width, CoolUtil.boundTo(1 - (elapsed * 30 * playbackRate), 0, 1))));
+		iconP2.setGraphicSize(Std.int(FlxMath.lerp(150, iconP2.width, CoolUtil.boundTo(1 - (elapsed * 30 * playbackRate), 0, 1))));
+		}
 	}
 
 	public dynamic function updateIconsPosition()
 	{
 		var iconOffset:Int = 26;
 		if (iconP1.animation.frames == 3) {
-		iconP1.x = healthBar.barCenter + (150 * iconP1.scale.x - 150) / 2 - iconOffset + 60;
+		iconP1.x = healthBar.barCenter + (150 * iconP1.scale.x - 150) / 3 - iconOffset + 60;
 		} else {
 		iconP1.x = healthBar.barCenter + (150 * iconP1.scale.x - 150) / 2 - iconOffset;
 		}
-		if (iconP1.animation.frames == 3) {
-		iconP2.x = healthBar.barCenter - (150 * iconP2.scale.x) / 2 - iconOffset * 2 + 60;
+		if (iconP2.animation.frames == 3) {
+		iconP2.x = healthBar.barCenter - (150 * iconP2.scale.x) / 3 - iconOffset * 2 + 60;
 		} else {
 		iconP2.x = healthBar.barCenter - (150 * iconP2.scale.x) / 2 - iconOffset * 2;
 		}
@@ -1998,17 +2003,46 @@ class PlayState extends MusicBeatState
 		var newPercent:Null<Float> = FlxMath.remapToRange(FlxMath.bound(healthBar.valueFunction(), healthBar.bounds.min, healthBar.bounds.max), healthBar.bounds.min, healthBar.bounds.max, 0, 100);
 		healthBar.percent = (newPercent != null ? newPercent : 0);
 
-		if (iconP1.animation.frames == 3) {
+		/*if (iconP1.animation.frames == 3) {
 			iconP1.animation.curAnim.curFrame = (healthBar.percent < 20) ? 1 : 0; //If health is under 20%, change player icon to frame 1 (losing icon), otherwise, frame 0 (normal)
-			iconP1.animation.curAnim.curFrame = (healthBar.percent > 80) ? 2 : 0;
+			iconP1.animation.curAnim.curFrame = (healthBar.percent > 80) ? 2 : 1;
 		} else {
 			iconP1.animation.curAnim.curFrame = (healthBar.percent < 20) ? 1 : 0; //If health is under 20%, change player icon to frame 1 (losing icon), otherwise, frame 0 (normal)
 		}
 		if (iconP2.animation.frames == 3) {
 			iconP2.animation.curAnim.curFrame = (healthBar.percent > 80) ? 1 : 0; //If health is over 80%, change opponent icon to frame 1 (losing icon), otherwise, frame 0 (normal)
-			iconP2.animation.curAnim.curFrame = (healthBar.percent < 20) ? 2 : 0;
+			iconP2.animation.curAnim.curFrame = (healthBar.percent < 20) ? 2 : 1;
 		} else {
 			iconP2.animation.curAnim.curFrame = (healthBar.percent > 80) ? 1 : 0; //If health is over 80%, change opponent icon to frame 1 (losing icon), otherwise, frame 0 (normal)
+		}*/
+		switch (iconP1.animation.numFrames){ // i replace own win icon to SB Engine 3.0.0 beta's win icon to PE 0.7.x i thing is work idk
+			case 3:
+				if (healthBar.percent < 20)
+					iconP1.animation.curAnim.curFrame = 1;
+				else if (healthBar.percent >80)
+					iconP1.animation.curAnim.curFrame = 2;
+				else
+					iconP1.animation.curAnim.curFrame = 0;
+			case 2:
+				if (healthBar.percent < 20)
+					iconP1.animation.curAnim.curFrame = 1;
+				else
+					iconP1.animation.curAnim.curFrame = 0;
+		}
+
+		switch(iconP2.animation.numFrames){
+			case 3:
+				if (healthBar.percent > 80)
+					iconP2.animation.curAnim.curFrame = 1;
+				else if (healthBar.percent < 20)
+					iconP2.animation.curAnim.curFrame = 2;
+				else 
+					iconP2.animation.curAnim.curFrame = 0;
+			case 2:
+				if (healthBar.percent > 80)
+					iconP2.animation.curAnim.curFrame = 1;
+				else 
+					iconP2.animation.curAnim.curFrame = 0;
 		}
 		return health;
 	}
@@ -3320,17 +3354,11 @@ class PlayState extends MusicBeatState
 			} 
 		} else { // if iconBopping is disabled
 			if (ClientPrefs.data.iconBoppingType == 'New Psych') {
-				iconP1.scale.set(0, 0);
-				iconP2.scale.set(0, 0);
-
-				iconP1.updateHitbox();
-				iconP2.updateHitbox();
+				iconP1.setGraphicSize(Std.int(iconP1.width + 30));
+				iconP2.setGraphicSize(Std.int(iconP2.width + 30));
 			} else { // if iconBoppingType is anthoer than New Psych
-				iconP1.scale.set(0, 0);
-				iconP2.scale.set(0, 0);
-
-				iconP1.updateHitbox();
-				iconP2.updateHitbox();
+				iconP1.setGraphicSize(Std.int(iconP1.width + 30));
+				iconP2.setGraphicSize(Std.int(iconP2.width + 30));
 			}
 		}
 

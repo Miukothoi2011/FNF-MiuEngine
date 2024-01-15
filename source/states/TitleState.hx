@@ -554,6 +554,7 @@ class TitleState extends MusicBeatState
 					addMoreText('Forked from', 40);
 					addMoreText('Psych Engine', 40);
 				case 5:
+					deleteCoolText();
 					#if PSYCH_WATERMARKS
 					createCoolText(['Psych Engine by'], 40);
 					#else

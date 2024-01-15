@@ -214,6 +214,29 @@ class ClientPrefs {
 			FlxG.drawFramerate = data.framerate;
 			FlxG.updateFramerate = data.framerate;
 		}
+		
+		if (FlxG.save.data.resolution != null) {
+			resolution = FlxG.save.data.resolution;
+			#if desktop
+    		var resolutionValue = cast(ClientPrefs.data.resolution, String);
+
+    		if (resolutionValue != null) {
+        		var parts = resolutionValue.split('x');
+        
+        		if (parts.length == 2) {
+					var width = Std.parseInt(parts[0]);
+            		var height = Std.parseInt(parts[1]);
+            	
+            		if (width != null && height != null) {
+						CoolUtil.resetResScale(width, height);
+                		FlxG.resizeGame(width, height);
+						lime.app.Application.current.window.width = width;
+						lime.app.Application.current.window.height = height;
+            		}
+        		}
+    		}
+			#end
+		}
 
 		if(FlxG.save.data.gameplaySettings != null)
 		{

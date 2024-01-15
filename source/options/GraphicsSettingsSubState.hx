@@ -45,9 +45,8 @@ class GraphicsSettingsSubState extends BaseOptionsMenu
 			'bool');
 		addOption(option);
 		
-		#if !html5 
-		#if desktop
-		//different res cant really be done on browser lol
+		#if !html5 //different res cant really be done on browser lol
+		#if desktop // don't android user use this
 		var option:Option = new Option('Resolution: ',
 			"What resolution do you want the game to run in?",
 			'resolution',
