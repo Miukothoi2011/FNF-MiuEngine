@@ -216,7 +216,6 @@ class ClientPrefs {
 		}
 		
 		if (FlxG.save.data.resolution != null) {
-			resolution = FlxG.save.data.resolution;
 			#if desktop
     		var resolutionValue = cast(ClientPrefs.data.resolution, String);
 
