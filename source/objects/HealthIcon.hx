@@ -37,7 +37,7 @@ class HealthIcon extends FlxSprite
 				loadGraphic(graphic, true, Math.floor(graphic.width / 3), Math.floor(graphic.height));
 				iconOffsets[0] = (width - 150) / 3;
 				iconOffsets[1] = (width - 150) / 3;
-				iconOffsets[2] = (width - 150) / 3;
+				iconOffsets[2] = (height - 150) / 3;
 			} else {
 				loadGraphic(graphic, true, Math.floor(graphic.width / 2), Math.floor(graphic.height));
 				iconOffsets[0] = (width - 150) / 2;
