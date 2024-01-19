@@ -381,7 +381,7 @@ class FreeplayState extends MusicBeatState
 			}
 			catch(e:Dynamic)
 			{
-				/*trace('ERROR! $e');
+				trace('ERROR! $e');
 
 				var errorStr:String = e.toString();
 				if(errorStr.startsWith('[file_contents,assets/data/')) errorStr = 'Missing file: ' + errorStr.substring(34, errorStr.length-1); //Missing chart
@@ -391,15 +391,8 @@ class FreeplayState extends MusicBeatState
 				missingTextBG.visible = true;
 				FlxG.sound.play(Paths.sound('cancelMenu'));
 
-				updateTexts(elapsed);*/
+				updateTexts(elapsed);
 				
-				if(sys.FileSystem.exists(Paths.inst(poop + '/'  + poop)) && !sys.FileSystem.exists(Paths.json(poop + '/' + poop))) { //the json doesn't exist, but the song files do, or you put a typo in the name
-					CoolUtil.coolError("The JSON's name does not match with  " + poop + "!\nTry making them match.", "JS Engine Anti-Crash Tool");
-				} else if(sys.FileSystem.exists(Paths.json(poop + '/' + poop)) && !sys.FileSystem.exists(Paths.inst(poop + '/'  + poop)))  {//the json exists, but the song files don't
-					CoolUtil.coolError("Your song seems to not have an Inst.ogg, check the folder name in 'songs'!", "JS Engine Anti-Crash Tool");
-				} else if(!sys.FileSystem.exists(Paths.json(poop + '/' + poop)) && !sys.FileSystem.exists(Paths.inst(poop + '/'  + poop))) { //neither the json nor the song files actually exist
-					CoolUtil.coolError("It appears that " + poop + " doesn't actually have a JSON, nor does it actually have voices/instrumental files!\nMaybe try fixing its name in weeks/" + WeekData.getWeekFileName() + "?", "JS Engine Anti-Crash Tool");
-				}
 				super.update(elapsed);
 				return;
 			}
