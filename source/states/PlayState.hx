@@ -176,7 +176,6 @@ class PlayState extends MusicBeatState
 	public var opponentStrums:FlxTypedGroup<StrumNote>;
 	public var playerStrums:FlxTypedGroup<StrumNote>;
 	public var grpNoteSplashes:FlxTypedGroup<NoteSplash>;
-	public var grpOppNoteSplashes:FlxTypedGroup<NoteSplash>;
 
 	public var camZooming:Bool = false;
 	public var camZoomingMult:Float = 1;
@@ -334,7 +333,6 @@ class PlayState extends MusicBeatState
 		FlxG.cameras.add(camHUD, false);
 		FlxG.cameras.add(camOther, false);
 		grpNoteSplashes = new FlxTypedGroup<NoteSplash>();
-		grpOppNoteSplashes = new FlxTypedGroup<OppNoteSplash>();
 
 		CustomFadeTransition.nextCamera = camOther;
 
@@ -528,17 +526,13 @@ class PlayState extends MusicBeatState
 		var splash:NoteSplash = new NoteSplash(100, 100);
 		grpNoteSplashes.add(splash);
 		splash.alpha = 0.000001; //cant make it invisible or it won't allow precaching
-		
-		var oppSplash:OppNoteSplash = new OppNoteSplash(100, 100);
-		grpOppNoteSplashes.add(splash);
-		oppSplash.alpha = 0.000001; //cant make it invisible or it won't allow precaching
 
 		opponentStrums = new FlxTypedGroup<StrumNote>();
 		playerStrums = new FlxTypedGroup<StrumNote>();
 
 		generateSong(SONG.song);
 
-		noteGroup.add(grpNoteSplashes && grpOppNoteSplashes);
+		noteGroup.add(grpNoteSplashes);
 
 		camFollow = new FlxObject(0, 0, 1, 1);
 		camFollow.setPosition(camPos.x, camPos.y);
