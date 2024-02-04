@@ -70,6 +70,8 @@ class FPSCounter extends TextField
 		currentFPS = currentFPS < FlxG.updateFramerate ? times.length : FlxG.updateFramerate;		
 		updateText();
 		deltaTimeout += deltaTime;
+		
+		colorInterp += deltaTime / 330; // Division so that it doesn't give you a seizure on 60 FPS
 	}
 
 	public dynamic function updateText():Void { // so people can override it in hscript
@@ -98,7 +100,6 @@ class FPSCounter extends TextField
 		}
 		
 		if (ClientPrefs.data.showRainbowFPS) {
-			colorInterp += deltaTime / 330; // Division so that it doesn't give you a seizure on 60 FPS
 			var colorIndex1:Int = Math.floor(colorInterp);
 			var colorIndex2:Int = (colorIndex1 + 1) % rainbowColors.length;
 

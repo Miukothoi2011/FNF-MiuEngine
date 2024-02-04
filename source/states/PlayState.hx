@@ -1256,7 +1256,7 @@ class PlayState extends MusicBeatState
 			str += ' (${percent}%) - ${ratingFC}';
 		}
 
-		if (!ClientPrefs.data.showNPS) {
+		//if (!ClientPrefs.data.showNPS) {
 			if (!practiceMode && !cpuControlled) {
 				var tempScore:String = 'Score: ${songScore}'
 				+ (!instakillOnMiss ? ' | Misses: ${songMisses}' : "")
@@ -1269,7 +1269,7 @@ class PlayState extends MusicBeatState
 			} else if (practiceMode) {
 				scoreTxt.text = 'Misses: ${songMisses}' + ' | Practice Mode';
 			}
-		} else {
+		/*} else {
 			if (!practiceMode && !cpuControlled) {
 				var tempScore:String = 'NPS: ${nps}' + '(${maxNPS})' + ' | Score: ${songScore}'
 				+ (!instakillOnMiss ? ' | Misses: ${songMisses}' : "")
@@ -1282,7 +1282,7 @@ class PlayState extends MusicBeatState
 			} else if (practiceMode) {
 				scoreTxt.text = 'NPS: ${nps}' + '(${maxNPS})' + ' | Misses: ${songMisses}' + ' | Practice Mode';
 			}
-		}
+		}*/
 
 		if (!miss && !cpuControlled)
 			doScoreBop();
