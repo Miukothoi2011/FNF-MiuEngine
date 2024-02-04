@@ -215,17 +215,11 @@ class VisualsUISubState extends BaseOptionsMenu
 			//['Golden Apple 1.5', '?']);
 		//addOption(option);
 		
-		var option:Option = new Option('Icon Bopping',
+		var option:Option = new Option('Icon Bounce:',
 			"?",
-			'iconBopping',
-			'bool');
-		addOption(option);
-		
-		var option:Option = new Option('Icon Bopping Type:',
-			"?",
-			'iconBoppingType',
+			'iconBounce',
 			'string',
-			['New Psych', 'Old Psych', 'Golden Apple', 'Dave And Bambi', 'VS Steve', 'Leather Engine']);
+			['None', 'New Psych', 'Old Psych', 'Golden Apple', 'Dave And Bambi', 'Leather Engine', 'VS Steve']);
 		addOption(option);
 
 		var option:Option = new Option('Chars & BG', //Name

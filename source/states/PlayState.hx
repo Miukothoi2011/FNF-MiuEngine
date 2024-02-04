@@ -99,7 +99,7 @@ class PlayState extends MusicBeatState
 		['Good', 0.8], //From 70% to 79%
 		['Great', 0.9], //From 80% to 89%
 		['Sick!', 1], //From 90% to 99%
-		['Perfect!!', 1.1] //The value on this one isn't used actually, since Perfect is always "1"
+		['Perfect!!', 1] //The value on this one isn't used actually, since Perfect is always "1"
 	];
 
 	//event variables
@@ -141,7 +141,6 @@ class PlayState extends MusicBeatState
 	public var boyfriendGroup:FlxSpriteGroup;
 	public var dadGroup:FlxSpriteGroup;
 	public var gfGroup:FlxSpriteGroup;
-	public var shaderUpdates:Array<Float->Void> = [];
 	public static var curStage:String = '';
 	public static var stageUI:String = "normal";
 	public static var isPixelStage(get, never):Bool;
@@ -184,15 +183,7 @@ class PlayState extends MusicBeatState
 
 	public var gfSpeed:Int = 1;
 	public var health(default, set):Float = 1;
-	public var totalNotesPlayed:Float = 0;
 	public var combo:Int = 0;
-	public var maxCombo:Float = 0;
-	
-	var notesAddedCount:Int = 0;
-    var notesToRemoveCount:Int = 0;
-    var oppNotesToRemoveCount:Int = 0;
-	public var iconBopsThisFrame:Int = 0;
-	public var iconBopsTotal:Int = 0;
 
 	public var healthBar:Bar;
 	public var timeBar:Bar;
@@ -206,7 +197,6 @@ class PlayState extends MusicBeatState
 	private var updateTime:Bool = true;
 	public static var changedDifficulty:Bool = false;
 	public static var chartingMode:Bool = false;
-	public static var playerIsCheating:Bool = false; //Whether the player is cheating. Enables if you change BOTPLAY or Practice Mode in the Pause menu
 
 	//Gameplay settings
 	public var healthGain:Float = 1;
@@ -227,20 +217,12 @@ class PlayState extends MusicBeatState
 	public var camOther:FlxCamera;
 	public var cameraSpeed:Float = 1;
 
-	public var nps:Float = 0;
-	public var maxNPS:Float = 0;
-	public var oppNPS:Float = 0;
-	public var maxOppNPS:Float = 0;
 	public var songScore:Int = 0;
 	public var songHits:Int = 0;
-	public var oppoHits:Int = 0;
 	public var songMisses:Int = 0;
 	public var scoreTxt:FlxText;
-	var hitTxt:FlxText;
 	var timeTxt:FlxText;
-	var timeTxtTween:FlxTween;
 	var scoreTxtTween:FlxTween;
-	var judgementCounter:FlxText;
 
 	public static var campaignScore:Int = 0;
 	public static var campaignMisses:Int = 0;
@@ -577,7 +559,7 @@ class PlayState extends MusicBeatState
 		scoreTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		scoreTxt.scrollFactor.set();
 		scoreTxt.borderSize = 1.25;
-		scoreTxt.visible = !ClientPrefs.data.hideHud && !ClientPrefs.data.hideScoreTxt;
+		scoreTxt.visible = !ClientPrefs.data.hideHud;
 		updateScore(false);
 		uiGroup.add(scoreTxt);
 
@@ -841,7 +823,7 @@ class PlayState extends MusicBeatState
 		}
 		#end
 	}
-
+	
 	public function addLuaShaderToCamera(cam:String, effect:ShaderEffect) { // STOLE FROM ANDROMEDA
 		switch (cam.toLowerCase()) {
 			case 'camhud' | 'hud':
@@ -1942,37 +1924,34 @@ class PlayState extends MusicBeatState
 		setOnScripts('cameraY', camFollow.y);
 		setOnScripts('botPlay', cpuControlled);
 		callOnScripts('onUpdatePost', [elapsed]);
-		for (i in shaderUpdates){
-			i(elapsed);
-		}
 	}
 
 	// Health icon updaters
 	public dynamic function updateIconsScale(elapsed:Float)
 	{
-		if(ClientPrefs.data.iconBopping) {
-		if (ClientPrefs.data.iconBoppingType == 'New Psych') {
-		var mult:Float = FlxMath.lerp(1, iconP1.scale.x, FlxMath.bound(1 - (elapsed * 9 * playbackRate), 0, 1));
-		iconP1.scale.set(mult, mult);
-		iconP1.updateHitbox();
+		if (ClientPrefs.data.iconBounce == 'New Psych') {
+			var mult:Float = FlxMath.lerp(1, iconP1.scale.x, FlxMath.bound(1 - (elapsed * 9 * playbackRate), 0, 1));
+			iconP1.scale.set(mult, mult);
+			iconP1.updateHitbox();
 
-		var mult:Float = FlxMath.lerp(1, iconP2.scale.x, FlxMath.bound(1 - (elapsed * 9 * playbackRate), 0, 1));
-		iconP2.scale.set(mult, mult);
-		iconP2.updateHitbox();
+			var mult:Float = FlxMath.lerp(1, iconP2.scale.x, FlxMath.bound(1 - (elapsed * 9 * playbackRate), 0, 1));
+			iconP2.scale.set(mult, mult);
+			iconP2.updateHitbox();
 		}
 		
-		if (ClientPrefs.data.iconBoppingType == 'Old Psych') {
-		iconP1.setGraphicSize(Std.int(FlxMath.lerp(150, iconP1.width, CoolUtil.boundTo(1 - (elapsed * 30 * playbackRate), 0, 1))));
-		iconP2.setGraphicSize(Std.int(FlxMath.lerp(150, iconP2.width, CoolUtil.boundTo(1 - (elapsed * 30 * playbackRate), 0, 1))));
+		if (ClientPrefs.data.iconBounce == 'Old Psych') {
+			iconP1.setGraphicSize(Std.int(iconP1.width + 30));
+			iconP2.setGraphicSize(Std.int(iconP2.width + 30));
 		}
 		
-		if (ClientPrefs.data.iconBoppingType == 'Golden Apple') {
-		iconP1.centerOffsets();
-		iconP2.centerOffsets();
-		}
-		} else {
-		iconP1.setGraphicSize(Std.int(FlxMath.lerp(150, iconP1.width, CoolUtil.boundTo(1 - (elapsed * 30 * playbackRate), 0, 1))));
-		iconP2.setGraphicSize(Std.int(FlxMath.lerp(150, iconP2.width, CoolUtil.boundTo(1 - (elapsed * 30 * playbackRate), 0, 1))));
+		if (ClientPrefs.data.iconBounce == 'Dave And Bambi') {
+			var thingy = 0.88; //(144 / Main.fps.currentFPS) * 0.88;
+			//still gotta make this fps consistent crap
+			iconP1.setGraphicSize(Std.int(FlxMath.lerp(150, iconP1.width, thingy)),Std.int(FlxMath.lerp(150, iconP1.height, thingy)));
+			iconP1.updateHitbox();
+
+			iconP2.setGraphicSize(Std.int(FlxMath.lerp(150, iconP2.width, thingy)),Std.int(FlxMath.lerp(150, iconP2.height, thingy)));
+			iconP2.updateHitbox();
 		}
 	}
 
@@ -1997,47 +1976,8 @@ class PlayState extends MusicBeatState
 		var newPercent:Null<Float> = FlxMath.remapToRange(FlxMath.bound(healthBar.valueFunction(), healthBar.bounds.min, healthBar.bounds.max), healthBar.bounds.min, healthBar.bounds.max, 0, 100);
 		healthBar.percent = (newPercent != null ? newPercent : 0);
 
-		if (iconP1.animation.frames == 3) {
-			iconP1.animation.curAnim.curFrame = (healthBar.percent < 20) ? 1 : 0; //If health is under 20%, change player icon to frame 1 (losing icon), otherwise, frame 0 (normal)
-			iconP1.animation.curAnim.curFrame = (healthBar.percent > 80) ? 2 : 1;
-		} else {
-			iconP1.animation.curAnim.curFrame = (healthBar.percent < 20) ? 1 : 0; //If health is under 20%, change player icon to frame 1 (losing icon), otherwise, frame 0 (normal)
-		}
-		if (iconP2.animation.frames == 3) {
-			iconP2.animation.curAnim.curFrame = (healthBar.percent > 80) ? 1 : 0; //If health is over 80%, change opponent icon to frame 1 (losing icon), otherwise, frame 0 (normal)
-			iconP2.animation.curAnim.curFrame = (healthBar.percent < 20) ? 2 : 1;
-		} else {
-			iconP2.animation.curAnim.curFrame = (healthBar.percent > 80) ? 1 : 0; //If health is over 80%, change opponent icon to frame 1 (losing icon), otherwise, frame 0 (normal)
-		}
-		/*switch (iconP1.animation.numFrames){ // i replace own win icon to SB Engine 3.0.0 beta's win icon to PE 0.7.x i thing is work idk
-			case 3:
-				if (healthBar.percent < 20)
-					iconP1.animation.curAnim.curFrame = 1;
-				else if (healthBar.percent >80)
-					iconP1.animation.curAnim.curFrame = 2;
-				else
-					iconP1.animation.curAnim.curFrame = 0;
-			case 2:
-				if (healthBar.percent < 20)
-					iconP1.animation.curAnim.curFrame = 1;
-				else
-					iconP1.animation.curAnim.curFrame = 0;
-		}
-
-		switch(iconP2.animation.numFrames){
-			case 3:
-				if (healthBar.percent > 80)
-					iconP2.animation.curAnim.curFrame = 1;
-				else if (healthBar.percent < 20)
-					iconP2.animation.curAnim.curFrame = 2;
-				else 
-					iconP2.animation.curAnim.curFrame = 0;
-			case 2:
-				if (healthBar.percent > 80)
-					iconP2.animation.curAnim.curFrame = 1;
-				else 
-					iconP2.animation.curAnim.curFrame = 0;
-		}*/
+		iconP1.animation.curAnim.curFrame = (healthBar.percent < 20) ? 1 : 0; //If health is under 20%, change player icon to frame 1 (losing icon), otherwise, frame 0 (normal)
+		iconP2.animation.curAnim.curFrame = (healthBar.percent > 80) ? 1 : 0; //If health is over 80%, change opponent icon to frame 1 (losing icon), otherwise, frame 0 (normal)
 		return health;
 	}
 
@@ -2454,15 +2394,13 @@ class PlayState extends MusicBeatState
 		}
 	}
 
-	//public function finishSong(?ignoreNoteOffset:Bool = false):Void
-	public function finishSong():Void
+	public function finishSong(?ignoreNoteOffset:Bool = false):Void
 	{
 		updateTime = false;
 		FlxG.sound.music.volume = 0;
 		vocals.volume = 0;
 		vocals.pause();
-		//if(ClientPrefs.data.noteOffset <= 0 || ignoreNoteOffset) {
-		if(ClientPrefs.data.noteOffset <= 0) {
+		if(ClientPrefs.data.noteOffset <= 0 || ignoreNoteOffset) {
 			endCallback();
 		} else {
 			finishTimer = new FlxTimer().start(ClientPrefs.data.noteOffset / 1000, function(tmr:FlxTimer) {
@@ -2512,14 +2450,11 @@ class PlayState extends MusicBeatState
 		var ret:Dynamic = callOnScripts('onEndSong', null, true);
 		if(ret != FunkinLua.Function_Stop && !transitioning)
 		{
-			if (!cpuControlled && !playerIsCheating && ClientPrefs.data.safeFrames <= 10)
-			{
-				#if !switch
-				var percent:Float = ratingPercent;
-				if(Math.isNaN(percent)) percent = 0;
-				Highscore.saveScore(SONG.song, songScore, storyDifficulty, percent);
-				#end
-			}
+			#if !switch
+			var percent:Float = ratingPercent;
+			if(Math.isNaN(percent)) percent = 0;
+			Highscore.saveScore(SONG.song, songScore, storyDifficulty, percent);
+			#end
 			playbackRate = 1;
 
 			if (chartingMode)
@@ -2556,7 +2491,9 @@ class PlayState extends MusicBeatState
 						FlxG.save.flush();
 					}
 					changedDifficulty = false;
-				} else {
+				}
+				else
+				{
 					var difficulty:String = Difficulty.getFilePath();
 
 					trace('LOADING NEXT SONG');
@@ -2572,7 +2509,9 @@ class PlayState extends MusicBeatState
 					cancelMusicFadeTween();
 					LoadingState.loadAndSwitchState(new PlayState());
 				}
-			} else {
+			}
+			else
+			{
 				trace('WENT BACK TO FREEPLAY??');
 				Mods.loadTopMod();
 				#if desktop DiscordClient.resetClientID(); #end
@@ -2667,13 +2606,6 @@ class PlayState extends MusicBeatState
 				totalPlayed++;
 				RecalculateRating(false);
 			}
-		} else {
-			if(!note.ratingDisabled)
-			{
-				songHits++;
-				totalPlayed++;
-				RecalculateRating(false);
-			}
 		}
 
 		var uiPrefix:String = "";
@@ -2705,7 +2637,7 @@ class PlayState extends MusicBeatState
 		comboSpr.x = placement;
 		comboSpr.acceleration.y = FlxG.random.int(200, 300) * playbackRate * playbackRate;
 		comboSpr.velocity.y -= FlxG.random.int(140, 160) * playbackRate;
-		comboSpr.visible = (!ClientPrefs.data.hideHud && ClientPrefs.data.showUnusedCombo);
+		comboSpr.visible = (!ClientPrefs.data.hideHud && showCombo || !ClientPrefs.data.hideHud && ClientPrefs.data.showUnusedCombo);
 		comboSpr.x += ClientPrefs.data.comboOffset[0];
 		comboSpr.y -= ClientPrefs.data.comboOffset[1];
 		comboSpr.antialiasing = antialias;
@@ -2738,7 +2670,7 @@ class PlayState extends MusicBeatState
 
 		var daLoop:Int = 0;
 		var xThing:Float = 0;
-		if (ClientPrefs.data.showUnusedCombo)
+		if (showCombo || ClientPrefs.data.showUnusedCombo)
 			comboGroup.add(comboSpr);
 
 		for (i in seperatedScore)
@@ -2802,7 +2734,7 @@ class PlayState extends MusicBeatState
 			//Prevents crash specifically on debug without needing to try catch shit
 			@:privateAccess if (!FlxG.keys._keyListMap.exists(eventKey)) return;
 			#end
-			
+
 			if(FlxG.keys.checkStatus(eventKey, JUST_PRESSED)) keyPressed(key);
 		}
 	}
@@ -3107,7 +3039,6 @@ class PlayState extends MusicBeatState
 
 		vocals.volume = 1;
 		strumPlayAnim(true, Std.int(Math.abs(note.noteData)), Conductor.stepCrochet * 1.25 / 1000 / playbackRate);
-		
 		note.hitByOpponent = true;
 		
 		var result:Dynamic = callOnLuas('opponentNoteHitPost', [notes.members.indexOf(note), Math.abs(note.noteData), note.noteType, note.isSustainNote]);
@@ -3144,6 +3075,7 @@ class PlayState extends MusicBeatState
 						}
 				}
 			}
+
 			noteMiss(note);
 			if(!note.noteSplashData.disabled && !note.isSustainNote) spawnNoteSplashOnNote(note);
 			if(!note.isSustainNote) invalidateNote(note);
@@ -3293,70 +3225,23 @@ class PlayState extends MusicBeatState
 		if (generatedMusic)
 			notes.sort(FlxSort.byY, ClientPrefs.data.downScroll ? FlxSort.ASCENDING : FlxSort.DESCENDING);
 
-		if(ClientPrefs.data.iconBopping) {
-			if (ClientPrefs.data.iconBoppingType == 'New Psych') {
-				iconP1.scale.set(1.2, 1.2);
-				iconP2.scale.set(1.2, 1.2);
-
-				iconP1.updateHitbox();
-				iconP2.updateHitbox();
-			}
-			if (ClientPrefs.data.iconBoppingType == 'Old Psych') {
-				iconP1.setGraphicSize(Std.int(iconP1.width + 30));
-				iconP2.setGraphicSize(Std.int(iconP2.width + 30));
-			}
-			if (curBeat % gfSpeed == 0 && ClientPrefs.data.iconBoppingType == 'Golden Apple') {
-			curBeat % (gfSpeed * 2) == 0 * playbackRate ? {
-			iconP1.scale.set(1.1, 0.8);
-			iconP2.scale.set(1.1, 1.3);
-
-			FlxTween.angle(iconP1, -15, 0, Conductor.crochet / 1300 / playbackRate, {ease: FlxEase.quadOut});
-			FlxTween.angle(iconP2, 15, 0, Conductor.crochet / 1300 / playbackRate, {ease: FlxEase.quadOut});
-			} : {
-			iconP1.scale.set(1.1, 1.3);
-			iconP2.scale.set(1.1, 0.8);
-
-			FlxTween.angle(iconP2, -15, 0, Conductor.crochet / 1300 / playbackRate, {ease: FlxEase.quadOut});
-			FlxTween.angle(iconP1, 15, 0, Conductor.crochet / 1300 / playbackRate, {ease: FlxEase.quadOut});
-			}
-
-			FlxTween.tween(iconP1, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-			FlxTween.tween(iconP2, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+		if (ClientPrefs.data.iconBounce == 'New Psych'){
+			iconP1.scale.set(1.2, 1.2);
+			iconP2.scale.set(1.2, 1.2);
 
 			iconP1.updateHitbox();
 			iconP2.updateHitbox();
-			}
-			if (ClientPrefs.data.iconBoppingType == 'Golden Apple') {
-			FlxTween.cancelTweensOf(iconP1);
-			FlxTween.cancelTweensOf(iconP2);
-			iconBopsTotal % 2 == 0 * playbackRate ? {
-			iconP1.scale.set(1.1, 0.8);
-			iconP2.scale.set(1.1, 1.3);
-
-			FlxTween.angle(iconP1, -15, 0, Conductor.crochet / 1300 / playbackRate, {ease: FlxEase.quadOut});
-			FlxTween.angle(iconP2, 15, 0, Conductor.crochet / 1300 / playbackRate, {ease: FlxEase.quadOut});
-			} : {
-			iconP1.scale.set(1.1, 1.3);
-			iconP2.scale.set(1.1, 0.8);
-
-			FlxTween.angle(iconP1, 15, 0, Conductor.crochet / 1300 / playbackRate, {ease: FlxEase.quadOut});
-			FlxTween.angle(iconP2, -15, 0, Conductor.crochet / 1300 / playbackRate, {ease: FlxEase.quadOut});
-			}
-
-			FlxTween.tween(iconP1, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-			FlxTween.tween(iconP2, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-
-			iconP1.updateHitbox();
-			iconP2.updateHitbox();
-			} 
-		} else { // if iconBopping is disabled
-			if (ClientPrefs.data.iconBoppingType == 'New Psych') {
-				iconP1.setGraphicSize(Std.int(iconP1.width + 30));
-				iconP2.setGraphicSize(Std.int(iconP2.width + 30));
-			} else { // if iconBoppingType is anthoer than New Psych
-				iconP1.setGraphicSize(Std.int(iconP1.width + 30));
-				iconP2.setGraphicSize(Std.int(iconP2.width + 30));
-			}
+		}
+		
+		if (ClientPrefs.data.iconBounce == 'Old Psych'){
+			iconP1.setGraphicSize(Std.int(iconP1.width + 30));
+			iconP2.setGraphicSize(Std.int(iconP2.width + 30));
+		}
+		
+		if (ClientPrefs.data.iconBounce == 'Dave And Bambi'){
+			var funny:Float = Math.max(Math.min(healthBar.value,1.9),0.1);//Math.clamp(healthBar.value,0.02,1.98);//Math.min(Math.min(healthBar.value,1.98),0.02);
+			iconP1.setGraphicSize(Std.int(iconP1.width + (50 * (funny + 0.1))),Std.int(iconP1.height - (25 * funny)));
+			iconP2.setGraphicSize(Std.int(iconP2.width + (50 * ((2 - funny) + 0.1))),Std.int(iconP2.height - (25 * ((2 - funny) + 0.1))));
 		}
 
 		characterBopper(curBeat);

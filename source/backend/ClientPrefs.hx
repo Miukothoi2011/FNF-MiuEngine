@@ -37,9 +37,8 @@ import shaders.Shaders;
 	public var showNPS:Bool = false;
 	public var showNotes:Bool = true;
 	public var showUnusedCombo:Bool = false;
-	public var iconBopping:Bool = true;
-	public var iconBoppingType:String = 'Golden Apple';
-	public var timeBounce:Bool = true;
+	public var iconBounce:String = 'New Psych';
+	public var timeBounce:Bool = false;
 	public var lowQuality:Bool = false;
 	public var shaders:Bool = true;
 	public var cacheOnGPU:Bool = #if !switch false #else true #end; //From Stilic
