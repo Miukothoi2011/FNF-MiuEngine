@@ -176,6 +176,7 @@ class PlayState extends MusicBeatState
 	public var opponentStrums:FlxTypedGroup<StrumNote>;
 	public var playerStrums:FlxTypedGroup<StrumNote>;
 	public var grpNoteSplashes:FlxTypedGroup<NoteSplash>;
+	public var grpOppNoteSplashes:FlxTypedGroup<NoteSplash>;
 
 	public var camZooming:Bool = false;
 	public var camZoomingMult:Float = 1;
@@ -227,8 +228,10 @@ class PlayState extends MusicBeatState
 	public var camOther:FlxCamera;
 	public var cameraSpeed:Float = 1;
 
-	public var songNps:Int = 0;
-	public var oppoNps:Int = 0;
+	public var nps:Float = 0;
+	public var maxNPS:Float = 0;
+	public var oppNPS:Float = 0;
+	public var maxOppNPS:Float = 0;
 	public var songScore:Int = 0;
 	public var songHits:Int = 0;
 	public var oppoHits:Int = 0;
@@ -331,6 +334,7 @@ class PlayState extends MusicBeatState
 		FlxG.cameras.add(camHUD, false);
 		FlxG.cameras.add(camOther, false);
 		grpNoteSplashes = new FlxTypedGroup<NoteSplash>();
+		grpOppNoteSplashes = new FlxTypedGroup<oppNoteSplash>();
 
 		CustomFadeTransition.nextCamera = camOther;
 
@@ -524,13 +528,17 @@ class PlayState extends MusicBeatState
 		var splash:NoteSplash = new NoteSplash(100, 100);
 		grpNoteSplashes.add(splash);
 		splash.alpha = 0.000001; //cant make it invisible or it won't allow precaching
+		
+		var oppSplash:oppNoteSplash = new oppoNoteSplash(100, 100);
+		grpOppNoteSplashes.add(splash);
+		oppSplash.alpha = 0.000001; //cant make it invisible or it won't allow precaching
 
 		opponentStrums = new FlxTypedGroup<StrumNote>();
 		playerStrums = new FlxTypedGroup<StrumNote>();
 
 		generateSong(SONG.song);
 
-		noteGroup.add(grpNoteSplashes);
+		noteGroup.add(grpNoteSplashes && grpOppNoteSplashes);
 
 		camFollow = new FlxObject(0, 0, 1, 1);
 		camFollow.setPosition(camPos.x, camPos.y);
@@ -1254,17 +1262,32 @@ class PlayState extends MusicBeatState
 			str += ' (${percent}%) - ${ratingFC}';
 		}
 
-		if (!practiceMode && !cpuControlled) {
-			var tempScore:String = 'Score: ${songScore}'
-			+ (!instakillOnMiss ? ' | Misses: ${songMisses}' : "")
-			+ ' | Rating: ${str}';
-			// "tempScore" variable is used to prevent another memory leak, just in case
-			// "\n" here prevents the text from being cut off by beat zooms
-			scoreTxt.text = '${tempScore}\n';
-		} else if (cpuControlled) {
-			scoreTxt.text = 'BOTPLAY';
-		} else if (practiceMode) {
-			scoreTxt.text = 'Misses: ${songMisses}' + ' | Practice Mode';
+		if (!ClientPrefs.data.showNPS) {
+			if (!practiceMode && !cpuControlled) {
+				var tempScore:String = 'Score: ${songScore}'
+				+ (!instakillOnMiss ? ' | Misses: ${songMisses}' : "")
+				+ ' | Rating: ${str}';
+				// "tempScore" variable is used to prevent another memory leak, just in case
+				// "\n" here prevents the text from being cut off by beat zooms
+				scoreTxt.text = '${tempScore}\n';
+			} else if (cpuControlled) {
+				scoreTxt.text = 'BOTPLAY';
+			} else if (practiceMode) {
+				scoreTxt.text = 'Misses: ${songMisses}' + ' | Practice Mode';
+			}
+		} else {
+			if (!practiceMode && !cpuControlled) {
+				var tempScore:String = 'NPS: ${nps}' + '(${maxNPS})' + ' | Score: ${songScore}'
+				+ (!instakillOnMiss ? ' | Misses: ${songMisses}' : "")
+				+ ' | Rating: ${str}';
+				// "tempScore" variable is used to prevent another memory leak, just in case
+				// "\n" here prevents the text from being cut off by beat zooms
+				scoreTxt.text = '${tempScore}\n';
+			} else if (cpuControlled) {
+				scoreTxt.text = 'NPS: ${nps}' + '(${maxNPS})' + ' | BOTPLAY';
+			} else if (practiceMode) {
+				scoreTxt.text = 'NPS: ${nps}' + '(${maxNPS})' + ' | Misses: ${songMisses}' + ' | Practice Mode';
+			}
 		}
 
 		if (!miss && !cpuControlled)
@@ -2664,9 +2687,10 @@ class PlayState extends MusicBeatState
 				RecalculateRating(false);
 			}
 		} else {
-			if(note.ratingDisabled)
+			if(!note.ratingDisabled)
 			{
 				songHits++;
+				totalPlayed++;
 				RecalculateRating(false);
 			}
 		}
@@ -2800,6 +2824,106 @@ class PlayState extends MusicBeatState
 			
 			if(FlxG.keys.checkStatus(eventKey, JUST_PRESSED)) keyPressed(key);
 		}
+		/*if(!boyfriend.stunned && generatedMusic)
+			{
+				//more accurate hit time for the ratings?
+				var lastTime:Float = Conductor.songPosition;
+				if (ClientPrefs.songLoading) Conductor.songPosition = FlxG.sound.music.time;
+
+				var canMiss:Bool = !ClientPrefs.ghostTapping;
+
+				// heavily based on my own code LOL if it aint broke dont fix it
+				var pressNotes:Array<Note> = [];
+				//var notesDatas:Array<Int> = [];
+				var notesStopped:Bool = false;
+
+				var hittableSpam = [];
+
+				var sortedNotesList:Array<Note> = [];
+				for (group in [notes, sustainNotes]) group.forEachAlive(function(daNote:Note)
+				{
+					if (daNote.canBeHit && !daNote.tooLate && !daNote.wasGoodHit && !daNote.isSustainNote && !daNote.blockHit)
+					{
+						if(daNote.noteData == key)
+						{
+							sortedNotesList.push(daNote);
+						}
+						canMiss = true;
+					}
+				});
+				sortedNotesList.sort(sortHitNotes);
+
+				if (sortedNotesList.length > 0) {
+					for (epicNote in sortedNotesList)
+					{
+						for (doubleNote in pressNotes) {
+							if (Math.abs(doubleNote.strumTime - epicNote.strumTime) < 1) {
+							if (shouldKillNotes)
+							{
+								doubleNote.kill();
+							}
+								notes.remove(doubleNote, true);
+							if (shouldKillNotes)
+							{
+								doubleNote.destroy();
+							}
+							} else
+								notesStopped = true;
+						}
+
+						// eee jack detection before was not super good
+						if (!notesStopped) {
+						goodNoteHit(epicNote);
+							pressNotes.push(epicNote);
+						}
+					if (sortedNotesList.length > 2 && ClientPrefs.data.ezSpam) //literally all you need to allow you to spam though impossiblely hard jacks
+					{
+						var notesThatCanBeHit = sortedNotesList.length;
+						for (i in 1...Std.int(notesThatCanBeHit)) //i may consider making this hit half the notes instead
+						{
+							goodNoteHit(sortedNotesList[i]);
+						}
+						
+					}
+					}
+				}
+				else {
+					callOnLuas('onGhostTap', [key]);
+				if (!opponentChart && ClientPrefs.ghostTapAnim && ClientPrefs.charsAndBG)
+				{
+					boyfriend.playAnim(singAnimations[Std.int(Math.abs(key))], true);
+					if (ClientPrefs.cameraPanning) camPanRoutine(singAnimations[Std.int(Math.abs(key))], 'bf');
+					boyfriend.holdTimer = 0;
+				}
+				if (opponentChart && ClientPrefs.ghostTapAnim && ClientPrefs.charsAndBG)
+				{
+					dad.playAnim(singAnimations[Std.int(Math.abs(key))], true);
+					if (ClientPrefs.cameraPanning) camPanRoutine(singAnimations[Std.int(Math.abs(key))], 'dad');
+					dad.holdTimer = 0;
+				}
+					if (canMiss) {
+						noteMissPress(key);
+					}
+				}
+
+				// I dunno what you need this for but here you go
+				//									- Shubs
+
+				// Shubs, this is for the "Just the Two of Us" achievement lol
+				//									- Shadow Mario
+				keysPressed[key] = true;
+
+				//more accurate hit time for the ratings? part 2 (Now that the calculations are done, go back to the time it was before for not causing a note stutter)
+				Conductor.songPosition = lastTime;
+			}
+
+			var spr:StrumNote = playerStrums.members[key];
+			if(strumsBlocked[key] != true && spr != null && spr.animation.curAnim.name != 'confirm')
+			{
+				spr.playAnim('pressed');
+				spr.resetAnim = 0;
+			}
+			callOnLuas('onKeyPress', [key]);*/
 	}
 
 	private function keyPressed(key:Int)

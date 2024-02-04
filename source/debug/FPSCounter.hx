@@ -5,6 +5,11 @@ import openfl.text.TextField;
 import openfl.text.TextFormat;
 import openfl.system.System;
 
+import states.MainMenuState;
+
+import Main;
+import flixel.util.FlxColor;
+
 /**
 	The FPS class provides an easy-to-use monitor to display
 	the current frame rate of an OpenFL project
@@ -20,6 +25,7 @@ class FPSCounter extends TextField
 		The current memory usage (WARNING: this is NOT your total program memory usage, rather it shows the garbage collector memory)
 	**/
 	public var memoryMegas(get, never):Float;
+	public var memoryLeakMegas(get, never):Float; // memory leak
 
 	@:noCompletion private var times:Array<Float>;
 
@@ -42,6 +48,11 @@ class FPSCounter extends TextField
 	}
 
 	var deltaTimeout:Float = 0.0;
+	
+	// All the colors:			      Red,	      Orange,     Yellow,     Green,      Blue,       Violet/Purple
+    final rainbowColors:Array<Int> = [0xFFFF0000, 0xFFFFA500, 0xFFFFFF00, 0xFF00FF00, 0xFF0000FF, 0xFFFF00FF];
+	var colorInterp:Float = 0;
+	var currentColor:Int = 0;
 
 	// Event Handlers
 	private override function __enterFrame(deltaTime:Float):Void
@@ -62,13 +73,80 @@ class FPSCounter extends TextField
 	}
 
 	public dynamic function updateText():Void { // so people can override it in hscript
-		text = 'FPS: ${currentFPS}'
-		+ '\nMemory: ${flixel.util.FlxStringUtil.formatBytes(memoryMegas)}';
+		if (memoryMegas >= memoryLeakMegas)
+			memoryLeakMegas = memoryMegas;
+		
+		text = (ClientPrefs.data.showFPS ? 'FPS: ${currentFPS}')
+		if (ClientPrefs.data.showMemory)
+			+ '\nMemory: ${flixel.util.FlxStringUtil.formatBytes(memoryMegas)}';
+		
+		if (ClientPrefs.data.showMemoryLeak)
+			+ '\nMemory Leak: ${flixel.util.FlxStringUtil.formatBytes(memoryLeakMegas)}';
+		
+		if (ClientPrefs.data.showEngineVersion)
+			+ '\nEngine version: ' + MainMenuState.miuEngineVersion + " (PE " + MainMenuState.psychEngineVersion + ")"; // Inspired from SB Engine by Stefan2008 https://github.com/Stefan2008Git
+		
+		if (ClientPrefs.data.showDebugInfo) {
+			+ "\nOS: " + '${lime.system.System.platformLabel} ${lime.system.System.platformVersion}';
+			+ '\nState: ${Type.getClassName(Type.getClass(FlxG.state))}';
+			if (FlxG.state.subState != null)
+				+ '\nSubstate: ${Type.getClassName(Type.getClass(FlxG.state.subState))}';
+			+ "\nFlixel: " + FlxG.VERSION;
+			/*+ "\nLime: ?????";
+			+ "\nOpenFL: ?????";*/
+		}
+		
+		if (ClientPrefs.data.showRainbowFPS) {
+			colorInterp += deltaTime / 330; // Division so that it doesn't give you a seizure on 60 FPS
+			var colorIndex1:Int = Math.floor(colorInterp);
+			var colorIndex2:Int = (colorIndex1 + 1) % rainbowColors.length;
 
+			var startColor:Int = rainbowColors[colorIndex1];
+			var endColor:Int = rainbowColors[colorIndex2];
+
+			var segmentInterp:Float = colorInterp - colorIndex1;
+
+			var interpolatedColor:Int = interpolateColor(startColor, endColor, segmentInterp);
+
+			textColor = interpolatedColor;
+
+			// Check if the current color segment interpolation is complete
+			if (colorInterp >= rainbowColors.length) {
+				// Reset colorInterp to start the interpolation cycle again
+				textColor = rainbowColors[0];
+				colorInterp = 0;
+			}
+		} else {
 		textColor = 0xFFFFFFFF;
 		if (currentFPS < FlxG.drawFramerate * 0.5)
 			textColor = 0xFFFF0000;
+		}
 	}
+	
+	private function interpolateColor(startColor:Int, endColor:Int, t:Float):Int {
+        // Extract color components (RGBA) from startColor
+        var startR:Int = (startColor >> 16) & 0xFF;
+        var startG:Int = (startColor >> 8) & 0xFF;
+        var startB:Int = startColor & 0xFF;
+        var startA:Int = (startColor >> 24) & 0xFF;
+
+        // Extract color components (RGBA) from endColor
+        var endR:Int = (endColor >> 16) & 0xFF;
+        var endG:Int = (endColor >> 8) & 0xFF;
+        var endB:Int = endColor & 0xFF;
+        var endA:Int = (endColor >> 24) & 0xFF;
+
+        // Perform linear interpolation for each color component
+        var interpolatedR:Int = Math.round(startR + t * (endR - startR));
+        var interpolatedG:Int = Math.round(startG + t * (endG - startG));
+        var interpolatedB:Int = Math.round(startB + t * (endB - startB));
+        var interpolatedA:Int = Math.round(startA + t * (endA - startA));
+
+        // Combine interpolated color components into a single color value
+        var interpolatedColor:Int = (interpolatedA << 24) | (interpolatedR << 16) | (interpolatedG << 8) | interpolatedB;
+
+        return interpolatedColor;
+    }
 
 	inline function get_memoryMegas():Float
 		return cast(System.totalMemory, UInt);

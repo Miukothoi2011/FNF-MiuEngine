@@ -70,6 +70,19 @@ class VisualsUISubState extends BaseOptionsMenu
 		option.changeValue = 0.1;
 		option.decimals = 1;
 		addOption(option);
+		
+		var option:Option = new Option('Enable Note Splashes',
+			"If unchecked, hitting \"Sick!\" notes won't show particles.",
+			'noteSplashes',
+			'bool');
+		addOption(option);
+
+		var option:Option = new Option('Enable Opponent Note Splashes',
+			"If checked, opponent note hits will show particles.",
+			'oppNoteSplashes',
+			'bool');
+		addOption(option);
+
 
 		var option:Option = new Option('Hide HUD',
 			'If checked, hides most HUD elements.',
@@ -121,6 +134,36 @@ class VisualsUISubState extends BaseOptionsMenu
 		addOption(option);
 		option.onChange = onChangeFPSCounter;
 		#end
+		
+		var option:Option = new Option('Show Memory',
+			'If checked, the game will show your Memory (a.k.a RAM) usage.',
+			'showMemory',
+			'bool');
+		addOption(option);
+		
+		var option:Option = new Option('Show Memory Leak',
+			'If checked, the game will show your maximum Memory (a.k.a RAM) usage.',
+			'showMemoryLeak',
+			'bool');
+		addOption(option);
+		
+		var option:Option = new Option('Show Engine Version',
+			'If checked, shows engine version on FPS Counter.',
+			'showEngineVersion',
+			'bool');
+		addOption(option);
+		
+		var option:Option = new Option('Show Debug Info',
+			'If checked, the game will show additional debug info.\nNote: Turn on FPS Counter before using this!',
+			'showDebugInfo',
+			'bool');
+		addOption(option);
+		
+		var option:Option = new Option('Show Rainbow FPS',
+			'?',
+			'showRainbowFPS',
+			'bool');
+		addOption(option);
 		
 		var option:Option = new Option('Pause Screen Song:',
 			"What song do you prefer for the Pause Screen?",

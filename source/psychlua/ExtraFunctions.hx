@@ -2,6 +2,7 @@ package psychlua;
 
 import flixel.util.FlxSave;
 import openfl.utils.Assets;
+import lime.app.Application
 
 //
 // Things to trivialize some dumb stuff like splitting strings on older Lua
@@ -258,6 +259,34 @@ class ExtraFunctions
 		});
 		Lua_helper.add_callback(lua, "getRandomBool", function(chance:Float = 50) {
 			return FlxG.random.bool(chance);
+		});
+		
+		//Extra things again :))
+		Lua_helper.add_callback(lua, 'openURL', function(url:String) {
+			CoolUtil.browserLoad(url);
+		});
+		Lua_helper.add_callback(lua, "pcUserName", function() {
+			return Sys.environment()["USERNAME"];
+		});
+		Lua_helper.add_callback(lua, "setRating", function(or:Int, nr:String) {
+			var ratingarray = PlayState.ratingStuff;
+			var targetrating = ratingarray[9];
+			if (or < 10 && or > -1) {
+				targetrating = ratingarray[or];
+			} 
+			targetrating[0] = nr;
+		});
+		Lua_helper.add_callback(lua, "setBotPlayText", function(value:String) {
+			PlayState.instance.botplayTxt.text = value;
+		});
+		/*Lua_helper.add_callback(lua, "setWatermarkText", function(value:String) {
+			PlayState.instance.songTxt.text = value;
+		});*/
+		Lua_helper.add_callback(lua, "setWindowTitle", function(value:String) {
+			openfl.Lib.application.window.title = value;
+		});
+		Lua_helper.add_callback(lua, 'popUpWindowAlert', function(message:String, title:String) {
+			Application.current.window.alert(message, title);
 		});
 	}
 }
