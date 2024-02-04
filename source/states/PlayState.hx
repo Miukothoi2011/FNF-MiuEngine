@@ -1256,33 +1256,18 @@ class PlayState extends MusicBeatState
 			str += ' (${percent}%) - ${ratingFC}';
 		}
 
-		//if (!ClientPrefs.data.showNPS) {
-			if (!practiceMode && !cpuControlled) {
-				var tempScore:String = 'Score: ${songScore}'
-				+ (!instakillOnMiss ? ' | Misses: ${songMisses}' : "")
-				+ ' | Rating: ${str}';
-				// "tempScore" variable is used to prevent another memory leak, just in case
-				// "\n" here prevents the text from being cut off by beat zooms
-				scoreTxt.text = '${tempScore}\n';
-			} else if (cpuControlled) {
-				scoreTxt.text = 'BOTPLAY';
-			} else if (practiceMode) {
-				scoreTxt.text = 'Misses: ${songMisses}' + ' | Practice Mode';
-			}
-		/*} else {
-			if (!practiceMode && !cpuControlled) {
-				var tempScore:String = 'NPS: ${nps}' + '(${maxNPS})' + ' | Score: ${songScore}'
-				+ (!instakillOnMiss ? ' | Misses: ${songMisses}' : "")
-				+ ' | Rating: ${str}';
-				// "tempScore" variable is used to prevent another memory leak, just in case
-				// "\n" here prevents the text from being cut off by beat zooms
-				scoreTxt.text = '${tempScore}\n';
-			} else if (cpuControlled) {
-				scoreTxt.text = 'NPS: ${nps}' + '(${maxNPS})' + ' | BOTPLAY';
-			} else if (practiceMode) {
-				scoreTxt.text = 'NPS: ${nps}' + '(${maxNPS})' + ' | Misses: ${songMisses}' + ' | Practice Mode';
-			}
-		}*/
+		if (!practiceMode && !cpuControlled) {
+			var tempScore:String = 'Score: ${songScore}'
+			+ (!instakillOnMiss ? ' | Misses: ${songMisses}' : "")
+			+ ' | Rating: ${str}';
+			// "tempScore" variable is used to prevent another memory leak, just in case
+			// "\n" here prevents the text from being cut off by beat zooms
+			scoreTxt.text = '${tempScore}\n';
+		} else if (cpuControlled) {
+			scoreTxt.text = 'BOTPLAY';
+		} else if (practiceMode) {
+			scoreTxt.text = 'Misses: ${songMisses}' + ' | Practice Mode';
+		}
 
 		if (!miss && !cpuControlled)
 			doScoreBop();
