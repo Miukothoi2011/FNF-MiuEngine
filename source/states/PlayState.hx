@@ -334,7 +334,7 @@ class PlayState extends MusicBeatState
 		FlxG.cameras.add(camHUD, false);
 		FlxG.cameras.add(camOther, false);
 		grpNoteSplashes = new FlxTypedGroup<NoteSplash>();
-		grpOppNoteSplashes = new FlxTypedGroup<oppNoteSplash>();
+		grpOppNoteSplashes = new FlxTypedGroup<OppNoteSplash>();
 
 		CustomFadeTransition.nextCamera = camOther;
 
@@ -529,7 +529,7 @@ class PlayState extends MusicBeatState
 		grpNoteSplashes.add(splash);
 		splash.alpha = 0.000001; //cant make it invisible or it won't allow precaching
 		
-		var oppSplash:oppNoteSplash = new oppoNoteSplash(100, 100);
+		var oppSplash:OppNoteSplash = new OppNoteSplash(100, 100);
 		grpOppNoteSplashes.add(splash);
 		oppSplash.alpha = 0.000001; //cant make it invisible or it won't allow precaching
 
