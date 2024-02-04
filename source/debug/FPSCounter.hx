@@ -76,7 +76,8 @@ class FPSCounter extends TextField
 		if (memoryMegas >= memoryLeakMegas)
 			memoryLeakMegas = memoryMegas;
 		
-		text = (ClientPrefs.data.showFPS ? 'FPS: ${currentFPS}')
+		if (ClientPrefs.data.showFPS) {
+		text = 'FPS: ${currentFPS}'
 		if (ClientPrefs.data.showMemory)
 			+ '\nMemory: ${flixel.util.FlxStringUtil.formatBytes(memoryMegas)}';
 		
@@ -120,6 +121,7 @@ class FPSCounter extends TextField
 		textColor = 0xFFFFFFFF;
 		if (currentFPS < FlxG.drawFramerate * 0.5)
 			textColor = 0xFFFF0000;
+		}
 		}
 	}
 	
