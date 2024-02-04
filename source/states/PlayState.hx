@@ -1264,9 +1264,9 @@ class PlayState extends MusicBeatState
 			// "\n" here prevents the text from being cut off by beat zooms
 			scoreTxt.text = '${tempScore}\n';
 		} else if (cpuControlled) {
-			scoreTxt.text = 'BOTPLAY';
+			scoreTxt.text = 'BOTPLAY\n';
 		} else if (practiceMode) {
-			scoreTxt.text = 'Misses: ${songMisses}' + ' | Practice Mode';
+			scoreTxt.text = 'Misses: ${songMisses}' + ' | Practice Mode\n';
 		}
 
 		if (!miss && !cpuControlled)
@@ -1347,7 +1347,7 @@ class PlayState extends MusicBeatState
 		@:privateAccess
 		FlxG.sound.playMusic(inst._sound, 1, false);
 		#if FLX_PITCH FlxG.sound.music.pitch = playbackRate; #end
-		//FlxG.sound.music.onComplete = finishSong.bind();
+		FlxG.sound.music.onComplete = finishSong.bind();
 		vocals.play();
 
 		if(startOnTime > 0) setSongTime(startOnTime - 500);
@@ -2454,7 +2454,8 @@ class PlayState extends MusicBeatState
 		}
 	}
 
-	public function finishSong(?ignoreNoteOffset:Bool = false):Void
+	//public function finishSong(?ignoreNoteOffset:Bool = false):Void
+	public function finishSong():Void
 	{
 		updateTime = false;
 		FlxG.sound.music.volume = 0;
