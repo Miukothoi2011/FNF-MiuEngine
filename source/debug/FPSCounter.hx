@@ -78,20 +78,26 @@ class FPSCounter extends TextField
 		
 		if (ClientPrefs.data.showFPS) {
 		text = 'FPS: ${currentFPS}'
-		if (ClientPrefs.data.showMemory) + '\nMemory: ${flixel.util.FlxStringUtil.formatBytes(memoryMegas)}';
+		if (ClientPrefs.data.showMemory) {
+			text += '\nMemory: ${flixel.util.FlxStringUtil.formatBytes(memoryMegas)}';
+		}
 		
-		if (ClientPrefs.data.showMemoryLeak) + '\nMemory Leak: ${flixel.util.FlxStringUtil.formatBytes(memoryLeakMegas)}';
+		if (ClientPrefs.data.showMemoryLeak) {
+			text += '\nMemory Leak: ${flixel.util.FlxStringUtil.formatBytes(memoryLeakMegas)}';
+		}
 		
-		if (ClientPrefs.data.showEngineVersion) + '\nEngine version: ' + MainMenuState.miuEngineVersion + " (PE " + MainMenuState.psychEngineVersion + ")"; // Inspired from SB Engine by Stefan2008 https://github.com/Stefan2008Git
+		if (ClientPrefs.data.showEngineVersion) {
+			text += '\nEngine version: ' + MainMenuState.miuEngineVersion + " (PE " + MainMenuState.psychEngineVersion + ")"; // Inspired from SB Engine by Stefan2008 https://github.com/Stefan2008Git
+		}
 		
 		if (ClientPrefs.data.showDebugInfo) {
-			+ "\nOS: " + '${lime.system.System.platformLabel} ${lime.system.System.platformVersion}';
-			+ '\nState: ${Type.getClassName(Type.getClass(FlxG.state))}';
+			text += "\nOS: " + '${lime.system.System.platformLabel} ${lime.system.System.platformVersion}';
+			text += '\nState: ${Type.getClassName(Type.getClass(FlxG.state))}';
 			if (FlxG.state.subState != null)
-				+ '\nSubstate: ${Type.getClassName(Type.getClass(FlxG.state.subState))}';
-			+ "\nFlixel: " + FlxG.VERSION;
-			/*+ "\nLime: ?????";
-			+ "\nOpenFL: ?????";*/
+				text += '\nSubstate: ${Type.getClassName(Type.getClass(FlxG.state.subState))}';
+			text += "\nFlixel: " + FlxG.VERSION;
+			/*text += "\nLime: ?????";
+			text += "\nOpenFL: ?????";*/
 		}
 		
 		if (ClientPrefs.data.showRainbowFPS) {
