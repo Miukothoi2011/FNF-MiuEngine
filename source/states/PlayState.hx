@@ -2462,7 +2462,7 @@ class PlayState extends MusicBeatState
 		vocals.volume = 0;
 		vocals.pause();
 		//if(ClientPrefs.data.noteOffset <= 0 || ignoreNoteOffset) {
-		if(ClientPrefs.data.noteOffset <= 0 || ignoreNoteOffset) {
+		if(ClientPrefs.data.noteOffset <= 0) {
 			endCallback();
 		} else {
 			finishTimer = new FlxTimer().start(ClientPrefs.data.noteOffset / 1000, function(tmr:FlxTimer) {
