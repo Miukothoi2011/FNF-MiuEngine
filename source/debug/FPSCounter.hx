@@ -78,14 +78,11 @@ class FPSCounter extends TextField
 		
 		if (ClientPrefs.data.showFPS) {
 		text = 'FPS: ${currentFPS}'
-		if (ClientPrefs.data.showMemory)
-			+ '\nMemory: ${flixel.util.FlxStringUtil.formatBytes(memoryMegas)}';
+		if (ClientPrefs.data.showMemory) + '\nMemory: ${flixel.util.FlxStringUtil.formatBytes(memoryMegas)}';
 		
-		if (ClientPrefs.data.showMemoryLeak)
-			+ '\nMemory Leak: ${flixel.util.FlxStringUtil.formatBytes(memoryLeakMegas)}';
+		if (ClientPrefs.data.showMemoryLeak) + '\nMemory Leak: ${flixel.util.FlxStringUtil.formatBytes(memoryLeakMegas)}';
 		
-		if (ClientPrefs.data.showEngineVersion)
-			+ '\nEngine version: ' + MainMenuState.miuEngineVersion + " (PE " + MainMenuState.psychEngineVersion + ")"; // Inspired from SB Engine by Stefan2008 https://github.com/Stefan2008Git
+		if (ClientPrefs.data.showEngineVersion) + '\nEngine version: ' + MainMenuState.miuEngineVersion + " (PE " + MainMenuState.psychEngineVersion + ")"; // Inspired from SB Engine by Stefan2008 https://github.com/Stefan2008Git
 		
 		if (ClientPrefs.data.showDebugInfo) {
 			+ "\nOS: " + '${lime.system.System.platformLabel} ${lime.system.System.platformVersion}';
