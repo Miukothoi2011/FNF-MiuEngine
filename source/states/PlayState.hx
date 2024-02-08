@@ -3260,6 +3260,7 @@ class PlayState extends MusicBeatState
 			FlxTween.angle(iconP2, -15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
 			FlxTween.angle(iconP1, 15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
 		}
+		}
 
 		characterBopper(curBeat);
 
