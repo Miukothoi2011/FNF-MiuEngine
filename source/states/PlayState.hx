@@ -3245,6 +3245,21 @@ class PlayState extends MusicBeatState
 			iconP1.setGraphicSize(Std.int(iconP1.width + (50 * (funny + 0.1))),Std.int(iconP1.height - (25 * funny)));
 			iconP2.setGraphicSize(Std.int(iconP2.width + (50 * ((2 - funny) + 0.1))),Std.int(iconP2.height - (25 * ((2 - funny) + 0.1))));
 		}*/
+		
+		if (curBeat % gfSpeed == 0 && ClientPrefs.data.iconBounce == 'Golden Apple') {
+		curBeat % (gfSpeed * 2) == 0 * playbackRate ? {
+			iconP1.scale.set(1.1, 0.8);
+			iconP2.scale.set(1.1, 1.3);
+			
+			FlxTween.angle(iconP1, -15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+			FlxTween.angle(iconP2, 15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+		} : {
+			iconP2.scale.set(1.1, 0.8);
+			iconP1.scale.set(1.1, 1.3);
+			
+			FlxTween.angle(iconP2, -15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+			FlxTween.angle(iconP1, 15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+		}
 
 		characterBopper(curBeat);
 
