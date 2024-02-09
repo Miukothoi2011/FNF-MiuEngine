@@ -79,6 +79,12 @@ import tea.SScript;
  * "function eventEarlyTrigger" - Used for making your event start a few MILLISECONDS earlier
  * "function triggerEvent" - Called when the song hits your event's timestamp, this is probably what you were looking for
 **/
+enum abstract IconType(Int) to Int from Int //abstract so it can hold int values for the frame count // THIS CODE BY ME, NOT BY DENPA ENGINE
+{
+    var SINGLE = 0;
+    var DEFAULT = 1;
+}
+
 class PlayState extends MusicBeatState
 {
 	public static var STRUM_X = 42;
@@ -88,6 +94,8 @@ class PlayState extends MusicBeatState
 	public var camGameShaders:Array<ShaderEffect> = [];
 	public var camHUDShaders:Array<ShaderEffect> = [];
 	public var camOtherShaders:Array<ShaderEffect> = [];
+	
+	public var type:IconType = DEFAULT;
 
 	public static var ratingStuff:Array<Dynamic> = [
 		['You Suck!', 0.2], //From 0% to 19%
@@ -142,6 +150,7 @@ class PlayState extends MusicBeatState
 	public var dadGroup:FlxSpriteGroup;
 	public var gfGroup:FlxSpriteGroup;
 	public var shaderUpdates:Array<Float->Void> = [];
+
 	public static var curStage:String = '';
 	public static var stageUI:String = "normal";
 	public static var isPixelStage(get, never):Bool;
@@ -208,6 +217,8 @@ class PlayState extends MusicBeatState
 	public var instakillOnMiss:Bool = false;
 	public var cpuControlled:Bool = false;
 	public var practiceMode:Bool = false;
+	
+	public var shouldKillNotes:Bool = true; //Whether notes should be killed when you hit them. Disables automatically when in Troll Mode because you can't end the song anyway
 
 	public var botplaySine:Float = 0;
 	public var botplayTxt:FlxText;
@@ -2739,6 +2750,44 @@ class PlayState extends MusicBeatState
 
 			if(FlxG.keys.checkStatus(eventKey, JUST_PRESSED)) keyPressed(key);
 		}
+		
+		var pressNotes:Array<Note> = [];
+		var notesStopped:Bool = false;
+		var sortedNotesList:Array<Note> = []; //ezSpam by JS Engine
+		if (sortedNotesList.length > 0) {
+			for (epicNote in sortedNotesList)
+			{
+				for (doubleNote in pressNotes) {
+					if (Math.abs(doubleNote.strumTime - epicNote.strumTime) < 1) {
+						if (shouldKillNotes)
+						{
+							doubleNote.kill();
+						}
+						notes.remove(doubleNote, true);
+						if (shouldKillNotes)
+						{
+							doubleNote.destroy();
+						}
+					} else {
+						notesStopped = true;
+					}
+
+					// eee jack detection before was not super good
+					if (!notesStopped) {
+					goodNoteHit(epicNote);
+						pressNotes.push(epicNote);
+					}
+					if (sortedNotesList.length > 2 && ClientPrefs.data.ezSpam) //literally all you need to allow you to spam though impossiblely hard jacks
+					{
+						var notesThatCanBeHit = sortedNotesList.length;
+						for (i in 1...Std.int(notesThatCanBeHit)) //i may consider making this hit half the notes instead
+						{
+							goodNoteHit(sortedNotesList[i]);
+						}
+					}
+				}
+			}
+		}
 	}
 
 	private function keyPressed(key:Int)
@@ -3247,19 +3296,23 @@ class PlayState extends MusicBeatState
 		}*/
 		
 		if (curBeat % gfSpeed == 0 && ClientPrefs.data.iconBounce == 'Golden Apple') {
-		curBeat % (gfSpeed * 2) == 0 * playbackRate ? {
-			iconP1.scale.set(1.1, 0.8);
-			iconP2.scale.set(1.1, 1.3);
+			curBeat % (gfSpeed * 2) == 0 * playbackRate ? {
+				iconP1.scale.set(1.1, 0.8);
+				iconP2.scale.set(1.1, 1.3);
 			
-			FlxTween.angle(iconP1, -15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-			FlxTween.angle(iconP2, 15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-		} : {
-			iconP2.scale.set(1.1, 0.8);
-			iconP1.scale.set(1.1, 1.3);
+				FlxTween.angle(iconP1, -15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+				FlxTween.angle(iconP2, 15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+			} : {
+				iconP1.scale.set(1.1, 1.3);
+				iconP2.scale.set(1.1, 0.8);
+				
+				FlxTween.angle(iconP1, 15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+				FlxTween.angle(iconP2, -15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+			}
 			
-			FlxTween.angle(iconP2, -15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-			FlxTween.angle(iconP1, 15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-		}
+			final scaleThing:Float = type == 2 ? 0.75 : 1;
+			FlxTween.tween(iconP1, {'iconP1.scale.x': 1 * scaleThing, 'iconP1.scale.y': 1 * scaleThing}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+			FlxTween.tween(iconP2, {'iconP2.scale.x': 1 * scaleThing, 'iconP2.scale.y': 1 * scaleThing}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
 		}
 
 		characterBopper(curBeat);
