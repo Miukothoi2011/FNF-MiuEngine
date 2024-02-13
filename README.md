@@ -1,4 +1,6 @@
 # Friday Night Funkin' - Miu Engine
+[![Star History Chart](https://api.star-history.com/svg?repos=Miuthoi123/FNF-MiuEngine&type=Date)](https://star-history.com/#Miuthoi123/FNF-MiuEngine&Date)
+
 Engine are fork from Psych Engine (0.7.2h)
 
 ### NOTE: This engine is in BETA stage, and i not a Professional Haxe lang coder i stil in lot for fail code.
