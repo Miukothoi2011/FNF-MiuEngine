@@ -3,9 +3,9 @@
 
 Engine are fork from Psych Engine (0.7.2h)
 
-### NOTE: This engine is in BETA stage, and i not a Professional Haxe lang coder i stil in lot for fail code.
+### NOTE: This engine is in ALPHA stage, so some feature doesn't (not) work properly because i not have beta tester, coder, assistant and helper guy :((( only me.
 
-If you want downloads build, go to ["Actions"](https://github.com/Miuthoi123/FNF-MiuEngine/actions) tabs or go to ["Releases"](https://github.com/Miuthoi123/FNF-MiuEngine/releases) (i to lazy to upload on Releases pls wait it)
+If you want downloads build, go to ["Actions"](https://github.com/Miuthoi123/FNF-MiuEngine/actions) tabs or go to ["Releases"](https://github.com/Miuthoi123/FNF-MiuEngine/releases) (i to lazy to upload on Releases pls don't mad it)
 
 ## Installation:
 
