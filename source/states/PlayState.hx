@@ -3095,6 +3095,7 @@ class PlayState extends MusicBeatState
 		if(ClientPrefs.data.opponentLightStrum) {
 			strumPlayAnim(true, Std.int(Math.abs(note.noteData)), Conductor.stepCrochet * 1.25 / 1000 / playbackRate);
 		} else {
+			var spr = opponentStrums.members[note.noteData]; // require need spr vars to play animation.
 			if(spr != null) spr.playAnim('static', true); // not need using strumPlayAnim() function because "static" note frame is 1, inspired by JS Engine and SB Engine.
 		}
 		note.hitByOpponent = true;
@@ -3184,6 +3185,7 @@ class PlayState extends MusicBeatState
 			if(ClientPrefs.data.botLightStrum) {
 				strumPlayAnim(false, Std.int(Math.abs(note.noteData)), Conductor.stepCrochet * 1.25 / 1000 / playbackRate);
 			} else {
+				var spr = playerStrums.members[note.noteData]; // require need spr vars to play animation.
 				if(spr != null) spr.playAnim('static', true); // not need using strumPlayAnim() function because "static" note frame is 1, inspired by JS Engine and SB Engine.
 			}
 		}
