@@ -3329,8 +3329,8 @@ class PlayState extends MusicBeatState
 			}
 			
 			final scaleThing:Float = type == 2 ? 0.75 : 1;
-			FlxTween.tween(iconP1, { iconP1.scale.x: 1 * scaleThing, iconP1.scale.y: 1 * scaleThing }, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-			FlxTween.tween(iconP2, { iconP2.scale.x: 1 * scaleThing, iconP2.scale.y: 1 * scaleThing }, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+			FlxTween.tween(iconP1, {'scale.x': 1 * scaleThing, 'scale.y': 1 * scaleThing}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+			FlxTween.tween(iconP2, {'scale.x': 1 * scaleThing, 'scale.y': 1 * scaleThing}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
 		}
 
 		characterBopper(curBeat);
