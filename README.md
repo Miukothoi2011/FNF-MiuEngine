@@ -20,8 +20,12 @@ inside `Project.xml`, you will find several variables to customize Psych Engine 
 to start you off, disabling Videos should be simple, simply Delete the line `"VIDEOS_ALLOWED"` or comment it out by wrapping the line in XML-like comments, like this `<!-- YOUR_LINE_HERE -->`
 
 same goes for *Lua Scripts*, comment out or delete the line with `LUA_ALLOWED`, this and other customization options are all available within the `Project.xml` file
+<details>
+	<summary><h2>Credits:</h2></summary>
+## Credits
+* Miukothoi2011 - Programmer
 
-## Credits:
+## PE Credits:
 * Shadow Mario - Programmer
 * Riveren - Artist
 
@@ -37,7 +41,10 @@ same goes for *Lua Scripts*, comment out or delete the line with `LUA_ALLOWED`, 
 * Nebula the Zorua - some Lua reworks
 * superpowers04 - LUA JIT Fork
 _____________________________________
+</details>
 
+<details>
+	<summary><h2>PE Features:</h2></summary>
 # Features
 
 ## Attractive animated dialogue boxes:
@@ -111,3 +118,4 @@ _____________________________________
 * You can reset your Score on Freeplay/Story Mode by pressing Reset button.
 * You can listen to a song or adjust Scroll Speed/Damage taken/etc. on Freeplay by pressing Space.
 * You can enable "Combo Stacking" in Gameplay Options. This causes the combo sprites to just be one sprite with an animation rather than sprites spawning each note hit.
+</details>
