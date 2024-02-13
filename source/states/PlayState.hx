@@ -3102,8 +3102,12 @@ class PlayState extends MusicBeatState
 		var result:Dynamic = callOnLuas('opponentNoteHitPost', [notes.members.indexOf(note), Math.abs(note.noteData), note.noteType, note.isSustainNote]);
 		if(result != FunkinLua.Function_Stop && result != FunkinLua.Function_StopHScript && result != FunkinLua.Function_StopAll) callOnHScript('opponentNoteHitPost', [note]);
 
-		if (!note.isSustainNote)
-			invalidateNote(note);
+		if (ClientPrefs.data.opponentNoteSplashes) {
+			if(!note.noteSplashData.disabled && !note.isSustainNote) spawnNoteSplashOnNote(note);
+		} else {
+			if(note.noteSplashData.disabled && !note.isSustainNote) spawnNoteSplashOnNote(note);
+		}
+		if(!note.isSustainNote) invalidateNote(note);
 	}
 
 	public function goodNoteHit(note:Note):Void
@@ -3207,7 +3211,7 @@ class PlayState extends MusicBeatState
 	}
 
 	public function spawnNoteSplashOnNote(note:Note) {
-		if(note != null) {
+		if(ClientPrefs.data.noteSplashes && note != null) {
 			var strum:StrumNote = playerStrums.members[note.noteData];
 			if(strum != null)
 				spawnNoteSplash(strum.x, strum.y, note.noteData, note);
