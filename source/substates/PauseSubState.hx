@@ -271,9 +271,9 @@ class PauseSubState extends MusicBeatSubstate
 					PlayState.changedDifficulty = true;
 					practiceText.visible = PlayState.instance.practiceMode;
 				case "Restart Song":
-					restartSong();
+					restartSong(false); // Prevent game crash if noTrans is false
 				case "Leave Charting Mode":
-					restartSong();
+					restartSong(false);
 					PlayState.chartingMode = false;
 				case 'Skip Time':
 					if(curTime < Conductor.songPosition)
@@ -294,7 +294,7 @@ class PauseSubState extends MusicBeatSubstate
 					close();
 					PlayState.instance.notes.clear();
 					PlayState.instance.unspawnNotes = [];
-					PlayState.instance.finishSong();
+					PlayState.instance.finishSong(true);
 				case 'Chart Editor':
 					MusicBeatState.switchState(new states.editors.ChartingState());
 					PlayState.chartingMode = true;
@@ -325,44 +325,44 @@ class PauseSubState extends MusicBeatSubstate
 				}
 			}
 			if (menuItems == menuItemsExit) {
-			switch(daSelected) {
-			case "Exit to Story Menu", "Exit to Freeplay":
-					#if desktop DiscordClient.resetClientID(); #end
-					PlayState.deathCounter = 0;
-					PlayState.seenCutscene = false;
+				switch(daSelected) {
+					case "Exit to Story Menu", "Exit to Freeplay":
+						#if desktop DiscordClient.resetClientID(); #end
+						PlayState.deathCounter = 0;
+						PlayState.seenCutscene = false;
 
-					Mods.loadTopMod();
-					if(PlayState.isStoryMode) {
-						MusicBeatState.switchState(new StoryMenuState());
-					} else {
-						MusicBeatState.switchState(new FreeplayState());
-					}
-					PlayState.cancelMusicFadeTween();
-					FlxG.sound.playMusic(Paths.music('freakyMenu'));
-					PlayState.changedDifficulty = false;
-					PlayState.chartingMode = false;
-					FlxG.camera.followLerp = 0;
-			case "Exit to Main Menu":
-					#if desktop DiscordClient.resetClientID(); #end
-					PlayState.deathCounter = 0;
-					PlayState.seenCutscene = false;
+						Mods.loadTopMod();
+						if(PlayState.isStoryMode) {
+							MusicBeatState.switchState(new StoryMenuState());
+						} else {
+							MusicBeatState.switchState(new FreeplayState());
+						}
+						PlayState.cancelMusicFadeTween();
+						FlxG.sound.playMusic(Paths.music('freakyMenu'));
+						PlayState.changedDifficulty = false;
+						PlayState.chartingMode = false;
+						FlxG.camera.followLerp = 0;
+					case "Exit to Main Menu":
+						#if desktop DiscordClient.resetClientID(); #end
+						PlayState.deathCounter = 0;
+						PlayState.seenCutscene = false;
 
-					MusicBeatState.switchState(new states.MainMenuState());
-					PlayState.cancelMusicFadeTween();
-					FlxG.sound.playMusic(Paths.music('freakyMenu'));
-					PlayState.changedDifficulty = false;
-					PlayState.chartingMode = false;
-			case "Exit Game":
-					#if desktop DiscordClient.resetClientID(); #end
-					trace ("Exiting game...");
-					openfl.system.System.exit(0);
-			case "Back":
-					menuItems = menuItemsOG;
-					regenMenu();
-			case "Exit to your Mother":
-					trace ("YO MAMA");
-					var aLittleCrashing:FlxSprite = null;
-					aLittleCrashing.destroy();
+						MusicBeatState.switchState(new states.MainMenuState());
+						PlayState.cancelMusicFadeTween();
+						FlxG.sound.playMusic(Paths.music('freakyMenu'));
+						PlayState.changedDifficulty = false;
+						PlayState.chartingMode = false;
+					case "Exit Game":
+						#if desktop DiscordClient.resetClientID(); #end
+						trace ("Exiting game...");
+						openfl.system.System.exit(0);
+					case "Back":
+							menuItems = menuItemsOG;
+							regenMenu();
+					case "Exit to your Mother":
+							trace ("YO MAMA");
+							var aLittleCrashing:FlxSprite = null;
+							aLittleCrashing.destroy();
 				}
 			}
 		}

@@ -1960,7 +1960,7 @@ class PlayState extends MusicBeatState
 			iconP2.setGraphicSize(Std.int(iconP2.width + 30));
 		}
 		
-		if (ClientPrefs.data.iconBounce == 'Dave And Bambi') {
+		/*if (ClientPrefs.data.iconBounce == 'Dave And Bambi') {
 			var thingy = 0.88; //(144 / Main.fps.currentFPS) * 0.88;
 			//still gotta make this fps consistent crap
 			iconP1.setGraphicSize(Std.int(FlxMath.lerp(150, iconP1.width, thingy)),Std.int(FlxMath.lerp(150, iconP1.height, thingy)));
@@ -1968,7 +1968,7 @@ class PlayState extends MusicBeatState
 
 			iconP2.setGraphicSize(Std.int(FlxMath.lerp(150, iconP2.width, thingy)),Std.int(FlxMath.lerp(150, iconP2.height, thingy)));
 			iconP2.updateHitbox();
-		}
+		}*/
 	}
 
 	public dynamic function updateIconsPosition()
@@ -3092,7 +3092,11 @@ class PlayState extends MusicBeatState
 		}
 
 		vocals.volume = 1;
-		strumPlayAnim(true, Std.int(Math.abs(note.noteData)), Conductor.stepCrochet * 1.25 / 1000 / playbackRate);
+		if(ClientPrefs.data.opponentLightStrum) {
+			strumPlayAnim(true, Std.int(Math.abs(note.noteData)), Conductor.stepCrochet * 1.25 / 1000 / playbackRate);
+		} else {
+			if(spr != null) spr.playAnim('static', true); // not need using strumPlayAnim() function because "static" note frame is 1, inspired by JS Engine and SB Engine.
+		}
 		note.hitByOpponent = true;
 		
 		var result:Dynamic = callOnLuas('opponentNoteHitPost', [notes.members.indexOf(note), Math.abs(note.noteData), note.noteType, note.isSustainNote]);
@@ -3165,9 +3169,20 @@ class PlayState extends MusicBeatState
 		if(!cpuControlled)
 		{
 			var spr = playerStrums.members[note.noteData];
-			if(spr != null) spr.playAnim('confirm', true);
+			if (ClientPrefs.data.playerLightStrum) {
+				if(spr != null) spr.playAnim('confirm', true);
+			} else {
+				if(spr != null) spr.playAnim('static', true);
+			}
 		}
-		else strumPlayAnim(false, Std.int(Math.abs(note.noteData)), Conductor.stepCrochet * 1.25 / 1000 / playbackRate);
+		else
+		{
+			if(ClientPrefs.data.botLightStrum) {
+				strumPlayAnim(false, Std.int(Math.abs(note.noteData)), Conductor.stepCrochet * 1.25 / 1000 / playbackRate);
+			} else {
+				if(spr != null) spr.playAnim('static', true); // not need using strumPlayAnim() function because "static" note frame is 1, inspired by JS Engine and SB Engine.
+			}
+		}
 		vocals.volume = 1;
 
 		if (!note.isSustainNote)
@@ -3314,8 +3329,8 @@ class PlayState extends MusicBeatState
 			}
 			
 			final scaleThing:Float = type == 2 ? 0.75 : 1;
-			FlxTween.tween(iconP1, {'iconP1.scale.x': 1 * scaleThing, 'iconP1.scale.y': 1 * scaleThing}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-			FlxTween.tween(iconP2, {'iconP2.scale.x': 1 * scaleThing, 'iconP2.scale.y': 1 * scaleThing}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+			FlxTween.tween(iconP1, { iconP1.scale.x: 1 * scaleThing, iconP1.scale.y: 1 * scaleThing }, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+			FlxTween.tween(iconP2, { iconP2.scale.x: 1 * scaleThing, iconP2.scale.y: 1 * scaleThing }, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
 		}
 
 		characterBopper(curBeat);
