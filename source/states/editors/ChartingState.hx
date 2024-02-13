@@ -1241,6 +1241,7 @@ class ChartingState extends MusicBeatState
 	var waveformUseInstrumental:FlxUICheckBox;
 	var waveformUseVoices:FlxUICheckBox;
 	#end
+	var saveUndoCheck:FlxUICheckBox;
 	var instVolume:FlxUINumericStepper;
 	var voicesVolume:FlxUINumericStepper;
 	function addChartingUI() {
@@ -1292,6 +1293,14 @@ class ChartingState extends MusicBeatState
 			mouseQuant = FlxG.save.data.mouseScrollingQuant;
 		};
 
+		saveUndoCheck = new FlxUICheckBox(mouseScrollingQuant.x + 150, mouseScrollingQuant.y + 25, null, null, "Save Undos", 100);
+		if (FlxG.save.data.allowUndo == null) FlxG.save.data.allowUndo = true;
+		saveUndoCheck.checked = FlxG.save.data.allowUndo;
+		saveUndoCheck.callback = function()
+		{
+			FlxG.save.data.allowUndo = saveUndoCheck.checked;
+		};
+		
 		check_vortex = new FlxUICheckBox(10, 160, null, null, "Vortex Editor (BETA)", 100);
 		if (FlxG.save.data.chart_vortex == null) FlxG.save.data.chart_vortex = false;
 		check_vortex.checked = FlxG.save.data.chart_vortex;
@@ -1391,6 +1400,7 @@ class ChartingState extends MusicBeatState
 		tab_group_chart.add(waveformUseInstrumental);
 		tab_group_chart.add(waveformUseVoices);
 		#end
+		tab_group_chart.add(saveUndoCheck);
 		tab_group_chart.add(instVolume);
 		tab_group_chart.add(voicesVolume);
 		tab_group_chart.add(check_mute_inst);
@@ -1901,15 +1911,9 @@ class ChartingState extends MusicBeatState
 				return;
 			}
 
-			if(FlxG.keys.justPressed.Z && FlxG.keys.pressed.CONTROL) {
+			if(FlxG.keys.justPressed.Z && FlxG.keys.pressed.CONTROL #if android || virtualPad.buttonV.justPressed #end) {
 				undo();
 			}
-			
-			#if android 
-			if (virtualPad.buttonV.justPressed) {
-				undo();
-			}
-			#end
 
 			if(FlxG.keys.justPressed.Z && curZoom > 0 && !FlxG.keys.pressed.CONTROL #if android || virtualPad.buttonZ.justPressed && curZoom > 0 #end) {
 				--curZoom;
@@ -3166,13 +3170,20 @@ class ChartingState extends MusicBeatState
 		//_song = redos[curRedoIndex];
 	}
 
-	function undo()
+	public function undo()
 	{
-		//redos.push(_song);
+		/*//redos.push(_song);
 		undos.pop();
 		//_song.notes = undos[undos.length - 1];
 		///trace(_song.notes);
-		//updateGrid();
+		//updateGrid();*/
+		if (undos.length > 0 && saveUndoCheck.checked) {
+			_song.notes = undos[0];
+			redos.unshift(undos[0]);
+			undos.splice(0, 1);
+			trace("Performed an Undo! Undos remaining: " + undos.length);
+			updateGrid();
+		}
 	}
 
 	function getStrumTime(yPos:Float, doZoomCalc:Bool = true):Float
