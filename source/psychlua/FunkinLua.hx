@@ -16,6 +16,7 @@ import flixel.addons.effects.FlxTrail;
 #if (!flash && sys)
 import flixel.addons.display.FlxRuntimeShader;
 import openfl.filters.ShaderFilter;
+import lime.app.Application;
 #end
 
 import cutscenes.DialogueBoxPsych;

@@ -2,7 +2,6 @@ package psychlua;
 
 import flixel.util.FlxSave;
 import openfl.utils.Assets;
-import lime.app.Application;
 
 //
 // Things to trivialize some dumb stuff like splitting strings on older Lua
