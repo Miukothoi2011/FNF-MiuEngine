@@ -3419,7 +3419,7 @@ class PlayState extends MusicBeatState
 				FlxTween.angle(iconP2, -15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
 			}
 			
-			final scaleThing:Float = type == 2 ? 0.75 : 1;
+			final scaleThing:Float = type == 2 ? (0.75 : 1);
 			FlxTween.tween(iconP1, {'scale.x': 1 * scaleThing, 'scale.y': 1 * scaleThing}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
 			FlxTween.tween(iconP2, {'scale.x': 1 * scaleThing, 'scale.y': 1 * scaleThing}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
 		}
