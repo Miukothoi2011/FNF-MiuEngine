@@ -50,7 +50,7 @@ jobs:
         with:
           name: linuxBuild
           path: 'export/release/linux/bin'
- buildLinuxDebug:
+  buildLinuxDebug:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
