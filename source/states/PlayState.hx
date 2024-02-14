@@ -3410,7 +3410,7 @@ class PlayState extends MusicBeatState
 			setOnScripts('altAnim', SONG.notes[curSection].altAnim);
 			setOnScripts('gfSection', SONG.notes[curSection].gfSection);
 		}
-		if (curBeat % gfSpeed == 0 && ClientPrefs.data.iconBounce == 'Golden Apple') { // To prevent icon bounce angle got reset to default angle.
+		/*if (curBeat % gfSpeed == 0 && ClientPrefs.data.iconBounce == 'Golden Apple') { // To prevent icon bounce angle got reset to default angle.
 			curBeat % (gfSpeed * 2) == 0 * playbackRate ? {
 				iconP1.scale.set(1.1, 1.3);
 				iconP2.scale.set(1.1, 0.8);
@@ -3422,7 +3422,7 @@ class PlayState extends MusicBeatState
 			final scaleThing = type == 2 ? 0.75 : 1;
 			FlxTween.tween(iconP1, {'scale.x': 1 * scaleThing, 'scale.y': 1 * scaleThing}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
 			FlxTween.tween(iconP2, {'scale.x': 1 * scaleThing, 'scale.y': 1 * scaleThing}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-		}
+		}*/
 		
 		super.sectionHit();
 
