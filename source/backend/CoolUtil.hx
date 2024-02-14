@@ -217,4 +217,21 @@ class CoolUtil
 				text.borderStyle = NONE;
 		}
 	}
+	
+	public static function formatTime(musicTime:Float):String
+	{
+		var secs:String = '' + Math.floor(musicTime / 1000) % 60;
+		var mins:String = "" + Math.floor(musicTime / 1000 / 60)%60;
+		final hour:String = '' + Math.floor((musicTime / 1000 / 3600))%24;
+
+		if (secs.length < 2)
+			secs = '0' + secs;
+
+		var shit:String = mins + ":" + secs;
+		if (hour != "0"){
+			if (mins.length < 2) mins = "0"+ mins;
+			shit = hour+":"+mins + ":" + secs;
+		}
+		return shit;
+	}
 }
