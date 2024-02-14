@@ -1307,7 +1307,7 @@ class PlayState extends MusicBeatState
 		});
 	}
 	
-	public function doTimeBop():Void {
+	/*public function doTimeBop():Void {
 		if(!ClientPrefs.data.scoreZoom)
 			return;
 
@@ -1321,7 +1321,7 @@ class PlayState extends MusicBeatState
 				timeTxtTween = null;
 			}
 		});
-	}
+	}*/
 
 	public function setSongTime(time:Float)
 	{
@@ -1843,7 +1843,9 @@ class PlayState extends MusicBeatState
 				timeTxt.text = FlxStringUtil.formatTime(secondsTotal, false);
 				
 			if(ClientPrefs.data.timeBarType == 'Song Name + Time') {
-				timeTxt.text = SONG.song + '(' + FlxStringUtil.formatTime(secondsTotal, false) + ' / ' + songCalc = curTime + ')';
+				/*timeTxt.text = SONG.song + '(' + FlxStringUtil.formatTime(secondsTotal, false) + ' / ' + songCalc = curTime + ')';*/
+				
+				timeTxt.text = SONG.song + ' (' + CoolUtil.formatTime(Conductor.songPosition) + ' / ' + CoolUtil.formatTime(songLength) + ')';
 			}
 		}
 

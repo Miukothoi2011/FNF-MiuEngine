@@ -165,7 +165,7 @@ class MainMenuState extends MusicBeatState
 							case 'story_mode':
 								FlxG.switchState(() -> new StoryMenuState());
 							case 'freeplay':
-								MusicBeatState.switchState(new FreeplayState());
+								FlxG.switchState(new FreeplayState());
 
 							#if MODS_ALLOWED
 							case 'mods':

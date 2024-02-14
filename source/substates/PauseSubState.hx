@@ -296,7 +296,7 @@ class PauseSubState extends MusicBeatSubstate
 					PlayState.instance.unspawnNotes = [];
 					PlayState.instance.finishSong(true);
 				case 'Chart Editor':
-					MusicBeatState.switchState(new states.editors.ChartingState());
+					FlxG.switchState(() -> new states.editors.ChartingState());
 					PlayState.chartingMode = true;
 				case "Change Gameplay Settings":
 					persistentUpdate = false;
@@ -347,7 +347,7 @@ class PauseSubState extends MusicBeatSubstate
 						PlayState.deathCounter = 0;
 						PlayState.seenCutscene = false;
 
-						MusicBeatState.switchState(new states.MainMenuState());
+						FlxG.switchState(() -> new states.MainMenuState());
 						PlayState.cancelMusicFadeTween();
 						FlxG.sound.playMusic(Paths.music('freakyMenu'));
 						PlayState.changedDifficulty = false;
@@ -357,12 +357,12 @@ class PauseSubState extends MusicBeatSubstate
 						trace ("Exiting game...");
 						openfl.system.System.exit(0);
 					case "Back":
-							menuItems = menuItemsOG;
-							regenMenu();
+						menuItems = menuItemsOG;
+						regenMenu();
 					case "Exit to your Mother":
-							trace ("YO MAMA");
-							var aLittleCrashing:FlxSprite = null;
-							aLittleCrashing.destroy();
+						trace ("YO MAMA");
+						var aLittleCrashing:FlxSprite = null;
+						aLittleCrashing.destroy();
 				}
 			}
 		}
