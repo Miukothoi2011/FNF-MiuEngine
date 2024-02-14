@@ -288,5 +288,9 @@ class ExtraFunctions
 		Lua_helper.add_callback(lua, 'popUpWindowAlert', function(message:String, title:String) {
 			Application.current.window.alert(message, title);
 		});
+		Lua_helper.add_callback(lua, 'setWindowPositon', function(x:Int, y:Int) {
+			openfl.Lib.application.window.x = x;
+			openfl.Lib.application.window.y = y;
+		});
 	}
 }

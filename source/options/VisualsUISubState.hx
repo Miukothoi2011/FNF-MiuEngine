@@ -52,7 +52,7 @@ class VisualsUISubState extends BaseOptionsMenu
 				ClientPrefs.data.splashSkin = ClientPrefs.defaultData.splashSkin; //Reset to default if saved splashskin couldnt be found
 
 			noteSplashes.insert(0, ClientPrefs.defaultData.splashSkin); //Default skin always comes first
-			var option:Option = new Option('Note Splashes:',
+			var option:Option = new Option('Note Splashes Skins:',
 				"Select your prefered Note Splash variation or turn it off.",
 				'splashSkin',
 				'string',
@@ -71,15 +71,15 @@ class VisualsUISubState extends BaseOptionsMenu
 		option.decimals = 1;
 		addOption(option);
 		
-		var option:Option = new Option('Enable Note Splashes',
+		var option:Option = new Option('Note Splashes',
 			"If unchecked, hitting \"Sick!\" notes won't show particles.",
 			'noteSplashes',
 			'bool');
 		addOption(option);
 
-		var option:Option = new Option('Enable Opponent Note Splashes',
+		var option:Option = new Option('Opponent Note Splashes',
 			"If checked, opponent note hits will show particles.",
-			'oppNoteSplashes',
+			'opponentNoteSplashes',
 			'bool');
 		addOption(option);
 
@@ -94,7 +94,7 @@ class VisualsUISubState extends BaseOptionsMenu
 			"What should the Time Bar display?",
 			'timeBarType',
 			'string',
-			['Time Left', 'Time Elapsed', 'Song Name', 'Disabled']);
+			['Time Left', 'Time Elapsed', 'Song Name', 'Song Name + Time', 'Disabled']);
 		addOption(option);
 
 		var option:Option = new Option('Flashing Lights',

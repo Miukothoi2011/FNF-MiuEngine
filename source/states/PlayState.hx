@@ -512,7 +512,7 @@ class PlayState extends MusicBeatState
 		strumLineNotes = new FlxTypedGroup<StrumNote>();
 		noteGroup.add(strumLineNotes);
 
-		if(ClientPrefs.data.timeBarType == 'Song Name')
+		if(ClientPrefs.data.timeBarType == 'Song Name' && ClientPrefs.data.timeBarType == 'Song Name + Time')
 		{
 			timeTxt.size = 24;
 			timeTxt.y += 3;
@@ -572,7 +572,7 @@ class PlayState extends MusicBeatState
 		scoreTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		scoreTxt.scrollFactor.set();
 		scoreTxt.borderSize = 1.25;
-		scoreTxt.visible = !ClientPrefs.data.hideHud;
+		scoreTxt.visible = !ClientPrefs.data.hideHud && !ClientPrefs.data.hideScoreTxt;
 		updateScore(false);
 		uiGroup.add(scoreTxt);
 
@@ -1251,6 +1251,7 @@ class PlayState extends MusicBeatState
 			str += ' (${percent}%) - ${ratingFC}';
 		}
 
+		
 		if (!practiceMode && !cpuControlled) {
 			var tempScore:String = 'Score: ${songScore}'
 			+ (!instakillOnMiss ? ' | Misses: ${songMisses}' : "")
@@ -1302,6 +1303,22 @@ class PlayState extends MusicBeatState
 		scoreTxtTween = FlxTween.tween(scoreTxt.scale, {x: 1, y: 1}, 0.2, {
 			onComplete: function(twn:FlxTween) {
 				scoreTxtTween = null;
+			}
+		});
+	}
+	
+	public function doTimeBop():Void {
+		if(!ClientPrefs.data.scoreZoom)
+			return;
+
+		if(timeTxtTween != null)
+			timeTxtTween.cancel();
+
+		timeTxt.scale.x = 1.075;
+		timeTxt.scale.y = 1.075;
+		timeTxtTween = FlxTween.tween(timeTxt.scale, {x: 1, y: 1}, 0.2, {
+			onComplete: function(twn:FlxTween) {
+				timeTxtTween = null;
 			}
 		});
 	}
@@ -1824,6 +1841,10 @@ class PlayState extends MusicBeatState
 
 			if(ClientPrefs.data.timeBarType != 'Song Name')
 				timeTxt.text = FlxStringUtil.formatTime(secondsTotal, false);
+				
+			if(ClientPrefs.data.timeBarType == 'Song Name + Time') {
+				timeTxt.text = SONG.song + '(' + FlxStringUtil.formatTime(secondsTotal, false) + ' / ' + songCalc = curTime + ')';
+			}
 		}
 
 		if (camZooming)
@@ -2037,7 +2058,7 @@ class PlayState extends MusicBeatState
 		DiscordClient.resetClientID();
 		#end
 
-		MusicBeatState.switchState(new ChartingState());
+		FlxG.switchState(() -> new ChartingState());
 	}
 
 	function openCharacterEditor()
@@ -2047,7 +2068,7 @@ class PlayState extends MusicBeatState
 		paused = true;
 		cancelMusicFadeTween();
 		#if desktop DiscordClient.resetClientID(); #end
-		MusicBeatState.switchState(new CharacterEditorState(SONG.player2));
+		FlxG.switchState(() -> new CharacterEditorState(SONG.player2));
 	}
 
 	public var isDead:Bool = false; //Don't mess with this on Lua!!!
@@ -2496,7 +2517,7 @@ class PlayState extends MusicBeatState
 					if(FlxTransitionableState.skipNextTransIn) {
 						CustomFadeTransition.nextCamera = null;
 					}
-					MusicBeatState.switchState(new StoryMenuState());
+					FlxG.switchState(() -> new StoryMenuState());
 
 					// if ()
 					if(!ClientPrefs.getGameplaySetting('practice') && !ClientPrefs.getGameplaySetting('botplay')) {
@@ -2523,7 +2544,7 @@ class PlayState extends MusicBeatState
 					FlxG.sound.music.stop();
 
 					cancelMusicFadeTween();
-					LoadingState.loadAndSwitchState(new PlayState());
+					LoadingState.loadAndSwitchState(() -> new PlayState());
 				}
 			}
 			else
@@ -2536,7 +2557,7 @@ class PlayState extends MusicBeatState
 				if(FlxTransitionableState.skipNextTransIn) {
 					CustomFadeTransition.nextCamera = null;
 				}
-				MusicBeatState.switchState(new FreeplayState());
+				FlxG.switchState(() -> new FreeplayState());
 				FlxG.sound.playMusic(Paths.music('freakyMenu'));
 				changedDifficulty = false;
 			}
@@ -3389,6 +3410,20 @@ class PlayState extends MusicBeatState
 			setOnScripts('altAnim', SONG.notes[curSection].altAnim);
 			setOnScripts('gfSection', SONG.notes[curSection].gfSection);
 		}
+		if (curBeat % gfSpeed == 0 && ClientPrefs.data.iconBounce == 'Golden Apple') { // To prevent icon bounce angle got reset to default angle.
+			curBeat % (gfSpeed * 2) == 0 * playbackRate ? {
+				iconP1.scale.set(1.1, 1.3);
+				iconP2.scale.set(1.1, 0.8);
+				
+				FlxTween.angle(iconP1, 15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+				FlxTween.angle(iconP2, -15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+			}
+			
+			final scaleThing:Float = type == 2 ? 0.75 : 1;
+			FlxTween.tween(iconP1, {'scale.x': 1 * scaleThing, 'scale.y': 1 * scaleThing}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+			FlxTween.tween(iconP2, {'scale.x': 1 * scaleThing, 'scale.y': 1 * scaleThing}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+		}
+		
 		super.sectionHit();
 
 		setOnScripts('curSection', curSection);

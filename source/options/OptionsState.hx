@@ -24,7 +24,7 @@ class OptionsState extends MusicBeatState
 			case 'Gameplay':
 				openSubState(new options.GameplaySettingsSubState());
 			case 'Adjust Delay and Combo':
-				MusicBeatState.switchState(new options.NoteOffsetState());
+				FlxG.switchState(() -> new options.NoteOffsetState());
 		}
 	}
 
@@ -86,10 +86,10 @@ class OptionsState extends MusicBeatState
 			if(onPlayState)
 			{
 				StageData.loadDirectory(PlayState.SONG);
-				MusicBeatState.switchState(new PlayState());
+				FlxG.switchState(() -> new PlayState()); //MusicBeatState.switchState(new PlayState());
 				FlxG.sound.music.volume = 0;
 			}
-			else MusicBeatState.switchState(new MainMenuState());
+			else FlxG.switchState(() -> new MainMenuState());
 		}
 		else if (controls.ACCEPT) openSelectedSubstate(options[curSelected]);
 	}
