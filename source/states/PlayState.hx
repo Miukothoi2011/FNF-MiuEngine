@@ -592,7 +592,7 @@ class PlayState extends MusicBeatState
 			watermarkTxt.size = 18;
 			watermarkTxt.updateHitbox();
 			watermarkTxt.alpha = 0.6;
-			watermarkTxt.visible = !ClientPrefs.data.hideHud || ClientPrefs.data.hideWatermarkTxt
+			watermarkTxt.visible = !ClientPrefs.data.hideHud || ClientPrefs.data.hideWatermarkTxt;
 			add(watermarkTxt);
 		} else {
 			watermarkTxt = new FlxText(10, FlxG.height - 28, 0, SONG.song + " - " + CoolUtil.difficultyString() + " - Strident Engine", 74);
@@ -601,7 +601,7 @@ class PlayState extends MusicBeatState
 			watermarkTxt.size = 18;
 			watermarkTxt.updateHitbox();
 			watermarkTxt.alpha = 0.6;
-			watermarkTxt.visible = !ClientPrefs.data.hideHud || ClientPrefs.data.hideWatermarkTxt
+			watermarkTxt.visible = !ClientPrefs.data.hideHud || ClientPrefs.data.hideWatermarkTxt;
 			add(watermarkTxt);
 		}
 
@@ -612,7 +612,7 @@ class PlayState extends MusicBeatState
 			screwYouTxt.size = 18;
 			screwYouTxt.updateHitbox();
 			screwYouTxt.alpha = 0.6;
-			screwYouTxt.visible = !ClientPrefs.data.hideHud || ClientPrefs.data.hideWatermarkTxt
+			screwYouTxt.visible = !ClientPrefs.data.hideHud || ClientPrefs.data.hideWatermarkTxt;
 			add(screwYouTxt);
 			watermarkTxt.y = FlxG.height - 50;
 			screwYouTxt.cameras = [camHUD];
@@ -623,7 +623,7 @@ class PlayState extends MusicBeatState
 			screwYouTxt.size = 18;
 			screwYouTxt.updateHitbox();
 			screwYouTxt.alpha = 0.6;
-			screwYouTxt.visible = !ClientPrefs.data.hideHud || ClientPrefs.data.hideWatermarkTxt
+			screwYouTxt.visible = !ClientPrefs.data.hideHud || ClientPrefs.data.hideWatermarkTxt;
 			add(screwYouTxt);
 			screwYouTxt.cameras = [camHUD];
 		}
