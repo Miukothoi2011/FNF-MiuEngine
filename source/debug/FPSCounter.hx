@@ -39,7 +39,11 @@ class FPSCounter extends TextField
 		currentFPS = 0;
 		selectable = false;
 		mouseEnabled = false;
+		#if android
 		defaultTextFormat = new TextFormat("_sans", 14, color);
+		#else
+		defaultTextFormat = new TextFormat("_sans", 12, color);
+		#end
 		autoSize = LEFT;
 		multiline = true;
 		text = "FPS: ";
@@ -67,7 +71,7 @@ class FPSCounter extends TextField
 		while (times[0] < now - 1000)
 			times.shift();
 
-		currentFPS = currentFPS < FlxG.updateFramerate ? times.length : FlxG.updateFramerate;		
+		currentFPS = currentFPS < FlxG.updateFramerate ? times.length : FlxG.updateFramerate;
 		updateText();
 		deltaTimeout += deltaTime;
 		
@@ -75,54 +79,59 @@ class FPSCounter extends TextField
 	}
 
 	public dynamic function updateText():Void { // so people can override it in hscript
-		if (memoryMegas >= memoryLeakMegas)
+		if (memoryMegas >= memoryLeakMegas) 
 			memoryLeakMegas = memoryMegas;
 		
 		if (ClientPrefs.data.showFPS) {
-		text = 'FPS: ${currentFPS}';
-		if (ClientPrefs.data.showMemory)
-			text += '\nMemory: ${flixel.util.FlxStringUtil.formatBytes(memoryMegas)}';
-		
-		if (ClientPrefs.data.showMemoryLeak)
-			text += '\nMemory Leak: ${flixel.util.FlxStringUtil.formatBytes(memoryLeakMegas)}';
-		
-		if (ClientPrefs.data.showEngineVersion)
-			text += '\nEngine version: ' + MainMenuState.miuEngineVersion + " (PE " + MainMenuState.psychEngineVersion + ")"; // Inspired from SB Engine by Stefan2008 https://github.com/Stefan2008Git
-		
-		if (ClientPrefs.data.showDebugInfo) {
-			text += "\nOS: " + '${lime.system.System.platformLabel} ${lime.system.System.platformVersion}';
-			text += '\nState: ${Type.getClassName(Type.getClass(FlxG.state))}';
-			if (FlxG.state.subState != null)
-				text += '\nSubstate: ${Type.getClassName(Type.getClass(FlxG.state.subState))}';
-			text += "\nFlixel: " + FlxG.VERSION;
-			/*text += "\nLime: ?????";
-			text += "\nOpenFL: ?????";*/
-		}
-		
-		if (ClientPrefs.data.showRainbowFPS) {
-			var colorIndex1:Int = Math.floor(colorInterp);
-			var colorIndex2:Int = (colorIndex1 + 1) % rainbowColors.length;
+			text = 'FPS: ${currentFPS}';
 
-			var startColor:Int = rainbowColors[colorIndex1];
-			var endColor:Int = rainbowColors[colorIndex2];
+			if (ClientPrefs.data.FPSTxtSize != ClientPrefs.defaultData.FPSTxtSize) // trace('if FPSTxtSize not equal to default FPSTxtSize, then change code from VisualsUISubState')
+				defaultTextFormat = new TextFormat(ClientPrefs.data.FPSTxtFont, ClientPrefs.data.FPSTxtSize, textColor);
 
-			var segmentInterp:Float = colorInterp - colorIndex1;
+			if (ClientPrefs.data.FPSTxtFont != '_sans')
+				defaultTextFormat = new TextFormat(ClientPrefs.data.FPSTxtFont, ClientPrefs.data.FPSTxtSize, textColor);
 
-			var interpolatedColor:Int = interpolateColor(startColor, endColor, segmentInterp);
-
-			textColor = interpolatedColor;
-
-			// Check if the current color segment interpolation is complete
-			if (colorInterp >= rainbowColors.length) {
-				// Reset colorInterp to start the interpolation cycle again
-				textColor = rainbowColors[0];
-				colorInterp = 0;
+			if (ClientPrefs.data.showMemory) {
+				text += '\nMemory: ${flixel.util.FlxStringUtil.formatBytes(memoryMegas)}';
+				if (ClientPrefs.data.showMemoryLeak)
+					text += '\nMemory Leak: ${flixel.util.FlxStringUtil.formatBytes(memoryLeakMegas)}';
 			}
-		} else {
-		textColor = 0xFFFFFFFF;
-		if (currentFPS < FlxG.drawFramerate * 0.5)
-			textColor = 0xFFFF0000;
-		}
+
+			if (ClientPrefs.data.showEngineVersion)
+				text += '\nMiu Engine ' + MainMenuState.miuEngineVersion + " (PE " + MainMenuState.psychEngineVersion + ")"; // Inspired from SB Engine by Stefan2008 https://github.com/Stefan2008Git
+			
+			if (ClientPrefs.data.showDebugInfo) {
+				text += "\nOS: " + '${lime.system.System.platformLabel} ${lime.system.System.platformVersion}';
+				text += '\nState: ${Type.getClassName(Type.getClass(FlxG.state))}';
+				if (FlxG.state.subState != null)
+					text += '\nSubstate: ${Type.getClassName(Type.getClass(FlxG.state.subState))}';
+				text += "\nFlixel: " + FlxG.VERSION;
+			}
+			
+			if (ClientPrefs.data.showRainbowFPS) {
+				var colorIndex1:Int = Math.floor(colorInterp);
+				var colorIndex2:Int = (colorIndex1 + 1) % rainbowColors.length;
+
+				var startColor:Int = rainbowColors[colorIndex1];
+				var endColor:Int = rainbowColors[colorIndex2];
+
+				var segmentInterp:Float = colorInterp - colorIndex1;
+
+				var interpolatedColor:Int = interpolateColor(startColor, endColor, segmentInterp);
+
+				textColor = interpolatedColor;
+
+				// Check if the current color segment interpolation is complete
+				if (colorInterp >= rainbowColors.length) {
+					// Reset colorInterp to start the interpolation cycle again
+					textColor = rainbowColors[0];
+					colorInterp = 0;
+				}
+			} else {
+				textColor = 0xFFFFFFFF;
+				if (currentFPS < FlxG.drawFramerate * 0.5)
+					textColor = 0xFFFF0000;
+			}
 		}
 	}
 	

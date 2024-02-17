@@ -7,6 +7,8 @@ import backend.Song;
 import backend.Section;
 import backend.Rating;
 
+import backend.CoolUtil;
+
 import flixel.FlxBasic;
 import flixel.FlxObject;
 import flixel.FlxSubState;
@@ -223,6 +225,9 @@ class PlayState extends MusicBeatState
 	public var botplaySine:Float = 0;
 	public var botplayTxt:FlxText;
 
+	var screwYouTxt:FlxText; //The screw you text and watermark text from Strident Engine (https://github.com/Joalor64GH/Strident-Engine) by DeltaPNG
+	var watermarkTxt:FlxText;
+
 	public var iconP1:HealthIcon;
 	public var iconP2:HealthIcon;
 	public var camHUD:FlxCamera;
@@ -285,6 +290,10 @@ class PlayState extends MusicBeatState
 	// Callbacks for stages
 	public var startCallback:Void->Void = null;
 	public var endCallback:Void->Void = null;
+
+	// Ratings Counter (UNFINISHED)
+	var disableTheTextAt:Int;
+	var textIsGoing:Bool = false;
 
 	override public function create()
 	{
@@ -572,9 +581,52 @@ class PlayState extends MusicBeatState
 		scoreTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		scoreTxt.scrollFactor.set();
 		scoreTxt.borderSize = 1.25;
-		scoreTxt.visible = !ClientPrefs.data.hideHud && !ClientPrefs.data.hideScoreTxt;
+		scoreTxt.visible = !ClientPrefs.data.hideHud || !ClientPrefs.data.hideScoreTxt;
 		updateScore(false);
 		uiGroup.add(scoreTxt);
+
+		if(SONG.credit != null) {
+			watermarkTxt = new FlxText(10, FlxG.height - 28, 0, 'By ' + SONG.credit + ' - ' + SONG.song + " - " + CoolUtil.difficultyString() + " - Strident Engine", 74);
+			watermarkTxt.scrollFactor.set();
+			watermarkTxt.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+			watermarkTxt.size = 18;
+			watermarkTxt.updateHitbox();
+			watermarkTxt.alpha = 0.6;
+			watermarkTxt.visible = !ClientPrefs.data.hideHud || ClientPrefs.data.hideWatermarkTxt
+			add(watermarkTxt);
+		} else {
+			watermarkTxt = new FlxText(10, FlxG.height - 28, 0, SONG.song + " - " + CoolUtil.difficultyString() + " - Strident Engine", 74);
+			watermarkTxt.scrollFactor.set();
+			watermarkTxt.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+			watermarkTxt.size = 18;
+			watermarkTxt.updateHitbox();
+			watermarkTxt.alpha = 0.6;
+			watermarkTxt.visible = !ClientPrefs.data.hideHud || ClientPrefs.data.hideWatermarkTxt
+			add(watermarkTxt);
+		}
+
+		if(SONG.screwYou != null) {
+			screwYouTxt = new FlxText(10, FlxG.height - 28, 0, SONG.screwYou, 74);
+			screwYouTxt.scrollFactor.set();
+			screwYouTxt.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+			screwYouTxt.size = 18;
+			screwYouTxt.updateHitbox();
+			screwYouTxt.alpha = 0.6;
+			screwYouTxt.visible = !ClientPrefs.data.hideHud || ClientPrefs.data.hideWatermarkTxt
+			add(screwYouTxt);
+			watermarkTxt.y = FlxG.height - 50;
+			screwYouTxt.cameras = [camHUD];
+		} else {
+			screwYouTxt = new FlxText(10, FlxG.height - 28, 0, null, 74);
+			screwYouTxt.scrollFactor.set();
+			screwYouTxt.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+			screwYouTxt.size = 18;
+			screwYouTxt.updateHitbox();
+			screwYouTxt.alpha = 0.6;
+			screwYouTxt.visible = !ClientPrefs.data.hideHud || ClientPrefs.data.hideWatermarkTxt
+			add(screwYouTxt);
+			screwYouTxt.cameras = [camHUD];
+		}
 
 		botplayTxt = new FlxText(400, timeBar.y + 55, FlxG.width - 800, "BOTPLAY", 32);
 		botplayTxt.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -1027,7 +1079,7 @@ class PlayState extends MusicBeatState
 		practiceMode = ClientPrefs.getGameplaySetting('practice', false);
 		cpuControlled = ClientPrefs.getGameplaySetting('botplay', false);
 		playbackRate = ClientPrefs.getGameplaySetting('songspeed', 1);
-		songSpeedType = ClientPrefs.getGameplaySetting('scrolltype','multiplicative');
+		songSpeedType = ClientPrefs.getGameplaySetting('scrolltype', 'multiplicative');
 
 		switch(songSpeedType)
 		{
@@ -2368,6 +2420,42 @@ class PlayState extends MusicBeatState
 			case 'Play Sound':
 				if(flValue2 == null) flValue2 = 1;
 				FlxG.sound.play(Paths.sound(value1), flValue2);
+
+			case 'Popup':
+				var title:String = (value1);
+				var message:String = (value2);
+				FlxG.sound.music.pause();
+				vocals.pause();
+
+				CoolUtil.coolError(message, title);
+				FlxG.sound.music.resume();
+				vocals.resume();
+			case 'Popup (No Pause)':
+				var title:String = (value1);
+				var message:String = (value2);
+
+				CoolUtil.coolError(message, title);
+			case '\"Screw you!\" Text Change':
+				var text:String = (value1);
+
+				screwYouTxt.text = text;
+				if(screwYouTxt.text == null || screwYouTxt.text == "")
+				{
+					watermarkTxt.y = FlxG.height - 28;
+				}
+				else
+				{
+					watermarkTxt.y = FlxG.height - 50;
+				}
+			case 'Random Text Change':
+				disableTheTextAt = Std.parseInt(value1);
+				if(value2 != null)
+				{
+					textStuffLol = value2.trim().split('^');
+				}
+				textIsGoing = true;
+				watermarkTxt.y = FlxG.height - 50;
+				
 		}
 
 		stagesFunc(function(stage:BaseStage) stage.eventCalled(eventName, value1, value2, flValue1, flValue2, strumTime));
@@ -2635,7 +2723,7 @@ class PlayState extends MusicBeatState
 		score = daRating.score;
 
 		if(daRating.noteSplash && !note.noteSplashData.disabled)
-			spawnNoteSplashOnNote(note);
+			spawnNoteSplashOnNote(false, note, false);
 
 		if(!practiceMode && !cpuControlled) {
 			songScore += score;
@@ -3126,11 +3214,7 @@ class PlayState extends MusicBeatState
 		var result:Dynamic = callOnLuas('opponentNoteHitPost', [notes.members.indexOf(note), Math.abs(note.noteData), note.noteType, note.isSustainNote]);
 		if(result != FunkinLua.Function_Stop && result != FunkinLua.Function_StopHScript && result != FunkinLua.Function_StopAll) callOnHScript('opponentNoteHitPost', [note]);
 
-		if (ClientPrefs.data.opponentNoteSplashes) {
-			if(!note.noteSplashData.disabled && !note.isSustainNote) spawnNoteSplashOnNote(note);
-		} else {
-			if(note.noteSplashData.disabled && !note.isSustainNote) spawnNoteSplashOnNote(note);
-		}
+		if(ClientPrefs.data.opponentNoteSplashes && !note.isSustainNote) spawnNoteSplashOnNote(true, note, note.gfNote);
 		if(!note.isSustainNote) invalidateNote(note);
 	}
 
@@ -3163,7 +3247,9 @@ class PlayState extends MusicBeatState
 			}
 
 			noteMiss(note);
-			if(!note.noteSplashData.disabled && !note.isSustainNote) spawnNoteSplashOnNote(note);
+			if (ClientPrefs.data.playerNoteSplashes)
+				if(!note.noteSplashData.disabled && !note.isSustainNote) spawnNoteSplashOnNote(false, note, false);
+
 			if(!note.isSustainNote) invalidateNote(note);
 			return;
 		}
@@ -3235,15 +3321,15 @@ class PlayState extends MusicBeatState
 		note.destroy();
 	}
 
-	public function spawnNoteSplashOnNote(note:Note) {
+	public function spawnNoteSplashOnNote(isDad:Bool, note:Note, ?isGf:Bool = false) {
 		if(ClientPrefs.data.noteSplashes && note != null) {
-			var strum:StrumNote = playerStrums.members[note.noteData];
+			var strum:StrumNote = !isDad ? playerStrums.members[note.noteData] : opponentStrums.members[note.noteData];
 			if(strum != null)
-				spawnNoteSplash(strum.x, strum.y, note.noteData, note);
+				spawnNoteSplash(strum.x, strum.y, note.noteData, note, isGf, isDad);
 		}
 	}
 
-	public function spawnNoteSplash(x:Float, y:Float, data:Int, ?note:Note = null) {
+	public function spawnNoteSplash(x:Float, y:Float, data:Int, ?note:Note = null, ?isGfNote:Bool = false, ?isDadNote:Bool = true) {
 		var splash:NoteSplash = grpNoteSplashes.recycle(NoteSplash);
 		splash.setupNoteSplash(x, y, data, note);
 		grpNoteSplashes.add(splash);
@@ -3309,6 +3395,20 @@ class PlayState extends MusicBeatState
 		lastStepHit = curStep;
 		setOnScripts('curStep', curStep);
 		callOnScripts('onStepHit');
+
+		if(disableTheTextAt == curStep)
+		{
+			textIsGoing = false;
+			if(SONG.screwYou != null || SONG.screwYou != "") 
+			{
+				screwYouTxt.text = SONG.screwYou;
+			}
+			else 
+			{
+				screwYouTxt.text = "";
+				watermarkTxt.y = FlxG.height - 28;
+			}
+		}
 	}
 
 	var lastBeatHit:Int = -1;
@@ -3828,4 +3928,5 @@ class PlayState extends MusicBeatState
 		return false;
 	}
 	#end
+}
 }

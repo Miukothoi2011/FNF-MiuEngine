@@ -71,9 +71,18 @@ class VisualsUISubState extends BaseOptionsMenu
 		option.decimals = 1;
 		addOption(option);
 		
+		if (!ClientPrefs.data.playerNoteSplashes && !ClientPrefs.data.opponentNoteSplashes) {
 		var option:Option = new Option('Note Splashes',
 			"If unchecked, hitting \"Sick!\" notes won't show particles.",
 			'noteSplashes',
+			'bool');
+		addOption(option);
+		}
+
+		if (ClientPrefs.data.noteSplashes) {
+		var option:Option = new Option('Player Note Splashes',
+			"If checked, player note hits will show particles.",
+			'playerNoteSplashes',
 			'bool');
 		addOption(option);
 
@@ -82,7 +91,7 @@ class VisualsUISubState extends BaseOptionsMenu
 			'opponentNoteSplashes',
 			'bool');
 		addOption(option);
-
+		}
 
 		var option:Option = new Option('Hide HUD',
 			'If checked, hides most HUD elements.',
@@ -126,7 +135,82 @@ class VisualsUISubState extends BaseOptionsMenu
 		option.decimals = 1;
 		addOption(option);
 		
-		#if !mobile
+		/*var option:Option = new Option('BF Icon Style:',
+			"You want choose BF icon style?",
+			'bfIconStyle',
+			'string',
+			['Default', 'VS Nonsense V2', 'Doki Doki+', 'Leather Engine', "Mic'd Up", 'FPS Plus', 'SB Engine', "OS 'Engine'"]);
+		addOption(option);
+		
+		var option:Option = new Option('Smooth Health',
+			"?",
+			'smoothHealth',
+			'bool');
+		addOption(option);
+		
+		var option:Option = new Option('Smooth Health Type:',
+			"?",
+			'smoothHealthType',
+			'string',
+			['Golden Apple 1.5', '?']);
+		addOption(option);*/
+		
+		var option:Option = new Option('Icon Bounce:',
+			"?",
+			'iconBounce',
+			'string',
+			['None', 'New Psych', 'Old Psych', 'Golden Apple', 'Dave And Bambi', 'VS Steve']);
+		addOption(option);
+
+		var option:Option = new Option('Chars & BG',
+			'If unchecked, gameplay will only show the HUD.',
+			'charsAndBG',
+			'bool');
+		addOption(option);
+
+		var option:Option = new Option('Light Opponent Strums',
+			"If this is unchecked, the Opponent strums won't light up when the Opponent hits a note.",
+			'opponentLightStrum',
+			'bool');
+		addOption(option);
+
+		var option:Option = new Option('Light Botplay Strums',
+			"If this is unchecked, the Player strums won't light when Botplay is active.",
+			'botLightStrum',
+			'bool');
+		addOption(option);
+
+		var option:Option = new Option('Light Player Strums',
+			"If this is unchecked, then uh.. the player strums won't light up.\nit's as simple as that.",
+			'playerLightStrum',
+			'bool');
+		addOption(option);
+		
+		var option:Option = new Option('Hide Score Text',
+			"?",
+			'hideScoreTxt',
+			'bool');
+		addOption(option);
+
+		var option:Option = new Option('Hide Watermark Text',
+			"?",
+			'hideWatermarkTxt',
+			'bool');
+		addOption(option);
+		
+		var option:Option = new Option('Show Unused Combo Popup',
+			"?",
+			'showUnusedCombo',
+			'bool');
+		addOption(option);
+		
+		var option:Option = new Option('Time Bounce',
+			"?",
+			'timeBounce',
+			'bool');
+		addOption(option);
+		
+		#if !mobile //mobile user can't using this (it's enable default).
 		var option:Option = new Option('FPS Counter',
 			'If unchecked, hides FPS Counter.',
 			'showFPS',
@@ -134,6 +218,35 @@ class VisualsUISubState extends BaseOptionsMenu
 		addOption(option);
 		option.onChange = onChangeFPSCounter;
 		#end
+
+		if (ClientPrefs.data.showFPS) {
+		var option:Option = new Option('FPS Text Size: ',
+			'?',
+			'FPSTxtSize',
+			'int');
+		addOption(option);
+		#if !mobile
+		option.minValue = 8;
+		#else
+		option.minValue = 12;
+		#end
+		option.maxValue = 50; //i not want max value is 100 or otherwise, FPS text is big and can't show gameplay. -Miukothoi2011
+		option.defaultValue = 12;
+
+		var FPSFont:Array<String> = Mods.mergeAllTextsNamed('mods/fonts/FPSFontList.txt'); //It stil work for assets/ or mods/ folder :-) (in fonts/ folder).
+		if(FPSFont.length > 0)
+		{
+			if(!FPSFont.contains(ClientPrefs.data.FPSTxtFont))
+				ClientPrefs.data.FPSTxtFont = ClientPrefs.defaultData.FPSTxtFont;
+
+			FPSFont.insert(0, ClientPrefs.defaultData.FPSTxtFont);
+			var option:Option = new Option('FPS Text Font: ',
+				'?',
+				'FPSTxtFont',
+				'string',
+				FPSFont);
+			addOption(option);
+		}
 		
 		var option:Option = new Option('Show Memory',
 			'If checked, the game will show your Memory (a.k.a RAM) usage.',
@@ -142,7 +255,7 @@ class VisualsUISubState extends BaseOptionsMenu
 		addOption(option);
 		
 		var option:Option = new Option('Show Memory Leak',
-			'If checked, the game will show your maximum Memory (a.k.a RAM) usage.',
+			'If checked, the game will show your maximum Memory \n(a.k.a RAM) usage (Require enable \"Show Memory\").',
 			'showMemoryLeak',
 			'bool');
 		addOption(option);
@@ -164,6 +277,7 @@ class VisualsUISubState extends BaseOptionsMenu
 			'showRainbowFPS',
 			'bool');
 		addOption(option);
+		}
 		
 		var option:Option = new Option('Pause Screen Song:',
 			"What song do you prefer for the Pause Screen?",
@@ -192,75 +306,6 @@ class VisualsUISubState extends BaseOptionsMenu
 		var option:Option = new Option('Combo Stacking',
 			"If unchecked, Ratings and Combo won't stack, saving on System Memory and making them easier to read",
 			'comboStacking',
-			'bool');
-		addOption(option);
-		
-		//var option:Option = new Option('BF Icon Style:',
-			//"You want choose BF icon style?",
-			//'bfIconStyle',
-			//'string',
-			//['Default', 'VS Nonsense V2', 'Doki Doki+', 'Leather Engine', "Mic'd Up", 'FPS Plus', 'SB Engine', "OS 'Engine'"]);
-		//addOption(option);
-		
-		//var option:Option = new Option('Smooth Health',
-			//"?",
-			//'smoothHealth',
-			//'bool');
-		//addOption(option);
-		
-		//var option:Option = new Option('Smooth Health Type:',
-			//"?",
-			//'smoothHealthType',
-			//'string',
-			//['Golden Apple 1.5', '?']);
-		//addOption(option);
-		
-		var option:Option = new Option('Icon Bounce:',
-			"?",
-			'iconBounce',
-			'string',
-			['None', 'New Psych', 'Old Psych', 'Golden Apple', 'Dave And Bambi', 'Leather Engine', 'VS Steve']);
-		addOption(option);
-
-		var option:Option = new Option('Chars & BG', //Name
-			'If unchecked, gameplay will only show the HUD.', //Description
-			'charsAndBG', //Save data variable name
-			'bool'); //Variable type
-		addOption(option);
-
-		var option:Option = new Option('Light Opponent Strums',
-			"If this is unchecked, the Opponent strums won't light up when the Opponent hits a note.",
-			'opponentLightStrum',
-			'bool');
-		addOption(option);
-
-		var option:Option = new Option('Light Botplay Strums',
-			"If this is unchecked, the Player strums won't light when Botplay is active.",
-			'botLightStrum',
-			'bool');
-		addOption(option);
-
-		var option:Option = new Option('Light Player Strums',
-			"If this is unchecked, then uh.. the player strums won't light up.\nit's as simple as that.",
-			'playerLightStrum',
-			'bool');
-		addOption(option);
-		
-		var option:Option = new Option('Hide ScoreTxt',
-			"?",
-			'hideScoreTxt',
-			'bool');
-		addOption(option);
-		
-		var option:Option = new Option('Show Unused Combo Popup',
-			"?",
-			'showUnusedCombo',
-			'bool');
-		addOption(option);
-		
-		var option:Option = new Option('Time Bounce',
-			"?",
-			'timeBounce',
 			'bool');
 		addOption(option);
 		

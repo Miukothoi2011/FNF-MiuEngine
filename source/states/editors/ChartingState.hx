@@ -80,6 +80,10 @@ class ChartingState extends MusicBeatState
 		['Change Scroll Speed', "Value 1: Scroll Speed Multiplier (1 is default)\nValue 2: Time it takes to change fully in seconds."],
 		['Set Property', "Value 1: Variable name\nValue 2: New value"],
 		['Play Sound', "Value 1: Sound file name\nValue 2: Volume (Default: 1), ranges from 0 to 1"]
+		['Popup', "Value 1: Title\nValue 2: Message\nMakes a window popup with a message in it."],
+		['Popup (No Pause)', "Value 1: Title\nValue 2: Message\nSame as popup but without a pause."],
+		['\"Screw you!\" Text Change', "Value 1: Text\n\nChanges the \"Screw you!\" text."],
+		['Random Text Change', "\n\n\nValue 1: Step to end at\nValue 2: List of words seperated with ^\nChanges the \"Screw you!\" text through\na list of words you put.\nChanges on a step hit."]
 	];
 
 	var _file:FileReference;
@@ -223,6 +227,8 @@ class ChartingState extends MusicBeatState
 				gfVersion: 'gf',
 				speed: 1,
 				stage: 'stage'
+				credit: null,
+				screwYou: null,
 			};
 			addSection();
 			PlayState.SONG = _song;
@@ -412,6 +418,8 @@ class ChartingState extends MusicBeatState
 	var playSoundBf:FlxUICheckBox = null;
 	var playSoundDad:FlxUICheckBox = null;
 	var UI_songTitle:FlxUIInputText;
+	var creditInputText:FlxUIInputText;
+	var screwYouInputText:FlxUIInputText;
 	var stageDropDown:FlxUIDropDownMenu;
 	#if FLX_PITCH
 	var sliderRate:FlxUISlider;
@@ -609,6 +617,12 @@ class ChartingState extends MusicBeatState
 		stageDropDown.selectedLabel = _song.stage;
 		blockPressWhileScrolling.push(stageDropDown);
 
+		creditInputText = new FlxUIInputText(10, 200 + 90, 125, _song.credit, 8);
+		blockPressWhileTypingOn.push(creditInputText);
+
+		screwYouInputText = new FlxUIInputText(creditInputText.x + 140, creditInputText.y, 125, _song.screwYou, 8);
+		blockPressWhileTypingOn.push(screwYouInputText);
+
 		var tab_group_song = new FlxUI(null, UI_box);
 		tab_group_song.name = "Song";
 		tab_group_song.add(UI_songTitle);
@@ -624,6 +638,8 @@ class ChartingState extends MusicBeatState
 		tab_group_song.add(loadEventJson);
 		tab_group_song.add(stepperBPM);
 		tab_group_song.add(stepperSpeed);
+		tab_group_song.add(creditInputText);
+		tab_group_song.add(screwYouInputText);
 		tab_group_song.add(new FlxText(stepperBPM.x, stepperBPM.y - 15, 0, 'Song BPM:'));
 		tab_group_song.add(new FlxText(stepperBPM.x + 100, stepperBPM.y - 15, 0, 'Song Offset:'));
 		tab_group_song.add(new FlxText(stepperSpeed.x, stepperSpeed.y - 15, 0, 'Song Speed:'));
@@ -631,6 +647,8 @@ class ChartingState extends MusicBeatState
 		tab_group_song.add(new FlxText(gfVersionDropDown.x, gfVersionDropDown.y - 15, 0, 'Girlfriend:'));
 		tab_group_song.add(new FlxText(player1DropDown.x, player1DropDown.y - 15, 0, 'Boyfriend:'));
 		tab_group_song.add(new FlxText(stageDropDown.x, stageDropDown.y - 15, 0, 'Stage:'));
+		tab_group_song.add(new FlxText(creditInputText.x, creditInputText.y - 15, 0, 'Song Credit:'));
+		tab_group_song.add(new FlxText(screwYouInputText.x, screwYouInputText.y - 15, 0, 'Screw You Text:'));
 		tab_group_song.add(player2DropDown);
 		tab_group_song.add(gfVersionDropDown);
 		tab_group_song.add(player1DropDown);
@@ -1726,6 +1744,26 @@ class ChartingState extends MusicBeatState
 	var colorSine:Float = 0;
 	override function update(elapsed:Float)
 	{
+		if (creditInputText.text == null || creditInputText.text ==  '') {
+			_song.credit = null;
+		}
+		else {
+			_song.credit = creditInputText.text;
+		}
+		/*if (event7InputText.text == null || event7InputText.text ==  '') { //Stil can't add this :(((
+			_song.event7Value = null;
+		}
+		else
+		{
+			_song.event7Value = event7InputText.text;
+		}*/
+		if (screwYouInputText.text == null || screwYouInputText.text ==  '') {
+			_song.screwYou = null;
+		}
+		else {
+			_song.screwYou = screwYouInputText.text;
+		}
+		
 		curStep = recalculateSteps();
 
 		if(FlxG.sound.music.time < 0) {

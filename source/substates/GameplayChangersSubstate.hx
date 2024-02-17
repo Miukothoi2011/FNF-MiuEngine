@@ -24,13 +24,13 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 
 		var option:GameplayOption = new GameplayOption('Scroll Speed', 'scrollspeed', 'float', 1);
 		option.scrollSpeed = 2.0;
-		option.minValue = 0.1;
-		option.changeValue = 0.05;
+		option.minValue = 0.01;
+		option.changeValue = 0.01;
 		option.decimals = 2;
 		if (goption.getValue() != "constant")
 		{
 			option.displayFormat = '%vX';
-			option.maxValue = 100;
+			option.maxValue = 1000;
 		}
 		else
 		{
