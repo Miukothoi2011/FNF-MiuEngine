@@ -71,13 +71,11 @@ class VisualsUISubState extends BaseOptionsMenu
 		option.decimals = 1;
 		addOption(option);
 		
-		if (!ClientPrefs.data.playerNoteSplashes && !ClientPrefs.data.opponentNoteSplashes) {
 		var option:Option = new Option('Note Splashes',
 			"If unchecked, hitting \"Sick!\" notes won't show particles.",
 			'noteSplashes',
 			'bool');
 		addOption(option);
-		}
 
 		if (ClientPrefs.data.noteSplashes) {
 		var option:Option = new Option('Player Note Splashes',

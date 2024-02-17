@@ -86,9 +86,9 @@ class FPSCounter extends TextField
 			text = 'FPS: ${currentFPS}';
 
 			if (ClientPrefs.data.FPSTxtSize != ClientPrefs.defaultData.FPSTxtSize) // trace('if FPSTxtSize not equal to default FPSTxtSize, then change code from VisualsUISubState')
-				defaultTextFormat = new TextFormat(ClientPrefs.data.FPSTxtFont, ClientPrefs.data.FPSTxtSize, textColor);
+				defaultTextFormat = new TextFormat("_sans", ClientPrefs.data.FPSTxtSize, textColor);
 
-			if (ClientPrefs.data.FPSTxtFont != '_sans')
+			if (ClientPrefs.data.FPSTxtFont != "_sans")
 				defaultTextFormat = new TextFormat(ClientPrefs.data.FPSTxtFont, ClientPrefs.data.FPSTxtSize, textColor);
 
 			if (ClientPrefs.data.showMemory) {
