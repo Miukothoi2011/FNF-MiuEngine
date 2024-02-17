@@ -19,6 +19,9 @@ typedef SwagSong =
 	var gfVersion:String;
 	var stage:String;
 
+	var credit:String;
+	var screwYou:String;
+
 	@:optional var gameOverChar:String;
 	@:optional var gameOverSound:String;
 	@:optional var gameOverLoop:String;
@@ -46,6 +49,10 @@ class Song
 	public var disableNoteRGB:Bool = false;
 	public var speed:Float = 1;
 	public var stage:String;
+	public var credit:String;
+	public var screwYou:String;
+	/*public var event7:String;
+	public var event7Value:String;*/
 	public var player1:String = 'bf';
 	public var player2:String = 'dad';
 	public var gfVersion:String = 'gf';

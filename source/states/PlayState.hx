@@ -295,6 +295,8 @@ class PlayState extends MusicBeatState
 	var disableTheTextAt:Int;
 	var textIsGoing:Bool = false;
 
+	var textStuffLol:Array<String> = ['F(* $#*$#(*))', 'FUCK YOU#)(@)$@#', '*(IF@*(F*(H%G)))', 'null reference found.'];
+
 	override public function create()
 	{
 		//trace('Playback Rate: ' + playbackRate);
