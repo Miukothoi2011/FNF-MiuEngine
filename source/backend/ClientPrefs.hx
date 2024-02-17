@@ -15,7 +15,7 @@ import shaders.Shaders;
 	public var opponentStrums:Bool = true;
 	public var showFPS:Bool = true;
 	public var FPSTxtSize:Int = 12;
-	public var FPSTxtFont:String = '_sans';
+	public var FPSTxtFont:String = 'Default';
 	public var showMemory:Bool = true;
 	public var showMemoryLeak:Bool = false;
 	public var showEngineVersion:Bool = false;

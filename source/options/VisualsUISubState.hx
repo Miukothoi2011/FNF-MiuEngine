@@ -230,21 +230,13 @@ class VisualsUISubState extends BaseOptionsMenu
 		#end
 		option.maxValue = 50; //i not want max value is 100 or otherwise, FPS text is big and can't show gameplay. -Miukothoi2011
 		option.defaultValue = 12;
-
-		var FPSFont:Array<String> = Mods.mergeAllTextsNamed('mods/fonts/FPSFontList.txt'); //It stil work for assets/ or mods/ folder :-) (in fonts/ folder).
-		if(FPSFont.length > 0)
-		{
-			if(!FPSFont.contains(ClientPrefs.data.FPSTxtFont))
-				ClientPrefs.data.FPSTxtFont = ClientPrefs.defaultData.FPSTxtFont;
-
-			FPSFont.insert(0, ClientPrefs.defaultData.FPSTxtFont);
-			var option:Option = new Option('FPS Text Font: ',
-				'?',
-				'FPSTxtFont',
-				'string',
-				FPSFont);
-			addOption(option);
-		}
+		
+		var option:Option = new Option('FPS Text Font: ',
+			'?',
+			'FPSTxtFont',
+			'string',
+			['Default', 'VCR', 'MS Sans Comic']);
+		addOption(option);
 		
 		var option:Option = new Option('Show Memory',
 			'If checked, the game will show your Memory (a.k.a RAM) usage.',
