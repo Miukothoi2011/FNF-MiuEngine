@@ -3929,4 +3929,3 @@ class PlayState extends MusicBeatState
 	}
 	#end
 }
-}
