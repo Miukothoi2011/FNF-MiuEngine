@@ -88,8 +88,11 @@ class FPSCounter extends TextField
 			if (ClientPrefs.data.FPSTxtSize != ClientPrefs.defaultData.FPSTxtSize) // trace('if FPSTxtSize not equal to default FPSTxtSize, then change code from VisualsUISubState')
 				defaultTextFormat = new TextFormat("_sans", ClientPrefs.data.FPSTxtSize, textColor);
 
-			if (ClientPrefs.data.FPSTxtFont != "_sans")
-				defaultTextFormat = new TextFormat(ClientPrefs.data.FPSTxtFont, ClientPrefs.data.FPSTxtSize, textColor);
+			switch(ClientPrefs.data.FPSTxtFont) {
+				case 'Default': defaultTextFormat = new TextFormat("_sans", ClientPrefs.data.FPSTxtSize, textColor);
+				case 'VCR': defaultTextFormat = new TextFormat("vcr.ttf", ClientPrefs.data.FPSTxtSize, textColor);
+				case 'MS Sans Comic': defaultTextFormat = new TextFormat("comic.ttf", ClientPrefs.data.FPSTxtSize, textColor);
+			}
 
 			if (ClientPrefs.data.showMemory) {
 				text += '\nMemory: ${flixel.util.FlxStringUtil.formatBytes(memoryMegas)}';
@@ -98,7 +101,7 @@ class FPSCounter extends TextField
 			}
 
 			if (ClientPrefs.data.showEngineVersion)
-				text += '\nMiu Engine ' + MainMenuState.miuEngineVersion + " (PE " + MainMenuState.psychEngineVersion + ")"; // Inspired from SB Engine by Stefan2008 https://github.com/Stefan2008Git
+				text += '\nMiu Engine ' + MainMenuState.miuEngineVersion + " (PE " + MainMenuState.psychEngineVersion + ")"; // Inspired by SB Engine by Stefan2008 https://github.com/Stefan2008Git
 			
 			if (ClientPrefs.data.showDebugInfo) {
 				text += "\nOS: " + '${lime.system.System.platformLabel} ${lime.system.System.platformVersion}';
