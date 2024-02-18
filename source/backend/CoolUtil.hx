@@ -13,18 +13,6 @@ class CoolUtil
 		return (m / snap);
 	}
 
-	// [Difficulty name, Chart file suffix] (https://github.com/Joalor64GH/Strident-Engine)
-	public static var difficultyStuff:Array<Dynamic> = [
-		['Easy', '-easy'],
-		['Normal', ''],
-		['Hard', '-hard']
-	];
-
-	public static function difficultyString():String //is using for watermarkTxt
-	{
-		return difficultyStuff[PlayState.storyDifficulty][0].toUpperCase();
-	}
-
 	#if desktop
 	public static var resW:Float = 1;
 	public static var resH:Float = 1;

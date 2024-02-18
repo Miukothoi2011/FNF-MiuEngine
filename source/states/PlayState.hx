@@ -577,34 +577,36 @@ class PlayState extends MusicBeatState
 		iconP2.y = healthBar.y - 75;
 		iconP2.visible = !ClientPrefs.data.hideHud;
 		iconP2.alpha = ClientPrefs.data.healthBarAlpha;
-		uiGroup.add(iconP2);
+		uiGroup.add(iconP2);0
 
 		scoreTxt = new FlxText(0, healthBar.y + 40, FlxG.width, "", 20);
 		scoreTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		scoreTxt.scrollFactor.set();
 		scoreTxt.borderSize = 1.25;
-		scoreTxt.visible = !ClientPrefs.data.hideHud || !ClientPrefs.data.hideScoreTxt;
+		scoreTxt.visible = !ClientPrefs.data.hideHud && !ClientPrefs.data.hideScoreTxt;
 		updateScore(false);
 		uiGroup.add(scoreTxt);
 
 		if(SONG.credit != null) {
-			watermarkTxt = new FlxText(10, FlxG.height - 28, 0, 'By ' + SONG.credit + ' - ' + SONG.song + " - " + CoolUtil.difficultyString() + " - Strident Engine", 74);
+			watermarkTxt = new FlxText(10, FlxG.height - 28, 0, 'By ' + SONG.credit + ' - ' + SONG.song + " - " + Difficulty.getString() + " - Miu Engine", 74);
 			watermarkTxt.scrollFactor.set();
 			watermarkTxt.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 			watermarkTxt.size = 18;
 			watermarkTxt.updateHitbox();
-			watermarkTxt.alpha = 0.6;
-			watermarkTxt.visible = !ClientPrefs.data.hideHud || ClientPrefs.data.hideWatermarkTxt;
+			watermarkTxt.alpha = 1;
+			watermarkTxt.visible = !ClientPrefs.data.hideHud && !ClientPrefs.data.hideWatermarkTxt;
 			add(watermarkTxt);
+			watermarkTxt.cameras = [camHUD];
 		} else {
-			watermarkTxt = new FlxText(10, FlxG.height - 28, 0, SONG.song + " - " + CoolUtil.difficultyString() + " - Strident Engine", 74);
+			watermarkTxt = new FlxText(10, FlxG.height - 28, 0, SONG.song + " - " + Difficulty.getString() + " - Miu Engine", 74);
 			watermarkTxt.scrollFactor.set();
 			watermarkTxt.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 			watermarkTxt.size = 18;
 			watermarkTxt.updateHitbox();
-			watermarkTxt.alpha = 0.6;
-			watermarkTxt.visible = !ClientPrefs.data.hideHud || ClientPrefs.data.hideWatermarkTxt;
+			watermarkTxt.alpha = 1;
+			watermarkTxt.visible = !ClientPrefs.data.hideHud && !ClientPrefs.data.hideWatermarkTxt;
 			add(watermarkTxt);
+			watermarkTxt.cameras = [camHUD];
 		}
 
 		if(SONG.screwYou != null) {
@@ -613,8 +615,8 @@ class PlayState extends MusicBeatState
 			screwYouTxt.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 			screwYouTxt.size = 18;
 			screwYouTxt.updateHitbox();
-			screwYouTxt.alpha = 0.6;
-			screwYouTxt.visible = !ClientPrefs.data.hideHud || ClientPrefs.data.hideWatermarkTxt;
+			screwYouTxt.alpha = 1;
+			screwYouTxt.visible = !ClientPrefs.data.hideHud && !ClientPrefs.data.hideWatermarkTxt;
 			add(screwYouTxt);
 			watermarkTxt.y = FlxG.height - 50;
 			screwYouTxt.cameras = [camHUD];
@@ -624,8 +626,8 @@ class PlayState extends MusicBeatState
 			screwYouTxt.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 			screwYouTxt.size = 18;
 			screwYouTxt.updateHitbox();
-			screwYouTxt.alpha = 0.6;
-			screwYouTxt.visible = !ClientPrefs.data.hideHud || ClientPrefs.data.hideWatermarkTxt;
+			screwYouTxt.alpha = 1;
+			screwYouTxt.visible = !ClientPrefs.data.hideHud && !ClientPrefs.data.hideWatermarkTxt;
 			add(screwYouTxt);
 			screwYouTxt.cameras = [camHUD];
 		}
@@ -2022,30 +2024,22 @@ class PlayState extends MusicBeatState
 	// Health icon updaters
 	public dynamic function updateIconsScale(elapsed:Float)
 	{
-		if (ClientPrefs.data.iconBounce == 'New Psych') {
-			var mult:Float = FlxMath.lerp(1, iconP1.scale.x, FlxMath.bound(1 - (elapsed * 9 * playbackRate), 0, 1));
-			iconP1.scale.set(mult, mult);
-			iconP1.updateHitbox();
+		switch(ClientPrefs.data.iconBounce) {
+			case 'New Psych':
+				var mult:Float = FlxMath.lerp(1, iconP1.scale.x, FlxMath.bound(1 - (elapsed * 9 * playbackRate), 0, 1));
+				iconP1.scale.set(mult, mult);
+				iconP1.updateHitbox();
 
-			var mult:Float = FlxMath.lerp(1, iconP2.scale.x, FlxMath.bound(1 - (elapsed * 9 * playbackRate), 0, 1));
-			iconP2.scale.set(mult, mult);
-			iconP2.updateHitbox();
-		}
-		
-		if (ClientPrefs.data.iconBounce == 'Old Psych') {
-			iconP1.setGraphicSize(Std.int(iconP1.width + 30));
-			iconP2.setGraphicSize(Std.int(iconP2.width + 30));
-		}
-		
-		/*if (ClientPrefs.data.iconBounce == 'Dave And Bambi') {
-			var thingy = 0.88; //(144 / Main.fps.currentFPS) * 0.88;
-			//still gotta make this fps consistent crap
-			iconP1.setGraphicSize(Std.int(FlxMath.lerp(150, iconP1.width, thingy)),Std.int(FlxMath.lerp(150, iconP1.height, thingy)));
-			iconP1.updateHitbox();
+				var mult:Float = FlxMath.lerp(1, iconP2.scale.x, FlxMath.bound(1 - (elapsed * 9 * playbackRate), 0, 1));
+				iconP2.scale.set(mult, mult);
+				iconP2.updateHitbox();
+			
+			case 'Old Psych':
+				iconP1.setGraphicSize(Std.int(iconP1.width + 30));
+				iconP2.setGraphicSize(Std.int(iconP2.width + 30));
 
-			iconP2.setGraphicSize(Std.int(FlxMath.lerp(150, iconP2.width, thingy)),Std.int(FlxMath.lerp(150, iconP2.height, thingy)));
-			iconP2.updateHitbox();
-		}*/
+			//Golden Apple icon bounce not need for updateIconsScale() function
+		}
 	}
 
 	public dynamic function updateIconsPosition()
@@ -3425,43 +3419,37 @@ class PlayState extends MusicBeatState
 		if (generatedMusic)
 			notes.sort(FlxSort.byY, ClientPrefs.data.downScroll ? FlxSort.ASCENDING : FlxSort.DESCENDING);
 
-		if (ClientPrefs.data.iconBounce == 'New Psych'){
-			iconP1.scale.set(1.2, 1.2);
-			iconP2.scale.set(1.2, 1.2);
+		switch (ClientPrefs.data.iconBounce) {
+			case 'New Psych':
+				iconP1.scale.set(1.2, 1.2);
+				iconP2.scale.set(1.2, 1.2);
 
-			iconP1.updateHitbox();
-			iconP2.updateHitbox();
-		}
-		
-		if (ClientPrefs.data.iconBounce == 'Old Psych'){
-			iconP1.setGraphicSize(Std.int(iconP1.width + 30));
-			iconP2.setGraphicSize(Std.int(iconP2.width + 30));
-		}
-		
-		/*if (ClientPrefs.data.iconBounce == 'Dave And Bambi'){
-			var funny:Float = Math.max(Math.min(healthBar.value,1.9),0.1);//Math.clamp(healthBar.value,0.02,1.98);//Math.min(Math.min(healthBar.value,1.98),0.02);
-			iconP1.setGraphicSize(Std.int(iconP1.width + (50 * (funny + 0.1))),Std.int(iconP1.height - (25 * funny)));
-			iconP2.setGraphicSize(Std.int(iconP2.width + (50 * ((2 - funny) + 0.1))),Std.int(iconP2.height - (25 * ((2 - funny) + 0.1))));
-		}*/
-		
-		if (curBeat % gfSpeed == 0 && ClientPrefs.data.iconBounce == 'Golden Apple') {
-			curBeat % (gfSpeed * 2) == 0 * playbackRate ? {
-				iconP1.scale.set(1.1, 0.8);
-				iconP2.scale.set(1.1, 1.3);
+				iconP1.updateHitbox();
+				iconP2.updateHitbox();
 			
-				FlxTween.angle(iconP1, -15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-				FlxTween.angle(iconP2, 15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-			} : {
-				iconP1.scale.set(1.1, 1.3);
-				iconP2.scale.set(1.1, 0.8);
-				
-				FlxTween.angle(iconP1, 15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-				FlxTween.angle(iconP2, -15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-			}
+			case 'Old Psych':
+				iconP1.setGraphicSize(Std.int(iconP1.width + 30));
+				iconP2.setGraphicSize(Std.int(iconP2.width + 30));
 			
-			final scaleThing:Float = type == 2 ? 0.75 : 1;
-			FlxTween.tween(iconP1, {'scale.x': 1 * scaleThing, 'scale.y': 1 * scaleThing}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-			FlxTween.tween(iconP2, {'scale.x': 1 * scaleThing, 'scale.y': 1 * scaleThing}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+			case 'Golden Apple': //idk this icon bounce after convent if to switch, case statement.
+				if (curBeat % gfSpeed == 0) {
+					curBeat % (gfSpeed * 2) == 0 * playbackRate ? {
+						iconP1.scale.set(1.1, 0.8);
+						iconP2.scale.set(1.1, 1.3);
+					
+						FlxTween.angle(iconP1, -15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+						FlxTween.angle(iconP2, 15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+					} : {
+						iconP1.scale.set(1.1, 1.3);
+						iconP2.scale.set(1.1, 0.8);
+						
+						FlxTween.angle(iconP1, 15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+						FlxTween.angle(iconP2, -15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+					}
+					final scaleThing:Float = type == 2 ? 0.75 : 1;
+					FlxTween.tween(iconP1, {'scale.x': 1 * scaleThing, 'scale.y': 1 * scaleThing}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+					FlxTween.tween(iconP2, {'scale.x': 1 * scaleThing, 'scale.y': 1 * scaleThing}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+				}
 		}
 
 		characterBopper(curBeat);
