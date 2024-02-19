@@ -2045,14 +2045,14 @@ class PlayState extends MusicBeatState
 		{
 			if (ClientPrefs.framerate > 60)
 			{
-				displayedHealth = FlxMath.lerp(displayedHealth, health : maxHealth - health, .1);
+				displayedHealth = FlxMath.lerp(displayedHealth, health : (maxHealth - health), .1);
 			} else if (ClientPrefs.framerate == 60) {
-				displayedHealth = FlxMath.lerp(displayedHealth, health : maxHealth - health, .4);
+				displayedHealth = FlxMath.lerp(displayedHealth, health : (maxHealth - health), .4);
 			}
 		}
 		if (ClientPrefs.smoothHealth && ClientPrefs.smoothHealthType == 'Golden Apple 1.5' && healthBar.visible)
 		{
-			displayedHealth = FlxMath.lerp(displayedHealth, health : maxHealth - health, CoolUtil.boundTo(elapsed * 20, 0, 1));
+			displayedHealth = FlxMath.lerp(displayedHealth, health : (maxHealth - health), CoolUtil.boundTo(elapsed * 20, 0, 1));
 		}
 		if (!ClientPrefs.smoothHealth && healthBar.visible) //so basically don't make the health smooth if you have that off
 		{
