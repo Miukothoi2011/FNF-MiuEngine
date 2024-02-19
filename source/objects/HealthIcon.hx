@@ -1,5 +1,7 @@
 package objects;
 
+import flixel.graphics.FlxGraphic;
+
 enum abstract IconType(Int) to Int from Int //abstract so it can hold int values for the frame count
 {
     var SINGLE = 0;

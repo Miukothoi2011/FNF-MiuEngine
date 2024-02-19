@@ -83,6 +83,12 @@ import tea.SScript;
  * "function triggerEvent" - Called when the song hits your event's timestamp, this is probably what you were looking for
 **/
 
+enum abstract IconType(Int) to Int from Int //abstract so it can hold int values for the frame count
+{
+    var SINGLE = 0;
+    var DEFAULT = 1;
+    var WINNING = 2;
+}
 class PlayState extends MusicBeatState
 {
 	public static var STRUM_X = 42;
@@ -113,6 +119,8 @@ class PlayState extends MusicBeatState
 	public var dadMap:Map<String, Character> = new Map<String, Character>();
 	public var gfMap:Map<String, Character> = new Map<String, Character>();
 	public var variables:Map<String, Dynamic> = new Map<String, Dynamic>();
+	
+	public var type:IconType = DEFAULT;
 
 	#if HSCRIPT_ALLOWED
 	public var hscriptArray:Array<HScript> = [];
