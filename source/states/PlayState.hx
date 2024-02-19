@@ -2092,7 +2092,7 @@ class PlayState extends MusicBeatState
 	public dynamic function updateIconsPosition()
 	{
 		var iconOffset:Int = 26;
-		//CODE FROM JS ENGINE (pls jordan san. don't kill me and you can ask persion :(((()
+		//CODE FROM ANOTHER? ENGINE
 		if (ClientPrefs.data.smoothHealth && ClientPrefs.data.smoothHealthType != 'Golden Apple 1.5' || !ClientPrefs.smoothHealth) //checks if you're using smooth health. if you are, but are not using the indie cross one then you know what that means
 		{
 			iconP1.x = healthBar.barCenter + (150 * iconP1.scale.x - 150) / 2 - iconOffset;
