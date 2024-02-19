@@ -31,12 +31,14 @@ class HealthIcon extends FlxSprite
 			setPosition(sprTracker.x + sprTracker.width + 12, sprTracker.y - 30);
 	}
 
-	private var iconOffsets:Array<Float> = [0, 0];
+	//private var iconOffsets:Array<Float> = [0, 0];
+	public var offsets(default, set):Array<Float> = [0, 0];
 	public function changeIcon(char:String, ?allowGPU:Bool = true) {
 		if(this.char != char) {
 			var name:String = 'icons/' + char;
 			if(!Paths.fileExists('images/' + name + '.png', IMAGE)) name = 'icons/icon-' + char; //Older versions of psych engine's support
 			if(!Paths.fileExists('images/' + name + '.png', IMAGE)) name = 'icons/icon-face'; //Prevents crash from missing icon
+			var file:FlxGraphic = Paths.image(name);
 			
 			/*var graphic = Paths.image(name, allowGPU);
 			loadGraphic(graphic, true, Math.floor(graphic.width / 2), Math.floor(graphic.height));
@@ -67,8 +69,16 @@ class HealthIcon extends FlxSprite
 	override function updateHitbox()
 	{
 		super.updateHitbox();
-		offset.x = iconOffsets[0];
-		offset.y = iconOffsets[1];
+		offset.x = offsets[0];
+		offset.y = offsets[1];
+	}
+
+	function set_offsets(newArr:Array<Float>):Array<Float>
+	{
+		offsets = newArr;
+		offset.x = offsets[0];
+		offset.y = offsets[1];
+		return offsets;
 	}
 
 	public function getCharacter():String {
