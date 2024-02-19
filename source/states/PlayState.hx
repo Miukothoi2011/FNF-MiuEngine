@@ -2094,18 +2094,18 @@ class PlayState extends MusicBeatState
 	{
 		var iconOffset:Int = 26;
 		//CODE FROM ANOTHER? ENGINE
-		if (ClientPrefs.data.smoothHealth && ClientPrefs.data.smoothHealthType != 'Golden Apple 1.5' || !ClientPrefs.smoothHealth) //checks if you're using smooth health. if you are, but are not using the indie cross one then you know what that means
-		{
-			iconP1.x = healthBar.barCenter + (150 * iconP1.scale.x - 150) / 2 - iconOffset;
-			iconP2.x = healthBar.barCenter - (150 * iconP2.scale.x) / 2 - iconOffset * 2;
-		}
-		if (ClientPrefs.data.smoothHealth && ClientPrefs.data.smoothHealthType == 'Golden Apple 1.5') //really makes it feel like the gapple 1.5 build's health tween
+		/*if (ClientPrefs.data.smoothHealth && ClientPrefs.data.smoothHealthType != 'Golden Apple 1.5' || !ClientPrefs.smoothHealth) //checks if you're using smooth health. if you are, but are not using the indie cross one then you know what that means
+		{*/
+		iconP1.x = healthBar.barCenter + (150 * iconP1.scale.x - 150) / 2 - iconOffset;
+		iconP2.x = healthBar.barCenter - (150 * iconP2.scale.x) / 2 - iconOffset * 2;
+		//}
+		/*if (ClientPrefs.data.smoothHealth && ClientPrefs.data.smoothHealthType == 'Golden Apple 1.5') //really makes it feel like the gapple 1.5 build's health tween
 		{
 			final percent:Float = 1 - (displayedHealth / maxHealth : (FlxMath.bound(displayedHealth, 0, maxHealth) / maxHealth));
 
 			iconP1.x = 0 + healthBar.x + (healthBar.width * percent) + (150 * iconP1.scale.x - 150) / 2 - iconOffset;
 			iconP2.x = 0 + healthBar.x + (healthBar.width * percent) - (150 * iconP2.scale.x) / 2 - iconOffset * 2;
-		}
+		}*/
 	}
 
 	var iconsAnimations:Bool = true;
