@@ -195,6 +195,8 @@ class PlayState extends MusicBeatState
 
 	public var gfSpeed:Int = 1;
 	public var health(default, set):Float = 1;
+	private var displayedHealth:Float;
+	public var maxHealth:Float = 2;
 	public var combo:Int = 0;
 
 	public var healthBar:Bar;
@@ -632,6 +634,22 @@ class PlayState extends MusicBeatState
 			screwYouTxt.cameras = [camHUD];
 		}
 
+		/*healthBarBG.y = FlxG.height * 0.89;
+		healthBarBG.screenCenter(X);
+		healthBarBG.scrollFactor.set();
+		healthBarBG.visible = !ClientPrefs.hideHud;
+		healthBarBG.xAdd = -4;
+		healthBarBG.yAdd = -4;
+		add(healthBarBG);
+		if(ClientPrefs.downScroll) healthBarBG.y = 0.11 * FlxG.height;
+
+		healthBar = new FlxBar(healthBarBG.x + 4, healthBarBG.y + 4, RIGHT_TO_LEFT, Std.int(healthBarBG.width - 8), Std.int(healthBarBG.height - 8), this, 'displayedHealth', 0, maxHealth);
+		healthBar.scrollFactor.set();
+		healthBar.visible = !ClientPrefs.hideHud;
+		healthBar.alpha = ClientPrefs.healthBarAlpha;
+		insert(members.indexOf(healthBarBG), healthBar);
+		healthBarBG.sprTracker = healthBar;*/
+
 		botplayTxt = new FlxText(400, timeBar.y + 55, FlxG.width - 800, "BOTPLAY", 32);
 		botplayTxt.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		botplayTxt.scrollFactor.set();
@@ -725,6 +743,9 @@ class PlayState extends MusicBeatState
 
 		CustomFadeTransition.nextCamera = camOther;
 		if(eventNotes.length < 1) checkEventNote();
+
+		health = maxHealth / 2;	
+		displayedHealth = maxHealth / 2;
 	}
 
 	function set_songSpeed(value:Float):Float
@@ -2012,6 +2033,32 @@ class PlayState extends MusicBeatState
 		}
 		#end
 
+		var newPercent:Null<Float> = FlxMath.remapToRange(FlxMath.bound(healthBar.valueFunction(), healthBar.bounds.min, healthBar.bounds.max), healthBar.bounds.min, healthBar.bounds.max, 0, 100);
+		healthBar.percent = (newPercent != null ? newPercent : 0);
+		
+		if(healthBar.percent < 20)
+			scoreTxt.color = FlxColor.RED;
+		else
+			scoreTxt.color = FlxColor.WHITE;
+
+		if (ClientPrefs.smoothHealth && ClientPrefs.smoothHealthType == 'Indie Cross' && healthBar.visible)
+		{
+			if (ClientPrefs.framerate > 60)
+			{
+				displayedHealth = FlxMath.lerp(displayedHealth, health : maxHealth - health, .1);
+			} else if (ClientPrefs.framerate == 60) {
+				displayedHealth = FlxMath.lerp(displayedHealth, health : maxHealth - health, .4);
+			}
+		}
+		if (ClientPrefs.smoothHealth && ClientPrefs.smoothHealthType == 'Golden Apple 1.5' && healthBar.visible)
+		{
+			displayedHealth = FlxMath.lerp(displayedHealth, health : maxHealth - health, CoolUtil.boundTo(elapsed * 20, 0, 1));
+		}
+		if (!ClientPrefs.smoothHealth && healthBar.visible) //so basically don't make the health smooth if you have that off
+		{
+			displayedHealth = health : maxHealth - health;
+		}
+
 		setOnScripts('cameraX', camFollow.x);
 		setOnScripts('cameraY', camFollow.y);
 		setOnScripts('botPlay', cpuControlled);
@@ -2045,8 +2092,19 @@ class PlayState extends MusicBeatState
 	public dynamic function updateIconsPosition()
 	{
 		var iconOffset:Int = 26;
-		iconP1.x = healthBar.barCenter + (150 * iconP1.scale.x - 150) / 2 - iconOffset;
-		iconP2.x = healthBar.barCenter - (150 * iconP2.scale.x) / 2 - iconOffset * 2;
+		//CODE FROM JS ENGINE (pls jordan san. don't kill me and you can ask persion :(((()
+		if (ClientPrefs.data.smoothHealth && ClientPrefs.data.smoothHealthType != 'Golden Apple 1.5' || !ClientPrefs.smoothHealth) //checks if you're using smooth health. if you are, but are not using the indie cross one then you know what that means
+		{
+			iconP1.x = healthBar.barCenter + (150 * iconP1.scale.x - 150) / 2 - iconOffset;
+			iconP2.x = healthBar.barCenter - (150 * iconP2.scale.x) / 2 - iconOffset * 2;
+		}
+		if (ClientPrefs.data.smoothHealth && ClientPrefs.data.smoothHealthType == 'Golden Apple 1.5') //really makes it feel like the gapple 1.5 build's health tween
+		{
+			final percent:Float = 1 - ((displayedHealth / maxHealth) : (FlxMath.bound(displayedHealth, 0, maxHealth) / maxHealth));
+
+			iconP1.x = 0 + healthBar.x + (healthBar.width * percent) + (150 * iconP1.scale.x - 150) / 2 - iconOffset;
+			iconP2.x = 0 + healthBar.x + (healthBar.width * percent) - (150 * iconP2.scale.x) / 2 - iconOffset * 2;
+		}
 	}
 
 	var iconsAnimations:Bool = true;
@@ -2063,8 +2121,25 @@ class PlayState extends MusicBeatState
 		var newPercent:Null<Float> = FlxMath.remapToRange(FlxMath.bound(healthBar.valueFunction(), healthBar.bounds.min, healthBar.bounds.max), healthBar.bounds.min, healthBar.bounds.max, 0, 100);
 		healthBar.percent = (newPercent != null ? newPercent : 0);
 
+		/*
 		iconP1.animation.curAnim.curFrame = (healthBar.percent < 20) ? 1 : 0; //If health is under 20%, change player icon to frame 1 (losing icon), otherwise, frame 0 (normal)
+		iconP1.animation.curAnim.curFrame = (healthBar.percent > 80) ? 2 : 0;
 		iconP2.animation.curAnim.curFrame = (healthBar.percent > 80) ? 1 : 0; //If health is over 80%, change opponent icon to frame 1 (losing icon), otherwise, frame 0 (normal)
+		iconP2.animation.curAnim.curFrame = (healthBar.percent < 20) ? 2 : 0;
+		*/
+
+		// I got special permission from AT to use this from Denpa engine, since the old code was a mess & buggy
+		// or should I say, dennnnpaaaa
+		iconP1.animation.curAnim.curFrame = switch (iconP1.type) {
+			case SINGLE: 0;
+			case WINNING: (healthBar.percent > 80 ? 2 : (healthBar.percent < 20 ? 1 : 0));
+            default: (healthBar.percent < 20 ? 1 : 0);
+		}
+		iconP2.animation.curAnim.curFrame = switch (iconP2.type) {
+			case SINGLE: 0;
+			case WINNING: (healthBar.percent > 80 ? 1 : (healthBar.percent < 20 ? 2 : 0));
+            default: (healthBar.percent > 80 ? 1 : 0);
+		}
 		return health;
 	}
 
@@ -3419,7 +3494,15 @@ class PlayState extends MusicBeatState
 		if (generatedMusic)
 			notes.sort(FlxSort.byY, ClientPrefs.data.downScroll ? FlxSort.ASCENDING : FlxSort.DESCENDING);
 
-		switch (ClientPrefs.data.iconBounce) {
+		/*
+			this place is using for icon bounce, if you want add/modified icon bounce,
+			find "public dynamic function updateIconsScale(elapsed:Float)" first, for update icon scale (if not having icon bounce update
+			Icons Scale, skip it), and find here "override function beatHit()" and add own
+			icon bounce in "switch(ClientPrefs.data.iconBounce.toLowerCase())" and add this like here: "case '(your own icon bonuce)': //your icon bounce code here"
+			
+			-Miukothoi2011
+		*/
+		switch(ClientPrefs.data.iconBounce.toLowerCase()) {
 			case 'New Psych':
 				iconP1.scale.set(1.2, 1.2);
 				iconP2.scale.set(1.2, 1.2);
