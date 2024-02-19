@@ -2041,7 +2041,7 @@ class PlayState extends MusicBeatState
 		else
 			scoreTxt.color = FlxColor.WHITE;
 
-		if (ClientPrefs.smoothHealth && ClientPrefs.smoothHealthType == 'Indie Cross' && healthBar.visible)
+		/*if (ClientPrefs.smoothHealth && ClientPrefs.smoothHealthType == 'Indie Cross' && healthBar.visible)
 		{
 			if (ClientPrefs.framerate > 60)
 			{
@@ -2049,7 +2049,7 @@ class PlayState extends MusicBeatState
 			} else if (ClientPrefs.framerate == 60) {
 				displayedHealth = FlxMath.lerp(displayedHealth, health : (maxHealth - health), .4);
 			}
-		}
+		}*/
 		if (ClientPrefs.smoothHealth && ClientPrefs.smoothHealthType == 'Golden Apple 1.5' && healthBar.visible)
 		{
 			displayedHealth = FlxMath.lerp(displayedHealth, health : (maxHealth - health), CoolUtil.boundTo(elapsed * 20, 0, 1));
