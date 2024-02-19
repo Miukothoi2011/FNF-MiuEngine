@@ -82,11 +82,6 @@ import tea.SScript;
  * "function eventEarlyTrigger" - Used for making your event start a few MILLISECONDS earlier
  * "function triggerEvent" - Called when the song hits your event's timestamp, this is probably what you were looking for
 **/
-enum abstract IconType(Int) to Int from Int //abstract so it can hold int values for the frame count // THIS CODE BY ME, NOT BY DENPA ENGINE
-{
-    var SINGLE = 0;
-    var DEFAULT = 1;
-}
 
 class PlayState extends MusicBeatState
 {
@@ -97,8 +92,6 @@ class PlayState extends MusicBeatState
 	public var camGameShaders:Array<ShaderEffect> = [];
 	public var camHUDShaders:Array<ShaderEffect> = [];
 	public var camOtherShaders:Array<ShaderEffect> = [];
-	
-	public var type:IconType = DEFAULT;
 
 	public static var ratingStuff:Array<Dynamic> = [
 		['You Suck!', 0.2], //From 0% to 19%
