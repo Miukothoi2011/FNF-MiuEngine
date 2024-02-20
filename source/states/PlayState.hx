@@ -2062,9 +2062,9 @@ class PlayState extends MusicBeatState
 					if (npsHitValue.getTime() + 2000 < Date.now().getTime())
 						notesHitArray.remove(npsHitValue);
 			}
-			nps = Math.floor(notesHitArray.length / 2);
-			if (nps > maxNPS)
-				maxNPS = nps;
+			songNps = Math.floor(notesHitArray.length / 2);
+			if (songNps > songMaxNPS)
+				songMaxNPS = songNps;
 			currentFrames = 0;
 		}
 		else if (currentFrames != ClientPrefs.data.framerate)
@@ -3875,7 +3875,7 @@ class PlayState extends MusicBeatState
 		setOnScripts('nps', songNps);
 		setOnScripts('maxNps', maxNps);
 		setOnScripts('combo', combo);
-		setOnScripts('oppoHits', oppoHits)
+		setOnScripts('oppoHits', oppoHits);
 		setOnScripts('oppoNps', oppoNps);
 		setOnScripts('oppoMaxNps', oppoMaxNps);
 
