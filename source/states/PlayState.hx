@@ -1354,7 +1354,7 @@ class PlayState extends MusicBeatState
 				+ (!ClientPrefs.data.showNPS ? 'BOTPLAY\n' : ' | BOTPLAY\n');
 			} else if (practiceMode) {
 				scoreTxt.text = (ClientPrefs.data.showNPS ? 'NPS: ${songNps}' + '/' + '${maxNps}' : "")
-				+ (!ClientPrefs.data.showNPS ? 'Misses: ${songMisses}' : ' | Misses: ${songMisses}))
+				+ (!ClientPrefs.data.showNPS ? 'Misses: ${songMisses}' : ' | Misses: ${songMisses})
 				+ (!instakillOnMiss ? ' | Practice Mode\n' : 'Practice Mode\n');
 			}
 		} else {
