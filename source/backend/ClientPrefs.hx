@@ -41,6 +41,7 @@ import shaders.Shaders;
 	public var hideScoreTxt:Bool = false;
 	public var hideWatermarkTxt:Bool = false;
 	public var showNPS:Bool = false;
+	public var showNotesCounting:Bool = false;
 	public var showNotes:Bool = true;
 	public var showUnusedCombo:Bool = false;
 	public var iconBounce:String = 'New Psych';

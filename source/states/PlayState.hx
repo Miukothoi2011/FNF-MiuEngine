@@ -1339,19 +1339,42 @@ class PlayState extends MusicBeatState
 			var percent:Float = CoolUtil.floorDecimal(ratingPercent * 100, 2);
 			str += ' (${percent}%) - ${ratingFC}';
 		}
-
-		
-		if (!practiceMode && !cpuControlled) {
-			var tempScore:String = 'Score: ${songScore}'
-			+ (!instakillOnMiss ? ' | Misses: ${songMisses}' : "")
-			+ ' | Rating: ${str}';
-			// "tempScore" variable is used to prevent another memory leak, just in case
-			// "\n" here prevents the text from being cut off by beat zooms
-			scoreTxt.text = '${tempScore}\n';
-		} else if (cpuControlled) {
-			scoreTxt.text = 'BOTPLAY\n';
-		} else if (practiceMode) {
-			scoreTxt.text = 'Misses: ${songMisses}' + ' | Practice Mode\n';
+	
+		if (!ClientPrefs.data.showNotesCounting) {
+			if (!practiceMode && !cpuControlled) {
+				var tempScore:String = (ClientPrefs.data.showNPS ? 'NPS: ${songNps}' + '/' + '${maxNps}' : "")
+				+ (!ClientPrefs.data.showNPS ? 'Score: ${songScore}' : ' | Score: ${songScore}')
+				+ (!instakillOnMiss ? ' | Misses: ${songMisses}' : "")
+				+ ' | Rating: ${str}';
+				// "tempScore" variable is used to prevent another memory leak, just in case
+				// "\n" here prevents the text from being cut off by beat zooms
+				scoreTxt.text = '${tempScore}\n';
+			} else if (cpuControlled) {
+				scoreTxt.text = (ClientPrefs.data.showNPS ? 'NPS: ${songNps}' + '/' + '${maxNps}' : "")
+				+ (!ClientPrefs.data.showNPS ? 'BOTPLAY\n' : ' | BOTPLAY\n');
+			} else if (practiceMode) {
+				scoreTxt.text = (ClientPrefs.data.showNPS ? 'NPS: ${songNps}' + '/' + '${maxNps}' : "")
+				+ (!ClientPrefs.data.showNPS ? (!instakillOnMiss ? 'Misses: ${songMisses}' : ' | Misses: ${songMisses}' : ""))
+				+ (!instakillOnMiss ? ' | Practice Mode\n' : 'Practice Mode\n');
+			}
+		} else {
+			if (!practiceMode && !cpuControlled) {
+				var tempScore:String = 'Note Count: ${songHits} | '
+				+ (ClientPrefs.data.showNPS ? 'NPS: ${songNps}' + '/' + '${maxNps}' : "")
+				+ (!ClientPrefs.data.showNPS ? 'Score: ${songScore}' : ' | Score: ${songScore}')
+				+ (!instakillOnMiss ? ' | Misses: ${songMisses}' : "")
+				+ ' | Rating: ${str}';
+				scoreTxt.text = '${tempScore}\n';
+			} else if (cpuControlled) {
+				scoreTxt.text = 'Note Count: ${songHits} | '
+				+ (ClientPrefs.data.showNPS ? 'NPS: ${songNps}' + '/' + '${maxNps}' : "")
+				+ (!ClientPrefs.data.showNPS ? 'BOTPLAY\n' : ' | BOTPLAY\n');
+			} else if (practiceMode) {
+				scoreTxt.text = 'Note Count: ${songHits} | '
+				+ (ClientPrefs.data.showNPS ? 'NPS: ${songNps}' + '/' + '${maxNps}' : "")
+				+ (!ClientPrefs.data.showNPS ? (!instakillOnMiss ? 'Misses: ${songMisses}' : ' | Misses: ${songMisses}' : ""))
+				+ (!instakillOnMiss ? ' | Practice Mode\n' : 'Practice Mode\n');
+			}
 		}
 
 		if (!miss && !cpuControlled)
@@ -2069,24 +2092,6 @@ class PlayState extends MusicBeatState
 		}
 		else if (currentFrames != ClientPrefs.data.framerate)
 			currentFrames++;
-		
-		/*if (ClientPrefs.smoothHealth && ClientPrefs.smoothHealthType == 'Indie Cross' && healthBar.visible)
-		{
-			if (ClientPrefs.framerate > 60)
-			{
-				displayedHealth = FlxMath.lerp(displayedHealth, health : (maxHealth - health), .1);
-			} else if (ClientPrefs.framerate == 60) {
-				displayedHealth = FlxMath.lerp(displayedHealth, health : (maxHealth - health), .4);
-			}
-		}
-		if (ClientPrefs.smoothHealth && ClientPrefs.smoothHealthType == 'Golden Apple 1.5' && healthBar.visible)
-		{
-			displayedHealth = FlxMath.lerp(displayedHealth, health : (maxHealth - health), CoolUtil.boundTo(elapsed * 20, 0, 1));
-		}
-		if (!ClientPrefs.smoothHealth && healthBar.visible) //so basically don't make the health smooth if you have that off
-		{
-			displayedHealth = health : maxHealth - health;
-		}*/
 
 		setOnScripts('cameraX', camFollow.x);
 		setOnScripts('cameraY', camFollow.y);
@@ -2121,19 +2126,8 @@ class PlayState extends MusicBeatState
 	public dynamic function updateIconsPosition()
 	{
 		var iconOffset:Int = 26;
-		//CODE FROM ANOTHER? ENGINE
-		/*if (ClientPrefs.data.smoothHealth && ClientPrefs.data.smoothHealthType != 'Golden Apple 1.5' || !ClientPrefs.smoothHealth) //checks if you're using smooth health. if you are, but are not using the indie cross one then you know what that means
-		{*/
 		iconP1.x = healthBar.barCenter + (150 * iconP1.scale.x - 150) / 2 - iconOffset;
 		iconP2.x = healthBar.barCenter - (150 * iconP2.scale.x) / 2 - iconOffset * 2;
-		//}
-		/*if (ClientPrefs.data.smoothHealth && ClientPrefs.data.smoothHealthType == 'Golden Apple 1.5') //really makes it feel like the gapple 1.5 build's health tween
-		{
-			final percent:Float = 1 - (displayedHealth / maxHealth : (FlxMath.bound(displayedHealth, 0, maxHealth) / maxHealth));
-
-			iconP1.x = 0 + healthBar.x + (healthBar.width * percent) + (150 * iconP1.scale.x - 150) / 2 - iconOffset;
-			iconP2.x = 0 + healthBar.x + (healthBar.width * percent) - (150 * iconP2.scale.x) / 2 - iconOffset * 2;
-		}*/
 	}
 
 	var iconsAnimations:Bool = true;
@@ -2151,9 +2145,9 @@ class PlayState extends MusicBeatState
 		healthBar.percent = (newPercent != null ? newPercent : 0);
 
 		iconP1.animation.curAnim.curFrame = (healthBar.percent < 20) ? 1 : 0; //If health is under 20%, change player icon to frame 1 (losing icon), otherwise, frame 0 (normal)
-		iconP1.animation.curAnim.curFrame = (healthBar.percent > 80) ? 0 : 2;
+		//iconP1.animation.curAnim.curFrame = (healthBar.percent > 80) ? 2 : 0;
 		iconP2.animation.curAnim.curFrame = (healthBar.percent > 80) ? 1 : 0; //If health is over 80%, change opponent icon to frame 1 (losing icon), otherwise, frame 0 (normal)
-		iconP2.animation.curAnim.curFrame = (healthBar.percent < 20) ? 0 : 2;
+		//iconP2.animation.curAnim.curFrame = (healthBar.percent < 20) ? 2 : 0;
 		return health;
 	}
 

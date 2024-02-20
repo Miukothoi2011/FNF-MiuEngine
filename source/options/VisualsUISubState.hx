@@ -141,13 +141,13 @@ class VisualsUISubState extends BaseOptionsMenu
 		addOption(option);
 		
 		var option:Option = new Option('Smooth Health',
-			"?",
+			"(unfinished)",
 			'smoothHealth',
 			'bool');
 		addOption(option);
 		
 		var option:Option = new Option('Smooth Health Type:',
-			"?",
+			"(unfinished)",
 			'smoothHealthType',
 			'string',
 			['Golden Apple 1.5', 'Indie Cross']);
@@ -197,14 +197,20 @@ class VisualsUISubState extends BaseOptionsMenu
 		addOption(option);
 		
 		var option:Option = new Option('Show Unused Combo Popup',
-			"?",
+			"If checked, game with show unused Combo popup",
 			'showUnusedCombo',
 			'bool');
 		addOption(option);
 		
 		var option:Option = new Option('Time Bounce',
-			"?",
+			"(unfinished)",
 			'timeBounce',
+			'bool');
+		addOption(option);
+		
+		var option:Option = new Option('Show Notes Counting',
+			"If checked, score text with show Note Counter.",
+			'showNotesCounting',
 			'bool');
 		addOption(option);
 		
