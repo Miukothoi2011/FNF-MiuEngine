@@ -24,10 +24,11 @@ class HealthIcon extends FlxSprite
 			setPosition(sprTracker.x + sprTracker.width + 12, sprTracker.y - 30);
 	}
 
-	if (width == 450)
+	if (width == 450) {
 		public var iconOffsets:Array<Float> = [0, 0, 0];
-	else
+	} else {
 		public var iconOffsets:Array<Float> = [0, 0];
+	}
 	
 	public function changeIcon(char:String, ?allowGPU:Bool = true) {
 		if(this.char != char) {
