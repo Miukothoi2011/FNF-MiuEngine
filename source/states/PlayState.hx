@@ -239,12 +239,22 @@ class PlayState extends MusicBeatState
 	public var camOther:FlxCamera;
 	public var cameraSpeed:Float = 1;
 
+	var notesHitArray:Array<Date> = [];
+	var currentFrames:Int = 0;
+
 	public var songScore:Int = 0;
 	public var songHits:Int = 0;
 	public var songMisses:Int = 0;
+	public var songNps:Int = 0;
+	public var maxNps:Int = 0;
 	public var scoreTxt:FlxText;
 	var timeTxt:FlxText;
 	var scoreTxtTween:FlxTween;
+
+	//opponent thing :)))
+	public var oppoHits:Int = 0;
+	public var oppoNps:Int = 0;
+	public var oppoMaxNps:Int = 0;
 
 	public static var campaignScore:Int = 0;
 	public static var campaignMisses:Int = 0;
@@ -2043,6 +2053,23 @@ class PlayState extends MusicBeatState
 		else
 			scoreTxt.color = FlxColor.WHITE;
 
+		if (currentFrames == ClientPrefs.data.framerate && !ClientPrefs.data.hideHud)
+		{
+			for (i in 0...notesHitArray.length)
+			{
+				var npsHitValue:Date = notesHitArray[i];
+				if (npsHitValue != null)
+					if (npsHitValue.getTime() + 2000 < Date.now().getTime())
+						notesHitArray.remove(npsHitValue);
+			}
+			nps = Math.floor(notesHitArray.length / 2);
+			if (nps > maxNPS)
+				maxNPS = nps;
+			currentFrames = 0;
+		}
+		else if (currentFrames != ClientPrefs.data.framerate)
+			currentFrames++;
+		
 		/*if (ClientPrefs.smoothHealth && ClientPrefs.smoothHealthType == 'Indie Cross' && healthBar.visible)
 		{
 			if (ClientPrefs.framerate > 60)
@@ -2123,25 +2150,10 @@ class PlayState extends MusicBeatState
 		var newPercent:Null<Float> = FlxMath.remapToRange(FlxMath.bound(healthBar.valueFunction(), healthBar.bounds.min, healthBar.bounds.max), healthBar.bounds.min, healthBar.bounds.max, 0, 100);
 		healthBar.percent = (newPercent != null ? newPercent : 0);
 
-		/*
 		iconP1.animation.curAnim.curFrame = (healthBar.percent < 20) ? 1 : 0; //If health is under 20%, change player icon to frame 1 (losing icon), otherwise, frame 0 (normal)
-		iconP1.animation.curAnim.curFrame = (healthBar.percent > 80) ? 2 : 0;
+		iconP1.animation.curAnim.curFrame = (healthBar.percent > 80) ? 0 : 2;
 		iconP2.animation.curAnim.curFrame = (healthBar.percent > 80) ? 1 : 0; //If health is over 80%, change opponent icon to frame 1 (losing icon), otherwise, frame 0 (normal)
-		iconP2.animation.curAnim.curFrame = (healthBar.percent < 20) ? 2 : 0;
-		*/
-
-		// I got special permission from AT to use this from Denpa engine, since the old code was a mess & buggy
-		// or should I say, dennnnpaaaa
-		iconP1.animation.curAnim.curFrame = switch (iconP1.type) {
-			case SINGLE: 0;
-			case WINNING: (healthBar.percent > 80 ? 2 : (healthBar.percent < 20 ? 1 : 0));
-            default: (healthBar.percent < 20 ? 1 : 0);
-		}
-		iconP2.animation.curAnim.curFrame = switch (iconP2.type) {
-			case SINGLE: 0;
-			case WINNING: (healthBar.percent > 80 ? 1 : (healthBar.percent < 20 ? 2 : 0));
-            default: (healthBar.percent > 80 ? 1 : 0);
-		}
+		iconP2.animation.curAnim.curFrame = (healthBar.percent < 20) ? 0 : 2;
 		return health;
 	}
 
@@ -2804,6 +2816,12 @@ class PlayState extends MusicBeatState
 			{
 				songHits++;
 				totalPlayed++;
+				RecalculateRating(false);
+			}
+		} else {
+			if(!note.ratingDisabled)
+			{
+				songHits++;
 				RecalculateRating(false);
 			}
 		}
@@ -3854,7 +3872,12 @@ class PlayState extends MusicBeatState
 		setOnScripts('score', songScore);
 		setOnScripts('misses', songMisses);
 		setOnScripts('hits', songHits);
+		setOnScripts('nps', songNps);
+		setOnScripts('maxNps', maxNps);
 		setOnScripts('combo', combo);
+		setOnScripts('oppoHits', oppoHits)
+		setOnScripts('oppoNps', oppoNps);
+		setOnScripts('oppoMaxNps', oppoMaxNps);
 
 		var ret:Dynamic = callOnScripts('onRecalculateRating', null, true);
 		if(ret != FunkinLua.Function_Stop)

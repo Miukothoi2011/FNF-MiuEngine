@@ -1,20 +1,11 @@
 package objects;
 
-import flixel.graphics.FlxGraphic;
-
-enum abstract IconType(Int) to Int from Int //abstract so it can hold int values for the frame count
-{
-    var SINGLE = 0;
-    var DEFAULT = 1;
-    var WINNING = 2;
-}
 class HealthIcon extends FlxSprite
 {
 	public var sprTracker:FlxSprite;
 	private var isOldIcon:Bool = false;
 	private var isPlayer:Bool = false;
 	private var char:String = '';
-	public var type:IconType = DEFAULT;
 
 	public function new(char:String = 'bf', isPlayer:Bool = false, ?allowGPU:Bool = true)
 	{
@@ -33,31 +24,30 @@ class HealthIcon extends FlxSprite
 			setPosition(sprTracker.x + sprTracker.width + 12, sprTracker.y - 30);
 	}
 
-	//private var iconOffsets:Array<Float> = [0, 0];
-	public var offsets(default, set):Array<Float> = [0, 0];
+	private var iconOffsets:Array<Float> = [0, 0, 0];
 	public function changeIcon(char:String, ?allowGPU:Bool = true) {
 		if(this.char != char) {
 			var name:String = 'icons/' + char;
 			if(!Paths.fileExists('images/' + name + '.png', IMAGE)) name = 'icons/icon-' + char; //Older versions of psych engine's support
 			if(!Paths.fileExists('images/' + name + '.png', IMAGE)) name = 'icons/icon-face'; //Prevents crash from missing icon
-			var file:FlxGraphic = Paths.image(name);
 			
-			/*var graphic = Paths.image(name, allowGPU);
-			loadGraphic(graphic, true, Math.floor(graphic.width / 2), Math.floor(graphic.height));
-			iconOffsets[0] = (width - 150) / 2;
-			iconOffsets[1] = (height - 150) / 2;
+			var graphic = Paths.image(name, allowGPU);
+			loadGraphic(graphic, true, Math.floor(graphic.width / 3), Math.floor(graphic.height));
+			if (width == 450) {
+				iconOffsets[0] = (width - 150) / 3;
+				iconOffsets[1] = (height - 150) / 3;
+				iconOffsets[2] = (height - 150) / 3;
+			} else {
+				iconOffsets[0] = (width - 150) / 2;
+				iconOffsets[1] = (height - 150) / 2;
+			}
 			updateHitbox();
-
-			animation.add(char, [0, 1], 0, false, isPlayer);
-			animation.play(char);
-			this.char = char;*/
-			type = (file.width < 200 ? SINGLE : ((file.width > 199 && file.width < 301) ? DEFAULT : WINNING));
-
-			loadGraphic(file, true, Math.floor(file.width / (type+1)), file.height);
-			offsets[0] = offsets[1] = (width - 150) / (type+1);
-			var frames:Array<Int> = [];
-			for (i in 0...type+1) frames.push(i);
-			animation.add(char, frames, 0, false, isPlayer);
+			
+			if (width == 450) {
+				animation.add(char, [0, 1, 2], 0, false, isPlayer);
+			} else {
+				animation.add(char, [0, 1], 0, false, isPlayer);
+			}
 			animation.play(char);
 			this.char = char;
 
@@ -70,17 +60,14 @@ class HealthIcon extends FlxSprite
 
 	override function updateHitbox()
 	{
-		super.updateHitbox();
-		offset.x = offsets[0];
-		offset.y = offsets[1];
-	}
-
-	function set_offsets(newArr:Array<Float>):Array<Float>
-	{
-		offsets = newArr;
-		offset.x = offsets[0];
-		offset.y = offsets[1];
-		return offsets;
+		//if (ClientPrefs.data.iconBounce != 'Golden Apple' && ClientPrefs.data.iconBounce != 'Dave And Bambi') {
+			super.updateHitbox();
+			offset.x = iconOffsets[0];
+			offset.y = iconOffsets[1];
+			offset.y = iconOffsets[2];
+		/*} else {
+			super.updateHitbox();
+		}*/
 	}
 
 	public function getCharacter():String {

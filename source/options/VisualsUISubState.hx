@@ -150,7 +150,7 @@ class VisualsUISubState extends BaseOptionsMenu
 			"?",
 			'smoothHealthType',
 			'string',
-			['Golden Apple 1.5', '?']);
+			['Golden Apple 1.5', 'Indie Cross']);
 		addOption(option);*/
 		
 		var option:Option = new Option('Icon Bounce:',

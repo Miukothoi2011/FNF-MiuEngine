@@ -30,7 +30,7 @@ import shaders.Shaders;
 	public var noteSplashes:Bool = true;
 	public var playerNoteSplashes:Bool = true;
 	public var opponentNoteSplashes:Bool = false;
-	public var smoothHealth:Bool = false;
+	public var smoothHealth:Bool = true;
 	public var smoothHealthType:String = 'Golden Apple 1.5';
 	public var resolution:String = '1280x720';
 	public var ezSpam:Bool = false;
