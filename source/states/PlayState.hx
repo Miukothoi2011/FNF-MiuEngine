@@ -2063,8 +2063,8 @@ class PlayState extends MusicBeatState
 						notesHitArray.remove(npsHitValue);
 			}
 			songNps = Math.floor(notesHitArray.length / 2);
-			if (songNps > songMaxNPS)
-				songMaxNPS = songNps;
+			if (songNps > maxNps)
+				maxNps = songNps;
 			currentFrames = 0;
 		}
 		else if (currentFrames != ClientPrefs.data.framerate)
