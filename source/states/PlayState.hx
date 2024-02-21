@@ -1353,8 +1353,8 @@ class PlayState extends MusicBeatState
 				scoreTxt.text = (ClientPrefs.data.showNPS ? 'NPS: ${songNps}' + '/' + '${maxNps}' : "")
 				+ (!ClientPrefs.data.showNPS ? 'BOTPLAY\n' : ' | BOTPLAY\n');
 			} else if (practiceMode) {
-				scoreTxt.text = (ClientPrefs.data.showNPS ? 'NPS: ${songNps}' + '/' + '${maxNps}' : "")
-				+ (!ClientPrefs.data.showNPS ? 'Misses: ${songMisses}' : ' | Misses: ${songMisses})
+				scoreTxt.text = (ClientPrefs.data.showNPS ? 'NPS: ${songNps}' + '/' + '${maxNps} | ' : "")
+				+ 'Misses: ${songMisses}'
 				+ ' | Practice Mode\n';
 			}
 		} else {
@@ -1371,8 +1371,8 @@ class PlayState extends MusicBeatState
 				+ (!ClientPrefs.data.showNPS ? 'BOTPLAY\n' : ' | BOTPLAY\n');
 			} else if (practiceMode) {
 				scoreTxt.text = 'Note Count: ${songHits} | '
-				+ (ClientPrefs.data.showNPS ? 'NPS: ${songNps}' + '/' + '${maxNps}' : "")
-				+ (!ClientPrefs.data.showNPS ? 'Misses: ${songMisses}' : ' | Misses: ${songMisses}')
+				+ (ClientPrefs.data.showNPS ? 'NPS: ${songNps}' + '/' + '${maxNps} | ' : "")
+				+ 'Misses: ${songMisses}'
 				+ ' | Practice Mode\n';
 			}
 		}
