@@ -3512,11 +3512,11 @@ class PlayState extends MusicBeatState
 			this place is using for icon bounce, if you want add/modified icon bounce,
 			find "public dynamic function updateIconsScale(elapsed:Float)" first, for update icon scale (if not having icon bounce update
 			Icons Scale, skip it), and find here "override function beatHit()" and add own
-			icon bounce in "switch(ClientPrefs.data.iconBounce.toLowerCase())" and add this like here: "case '(your own icon bonuce)': //your icon bounce code here"
+			icon bounce in "switch(ClientPrefs.data.iconBounce)" and add this like here: "case '(your own icon bonuce)': //your icon bounce code here"
 			
 			-Miukothoi2011
 		*/
-		switch(ClientPrefs.data.iconBounce.toLowerCase()) {
+		switch(ClientPrefs.data.iconBounce) {
 			case 'New Psych':
 				iconP1.scale.set(1.2, 1.2);
 				iconP2.scale.set(1.2, 1.2);
