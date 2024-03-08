@@ -1,3 +1,0 @@
-_sans
-vcr
-comic
