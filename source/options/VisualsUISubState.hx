@@ -157,7 +157,7 @@ class VisualsUISubState extends BaseOptionsMenu
 			"?",
 			'iconBounce',
 			'string',
-			['None', 'New Psych', 'Old Psych', 'Golden Apple', 'Dave And Bambi', 'VS Steve']);
+			['None', 'Default', 'New Psych', 'Old Psych', 'Golden Apple', 'Dave and Bambi', 'VS Steve']);
 		addOption(option);
 
 		var option:Option = new Option('Chars & BG',
@@ -193,6 +193,18 @@ class VisualsUISubState extends BaseOptionsMenu
 		var option:Option = new Option('Hide Watermark Text',
 			"?",
 			'hideWatermarkTxt',
+			'bool');
+		addOption(option);
+
+		var option:Option = new Option('Show Ratings Popup',
+			"If checked, game with show Ratings popup",
+			'showRatingsPopUp',
+			'bool');
+		addOption(option);
+
+		var option:Option = new Option('Don\'t Show Ratings Popup If Botplay',
+			"If checked, game with no show Ratings popup if you enable Botplay",
+			'showRatingsPopUp',
 			'bool');
 		addOption(option);
 		

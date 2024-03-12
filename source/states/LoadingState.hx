@@ -3,7 +3,7 @@ package states;
 import lime.app.Promise;
 import lime.app.Future;
 
-import flixel.util.typeLimit.NextState; //import flixel.FlxState;
+import flixel.util.typeLimit.NextState;
 
 import openfl.utils.Assets;
 import lime.utils.Assets as LimeAssets;
@@ -13,6 +13,20 @@ import lime.utils.AssetManifest;
 import backend.StageData;
 
 import haxe.io.Path;
+
+import states.PlayState;
+
+#if LUA_ALLOWED
+import psychlua.*;
+#else
+import psychlua.FunkinLua;
+import psychlua.LuaUtils;
+import psychlua.HScript;
+#end
+
+#if SScript
+import tea.SScript;
+#end
 
 class LoadingState extends MusicBeatState
 {
@@ -77,6 +91,8 @@ class LoadingState extends MusicBeatState
 				new FlxTimer().start(fadeTime + MIN_TIME, function(_) introComplete());
 			}
 		);
+		
+		PlayState.callOnScripts('onLoadingCreate');
 	}
 	
 	function checkLoadSong(path:String)
@@ -122,6 +138,8 @@ class LoadingState extends MusicBeatState
 			targetShit = FlxMath.remapToRange(callbacks.numRemaining / callbacks.length, 1, 0, 0, 1);
 			loadBar.scale.x += 0.5 * (targetShit - loadBar.scale.x);
 		}
+		
+		PlayState.callOnScripts('onLoadingUpdate', elapsed);
 	}
 	
 	function onLoad()

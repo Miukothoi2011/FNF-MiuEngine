@@ -30,9 +30,10 @@ class CoolUtil
 		return text.charAt(0).toUpperCase() + text.substr(1).toLowerCase();
 
 	inline public static function boundTo(value:Float, min:Float, max:Float):Float
-	{
-		return Math.max(min, Math.min(max, value));
-	}
+		var newValue:Float = value;
+		if(newValue < min) newValue = min;
+		else if(newValue > max) newValue = max;
+		return newValue;
 
 	inline public static function coolTextFile(path:String):Array<String>
 	{

@@ -137,8 +137,14 @@ class FunkinLua {
 
 		set('score', 0);
 		set('misses', 0);
-		set('hits', 0);
+		set('hits', PlayState.instance.songHits);
+		set('nps', PlayState.instance.songNps);
+		set('maxNps', PlayState.instance.maxNps);
 		set('combo', 0);
+
+		set('oppoHits', PlayState.instance.oppoHits);
+		set('oppoNps', PlayState.instance.oppoNps);
+		set('oppoMaxNps', PlayState.instance.oppoMaxNps);
 
 		set('rating', 0);
 		set('ratingName', '');
@@ -206,6 +212,7 @@ class FunkinLua {
 
 		// build target (windows, mac, linux, etc.)
 		set('buildTarget', getBuildTarget());
+		set('pcUserName', getPcUserName());
 
 		for (name => func in customFunctions)
 		{
@@ -1489,9 +1496,9 @@ class FunkinLua {
 		Lua_helper.add_callback(lua, 'openURL', function(url:String) {
 			CoolUtil.browserLoad(url);
 		});
-		Lua_helper.add_callback(lua, "pcUserName", function() {
-			return Sys.environment()["USERNAME"];
-		});
+		//Lua_helper.add_callback(lua, "pcUserName", function() {
+		//	return Sys.environment()["USERNAME"];
+		//});
 		/*Lua_helper.add_callback(lua, "setRating", function(or:Int, nr:String) {
 			var ratingarray = PlayState.ratingStuff;
 			var targetrating = ratingarray[9];
@@ -1503,14 +1510,15 @@ class FunkinLua {
 		Lua_helper.add_callback(lua, "setBotPlayText", function(value:String) {
 			PlayState.instance.botplayTxt.text = value;
 		});
-		/*Lua_helper.add_callback(lua, "setWatermarkText", function(value:String) {
-			PlayState.instance.songTxt.text = value;
-		});*/
+		Lua_helper.add_callback(lua, "setWatermarkText", function(value1:String, value2:String) {
+			PlayState.instance.watermarkTxt.text = value1;
+			PlayState.instance.screwYouTxt.text = value2;
+		});
 		Lua_helper.add_callback(lua, "setWindowTitle", function(value:String) {
 			openfl.Lib.application.window.title = value;
 		});
 		Lua_helper.add_callback(lua, 'popUpWindowAlert', function(message:String, title:String) {
-			Application.current.window.alert(message, title);
+			CoolUtil.coolError(message, title);
 		});
 		Lua_helper.add_callback(lua, 'setWindowPositon', function(x:Int, y:Int) {
 			openfl.Lib.application.window.x = x;
@@ -1676,6 +1684,15 @@ class FunkinLua {
 		return 'android';
 		#elseif switch
 		return 'switch';
+		#else
+		return 'unknown';
+		#end
+	}
+
+	public static function getPcUserName():String
+	{
+		#if (desktop && windows)
+		return Sys.environment()["USERNAME"];
 		#else
 		return 'unknown';
 		#end

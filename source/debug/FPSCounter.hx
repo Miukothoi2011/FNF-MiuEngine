@@ -27,6 +27,8 @@ class FPSCounter extends TextField
 	public var memoryMegas(get, never):Float;
 	public var memoryLeakMegas:Float; // memory leak
 
+	@:noCompletion private var cacheCount:Int;
+	@:noCompletion private var currentTime:Float;
 	@:noCompletion private var times:Array<Float>;
 
 	public function new(x:Float = 10, y:Float = 10, color:Int = 0x000000)
@@ -53,7 +55,7 @@ class FPSCounter extends TextField
 
 	var deltaTimeout:Float = 0.0;
 	
-	// All the colors:			      Red,	      Orange,     Yellow,     Green,      Blue,       Violet/Purple
+	// All the colors:			      Red,	        Orange,        Yellow,       Green,        Blue,         Violet/Purple
     final rainbowColors:Array<Int> = [0xFFFF0000, 0xFFFFA500, 0xFFFFFF00, 0xFF00FF00, 0xFF0000FF, 0xFFFF00FF];
 	var colorInterp:Float = 0;
 	var currentColor:Int = 0;
@@ -67,11 +69,13 @@ class FPSCounter extends TextField
 		}
 
 		var now:Float = haxe.Timer.stamp();
+		currentTime += deltaTime;
 		times.push(now);
 		while (times[0] < now - 1000)
 			times.shift();
 
-		currentFPS = currentFPS < FlxG.updateFramerate ? times.length : FlxG.updateFramerate;
+		var currentCount = times.length;
+		currentFPS = Math.round((currentCount + cacheCount) / 2); //currentFPS = currentFPS < FlxG.updateFramerate ? times.length : FlxG.updateFramerate;
 		updateText();
 		deltaTimeout += deltaTime;
 		
@@ -85,19 +89,18 @@ class FPSCounter extends TextField
 		if (ClientPrefs.data.showFPS) {
 			text = 'FPS: ${currentFPS}';
 
-			if (ClientPrefs.data.FPSTxtSize != ClientPrefs.defaultData.FPSTxtSize) // trace('if FPSTxtSize not equal to default FPSTxtSize, then change code from VisualsUISubState')
+			if (ClientPrefs.data.FPSTxtSize != ClientPrefs.defaultData.FPSTxtSize)
 				defaultTextFormat = new TextFormat("_sans", ClientPrefs.data.FPSTxtSize, textColor);
 
-			switch(ClientPrefs.data.FPSTxtFont) {
+			switch (ClientPrefs.data.FPSTxtFont) {
 				case 'Default': defaultTextFormat = new TextFormat("_sans", ClientPrefs.data.FPSTxtSize, textColor);
 				case 'VCR': defaultTextFormat = new TextFormat("vcr.ttf", ClientPrefs.data.FPSTxtSize, textColor);
-				case 'MS Sans Comic': defaultTextFormat = new TextFormat("comic.ttf", ClientPrefs.data.FPSTxtSize, textColor);
 			}
 
 			if (ClientPrefs.data.showMemory) {
 				text += '\nMemory: ${flixel.util.FlxStringUtil.formatBytes(memoryMegas)}';
 				if (ClientPrefs.data.showMemoryLeak)
-					text += '\nMemory Leak: ${flixel.util.FlxStringUtil.formatBytes(memoryLeakMegas)}';
+					text += ' / ${flixel.util.FlxStringUtil.formatBytes(memoryLeakMegas)}';
 			}
 
 			if (ClientPrefs.data.showEngineVersion)

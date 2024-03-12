@@ -18,10 +18,6 @@ import openfl.display.StageScaleMode;
 import lime.app.Application;
 import states.TitleState;
 
-#if linux
-import lime.graphics.Image;
-#end
-
 //crash handler stuff
 #if CRASH_HANDLER
 import openfl.events.UncaughtErrorEvent;
@@ -30,10 +26,9 @@ import haxe.io.Path;
 #end
 
 #if linux
+import lime.graphics.Image;
 @:cppInclude('./external/gamemode_client.h')
-@:cppFileCode('
-	#define GAMEMODE_AUTO
-')
+@:cppFileCode('#define GAMEMODE_AUTO')
 #end
 
 class Main extends Sprite
@@ -170,7 +165,7 @@ class Main extends Sprite
 		dateNow = dateNow.replace(" ", "_");
 		dateNow = dateNow.replace(":", "'");
 
-		path = "./crash/" + "PsychEngine_" + dateNow + ".txt";
+		path = "./crash/" + "PsychEngine_" + dateNow + ".log"; // Using .log file instead of .txt file.
 
 		for (stackItem in callStack)
 		{
@@ -183,7 +178,7 @@ class Main extends Sprite
 			}
 		}
 
-		errMsg += "\nUncaught Error: " + e.error + "\nPlease report this error to the GitHub page: https://github.com/ShadowMario/FNF-PsychEngine\n\n> Crash Handler written by: sqirra-rng";
+		errMsg += "\nUncaught Error: " + e.error + "\nPlease report this error to the GitHub page: https://github.com/Miuthoi123/FNF-MiuEngine\n\n> Crash Handler written by: sqirra-rng";
 
 		if (!FileSystem.exists("./crash/"))
 			FileSystem.createDirectory("./crash/");

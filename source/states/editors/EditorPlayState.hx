@@ -67,7 +67,11 @@ class EditorPlayState extends MusicBeatSubstate
 
 	var scoreTxt:FlxText;
 	var dataTxt:FlxText;
+	var pauseTxt:FlxText;
 	var guitarHeroSustains:Bool = false;
+
+	// EditorPlayState Pause text
+	var paused:Bool = false;
 
 	public function new(playbackRate:Float)
 	{
@@ -128,6 +132,13 @@ class EditorPlayState extends MusicBeatSubstate
 		dataTxt.borderSize = 1.25;
 		add(dataTxt);
 
+		pauseTxt = new FlxText(10, 490, FlxG.width - 20, "Game is Pause, press ENTER to continue.", 20);
+		pauseTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		pauseTxt.scrollFactor.set();
+		pauseTxt.borderSize = 1.25;
+		pauseTxt.visible = !paused;
+		add(pauseTxt);
+
 		var tipText:FlxText = new FlxText(10, FlxG.height - 24, 0, 'Press ESC to Go Back to Chart Editor', 16);
 		tipText.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		tipText.borderSize = 2;
@@ -152,6 +163,14 @@ class EditorPlayState extends MusicBeatSubstate
 		if(controls.BACK || FlxG.keys.justPressed.ESCAPE)
 		{
 			endSong();
+			super.update(elapsed);
+			return;
+		}
+
+		if(controls.PAUSE || FlxG.keys.justPressed.ENTER)
+		{
+			paused = true;
+			pauseSong();
 			super.update(elapsed);
 			return;
 		}
@@ -473,6 +492,20 @@ class EditorPlayState extends MusicBeatSubstate
 		close();
 	}
 
+	public function pauseSong()
+	{
+		persistentUpdate = false;
+		persistentDraw = true;
+		if(FlxG.sound.music != null) {
+			FlxG.sound.music.pause();
+			vocals.pause();
+		}
+		if(controls.BACK)
+		{
+			close();
+		}
+	}
+
 	private function cachePopUpScore()
 	{
 		for (rating in ratingsData)
@@ -781,9 +814,13 @@ class EditorPlayState extends MusicBeatSubstate
 			vocals.volume = 1;
 
 		var strum:StrumNote = opponentStrums.members[Std.int(Math.abs(note.noteData))];
-		if(strum != null) {
-			strum.playAnim('confirm', true);
-			strum.resetAnim = Conductor.stepCrochet * 1.25 / 1000 / playbackRate;
+		if (ClientPrefs.data.opponentLightStrum) {
+			if(strum != null) {
+				strum.playAnim('confirm', true);
+				strum.resetAnim = Conductor.stepCrochet * 1.25 / 1000 / playbackRate;
+			}
+		} else {
+			if(strum != null) strum.playAnim('static', true);
 		}
 		note.hitByOpponent = true;
 
@@ -817,7 +854,11 @@ class EditorPlayState extends MusicBeatSubstate
 		}
 
 		var spr:StrumNote = playerStrums.members[note.noteData];
-		if(spr != null) spr.playAnim('confirm', true);
+		if (ClientPrefs.data.playerLightStrum) {
+			if(spr != null) spr.playAnim('confirm', true);
+		} else {
+			if(spr != null) spr.playAnim('static', true);
+		} 
 		vocals.volume = 1;
 
 		if (!note.isSustainNote)
