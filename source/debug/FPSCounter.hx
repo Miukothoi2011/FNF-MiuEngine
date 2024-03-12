@@ -27,8 +27,8 @@ class FPSCounter extends TextField
 	public var memoryMegas(get, never):Float;
 	public var memoryLeakMegas:Float; // memory leak
 
-	@:noCompletion private var cacheCount:Int;
-	@:noCompletion private var currentTime:Float;
+	//@:noCompletion private var cacheCount:Int;
+	//@:noCompletion private var currentTime:Float;
 	@:noCompletion private var times:Array<Float>;
 
 	public function new(x:Float = 10, y:Float = 10, color:Int = 0x000000)
@@ -74,8 +74,7 @@ class FPSCounter extends TextField
 		while (times[0] < now - 1000)
 			times.shift();
 
-		var currentCount = times.length;
-		currentFPS = Math.round((currentCount + cacheCount) / 2); //currentFPS = currentFPS < FlxG.updateFramerate ? times.length : FlxG.updateFramerate;
+		currentFPS = currentFPS < FlxG.updateFramerate ? times.length : FlxG.updateFramerate;
 		updateText();
 		deltaTimeout += deltaTime;
 		

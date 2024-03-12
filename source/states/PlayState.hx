@@ -3343,6 +3343,8 @@ class PlayState extends MusicBeatState
 
 		if(ClientPrefs.data.opponentNoteSplashes && !note.isSustainNote) spawnNoteSplashOnNote(true, note, note.gfNote);
 		if(!note.isSustainNote) invalidateNote(note);
+		
+		oppoHits++;
 	}
 
 	public function goodNoteHit(note:Note):Void

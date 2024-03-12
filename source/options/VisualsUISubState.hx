@@ -159,30 +159,6 @@ class VisualsUISubState extends BaseOptionsMenu
 			'string',
 			['None', 'Default', 'New Psych', 'Old Psych', 'Golden Apple', 'Dave and Bambi', 'VS Steve']);
 		addOption(option);
-
-		var option:Option = new Option('Chars & BG',
-			'If unchecked, gameplay will only show the HUD.',
-			'charsAndBG',
-			'bool');
-		addOption(option);
-
-		var option:Option = new Option('Light Opponent Strums',
-			"If this is unchecked, the Opponent strums won't light up when the Opponent hits a note.",
-			'opponentLightStrum',
-			'bool');
-		addOption(option);
-
-		var option:Option = new Option('Light Botplay Strums',
-			"If this is unchecked, the Player strums won't light when Botplay is active.",
-			'botLightStrum',
-			'bool');
-		addOption(option);
-
-		var option:Option = new Option('Light Player Strums',
-			"If this is unchecked, then uh.. the player strums won't light up.\nit's as simple as that.",
-			'playerLightStrum',
-			'bool');
-		addOption(option);
 		
 		var option:Option = new Option('Hide Score Text',
 			"?",
@@ -195,24 +171,6 @@ class VisualsUISubState extends BaseOptionsMenu
 			'hideWatermarkTxt',
 			'bool');
 		addOption(option);
-
-		var option:Option = new Option('Show Ratings Popup',
-			"If checked, game with show Ratings popup",
-			'showRatingsPopUp',
-			'bool');
-		addOption(option);
-
-		var option:Option = new Option('Don\'t Show Ratings Popup If Botplay',
-			"If checked, game with no show Ratings popup if you enable Botplay",
-			'showRatingsPopUp',
-			'bool');
-		addOption(option);
-		
-		var option:Option = new Option('Show Unused Combo Popup',
-			"If checked, game with show unused Combo popup",
-			'showUnusedCombo',
-			'bool');
-		addOption(option);
 		
 		var option:Option = new Option('Time Bounce',
 			"(unfinished)",
@@ -223,6 +181,12 @@ class VisualsUISubState extends BaseOptionsMenu
 		var option:Option = new Option('Show Notes Counting',
 			"If checked, score text with show Note Counter.",
 			'showNotesCounting',
+			'bool');
+		addOption(option);
+		
+		var option:Option = new Option('Show NPS',
+			"If checked, score text with show NPS Counter.",
+			'showNps',
 			'bool');
 		addOption(option);
 		
