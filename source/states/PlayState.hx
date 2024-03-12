@@ -2118,7 +2118,7 @@ class PlayState extends MusicBeatState
 				iconP1.updateHitbox();
 				iconP2.updateHitbox();
 			
-			case 'Dave and Bambi':
+			/*case 'Dave and Bambi':
 				var bopMult:Float = 1;
 				var scaleMult = 1;
 
@@ -2127,13 +2127,13 @@ class PlayState extends MusicBeatState
 				
 				iconP2.setGraphicSize(Std.int(FlxMath.lerp(150 * scaleMult, iconP2.width, 0.8)), Std.int(FlxMath.lerp(150 * scaleMult, iconP2.height, 0.8)));
 				iconP2.updateHitbox();
-
+			*/
 			case 'Golden Apple':
 				iconP1.centerOffsets();
 				iconP2.centerOffsets();
 
 			case 'Default':
-				iconP1.scale.y = (iconP1.scale.y - 1) / -1 + 1;
+				/*iconP1.scale.y = (iconP1.scale.y - 1) / -1 + 1;
 				iconP2.scale.y = (iconP2.scale.y - 1) / -1 + 1;
 				
 				iconP1.y = 450 + (iconP1.scale.y * 113);
@@ -2155,7 +2155,7 @@ class PlayState extends MusicBeatState
 					if (iconP2.angle != 0) {
 						iconP2.angle += 1 * playbackRate;
 					}
-				}
+				}*/
 		}
 	}
 
@@ -3593,7 +3593,7 @@ class PlayState extends MusicBeatState
 				iconP1.updateHitbox();
 				iconP2.updateHitbox();
 			
-			case 'Dave and Bambi': // WTF WHY THIS NOT WORK FOR THIS PSYCH 0.7.x
+			/*case 'Dave and Bambi': // WTF WHY THIS NOT WORK FOR THIS PSYCH 0.7.x
 				var bopMult:Float = 1;
 				var scaleMult = 1;
 
@@ -3603,7 +3603,7 @@ class PlayState extends MusicBeatState
 
 				iconP1.setGraphicSize(Std.int(iconP1.width + (stretchValues[0] * trueFunny)),Std.int(iconP1.height - (stretchValues[1] * trueFunny)));
 				iconP2.setGraphicSize(Std.int(iconP2.width + (stretchValues[0] * trueFunny)),Std.int(iconP2.height - (stretchValues[1] * trueFunny)));
-			
+			*/
 			case 'Golden Apple':
 				if (curBeat % gfSpeed == 0) {
 					curBeat % (gfSpeed * 2) == 0 * playbackRate ? {
@@ -3643,22 +3643,23 @@ class PlayState extends MusicBeatState
 					final scaleThing:Float = type == 2 ? 0.75 : 1;
 					FlxTween.tween(iconP1, {'scale.x': 1 * scaleThing, 'scale.y': 1 * scaleThing}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
 					FlxTween.tween(iconP2, {'scale.x': 1 * scaleThing, 'scale.y': 1 * scaleThing}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-					if (curBeat % (gfSpeed * 2) == 0) {
-						iconP1.scale.set(0.8, 0.8);
-						iconP2.scale.set(1.2, 1.3);
+				}
+					/*if (curBeat % (gfSpeed * 2) == 0) {
+						//iconP1.scale.set(0.8, 0.8);
+						//iconP2.scale.set(1.2, 1.3);
 					
 						iconP1.angle = -15;
 						iconP2.angle = 15;
 					} else {
-						iconP2.scale.set(0.8, 0.8);
-						iconP1.scale.set(1.2, 1.3);
+						//iconP2.scale.set(0.8, 0.8);
+						//iconP1.scale.set(1.2, 1.3);
 						
 						iconP2.angle = -15;
 						iconP1.angle = 15;
 					}
 				}
 				iconP1.updateHitbox();
-				iconP2.updateHitbox();
+				iconP2.updateHitbox();*/
 		}
 
 		characterBopper(curBeat);
