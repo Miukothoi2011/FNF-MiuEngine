@@ -29,11 +29,15 @@ class CoolUtil
 	inline public static function capitalize(text:String)
 		return text.charAt(0).toUpperCase() + text.substr(1).toLowerCase();
 
-	inline public static function boundTo(value:Float, min:Float, max:Float):Float
+	inline public static function boundTo(value:Float, min:Float, max:Float):Float {
 		var newValue:Float = value;
-		if(newValue < min) newValue = min;
-		else if(newValue > max) newValue = max;
+		if(newValue < min) {
+			newValue = min;
+		} else if(newValue > max) {
+			newValue = max;
+		}
 		return newValue;
+	}
 
 	inline public static function coolTextFile(path:String):Array<String>
 	{
