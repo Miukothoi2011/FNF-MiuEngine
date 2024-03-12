@@ -313,6 +313,9 @@ class PlayState extends MusicBeatState
 
 	var textStuffLol:Array<String> = ['F(* $#*$#(*))', 'FUCK YOU#)(@)$@#', '*(IF@*(F*(H%G)))', 'null reference found.'];
 
+	// stores the last judgement object
+	public static var lastRating:FlxSprite;
+	
 	override public function create()
 	{
 		//trace('Playback Rate: ' + playbackRate);
@@ -2116,13 +2119,13 @@ class PlayState extends MusicBeatState
 				iconP2.updateHitbox();
 			
 			case 'Dave and Bambi':
-				var thingy = 0.88; //(144 / Main.fps.currentFPS) * 0.88;
-				//still gotta make this fps consistent crap
+				var bopMult:Float = 1;
+				var scaleMult = 1;
 
-				iconP1.setGraphicSize(Std.int(FlxMath.lerp(150, iconP1.width, thingy)),Std.int(FlxMath.lerp(150, iconP1.height, thingy)));
+				iconP1.setGraphicSize(Std.int(FlxMath.lerp(150 * scaleMult, width, 0.8)), Std.int(FlxMath.lerp(150 * scaleMult, height, 0.8)));
 				iconP1.updateHitbox();
-
-				iconP2.setGraphicSize(Std.int(FlxMath.lerp(150, iconP2.width, thingy)),Std.int(FlxMath.lerp(150, iconP2.height, thingy)));
+				
+				iconP2.setGraphicSize(Std.int(FlxMath.lerp(150 * scaleMult, width, 0.8)), Std.int(FlxMath.lerp(150 * scaleMult, height, 0.8)));
 				iconP2.updateHitbox();
 
 			case 'Golden Apple':
@@ -2857,6 +2860,7 @@ class PlayState extends MusicBeatState
 			antialias = !isPixelStage;
 		}
 		
+		if (!ClientPrefs.data.dontShowRatingsPopUpIfBotplay && !cpuControlled) {
 		rating.loadGraphic(Paths.image(uiPrefix + daRating.image + uiSuffix));
 		rating.screenCenter();
 		rating.x = placement - 40;
@@ -2864,7 +2868,7 @@ class PlayState extends MusicBeatState
 		rating.acceleration.y = 550 * playbackRate * playbackRate;
 		rating.velocity.y -= FlxG.random.int(140, 175) * playbackRate;
 		rating.velocity.x -= FlxG.random.int(0, 10) * playbackRate;
-		rating.visible = (!ClientPrefs.data.hideHud && showRating || !ClientPrefs.data.hideHud && !ClientPrefs.data.dontShowRatingsPopUpIfBotplay && !cpuControlled);
+		rating.visible = (!ClientPrefs.data.hideHud && showRating);
 		rating.x += ClientPrefs.data.comboOffset[0];
 		rating.y -= ClientPrefs.data.comboOffset[1];
 		rating.antialiasing = antialias;
@@ -2895,6 +2899,16 @@ class PlayState extends MusicBeatState
 
 		comboSpr.updateHitbox();
 		rating.updateHitbox();
+		
+		if (!ClientPrefs.data.comboStacking)
+		{
+			if (lastRating != null)
+			{
+				FlxTween.cancelTweensOf(lastRating);
+				remove(lastRating, true);
+				lastRating.destroy();
+			}
+		}
 
 		var seperatedScore:Array<Int> = [];
 
@@ -2944,6 +2958,10 @@ class PlayState extends MusicBeatState
 		}
 		comboSpr.x = xThing + 50;
 		FlxTween.tween(rating, {alpha: 0}, 0.2 / playbackRate, {
+			onComplete: function(tween:FlxTween)
+			{
+				rating.destroy();
+			},
 			startDelay: Conductor.crochet * 0.001 / playbackRate
 		});
 
@@ -2951,10 +2969,10 @@ class PlayState extends MusicBeatState
 			onComplete: function(tween:FlxTween)
 			{
 				comboSpr.destroy();
-				rating.destroy();
 			},
 			startDelay: Conductor.crochet * 0.002 / playbackRate
 		});
+		}
 	}
 
 	public var strumsBlocked:Array<Bool> = [];
@@ -2972,44 +2990,6 @@ class PlayState extends MusicBeatState
 			#end
 
 			if(FlxG.keys.checkStatus(eventKey, JUST_PRESSED)) keyPressed(key);
-		}
-		
-		var pressNotes:Array<Note> = [];
-		var notesStopped:Bool = false;
-		var sortedNotesList:Array<Note> = []; //ezSpam by JS Engine
-		if (sortedNotesList.length > 0) {
-			for (epicNote in sortedNotesList)
-			{
-				for (doubleNote in pressNotes) {
-					if (Math.abs(doubleNote.strumTime - epicNote.strumTime) < 1) {
-						if (shouldKillNotes)
-						{
-							doubleNote.kill();
-						}
-						notes.remove(doubleNote, true);
-						if (shouldKillNotes)
-						{
-							doubleNote.destroy();
-						}
-					} else {
-						notesStopped = true;
-					}
-
-					// eee jack detection before was not super good
-					if (!notesStopped) {
-					goodNoteHit(epicNote);
-						pressNotes.push(epicNote);
-					}
-					if (sortedNotesList.length > 2 && ClientPrefs.data.ezSpam) //literally all you need to allow you to spam though impossiblely hard jacks
-					{
-						var notesThatCanBeHit = sortedNotesList.length;
-						for (i in 1...Std.int(notesThatCanBeHit)) //i may consider making this hit half the notes instead
-						{
-							goodNoteHit(sortedNotesList[i]);
-						}
-					}
-				}
-			}
 		}
 	}
 
@@ -3064,6 +3044,44 @@ class PlayState extends MusicBeatState
 		} else {
 			dad.playAnim(singAnimations[Std.int(Math.abs(key))], true);
 			dad.holdTimer = 0;
+		}
+		
+		var pressNotes:Array<Note> = [];
+		var notesStopped:Bool = false;
+		var sortedNotesList:Array<Note> = []; //ezSpam by JS Engine
+		if (sortedNotesList.length > 0) {
+			for (epicNote in sortedNotesList)
+			{
+				for (doubleNote in pressNotes) {
+					if (Math.abs(doubleNote.strumTime - epicNote.strumTime) < 1) {
+						if (shouldKillNotes)
+						{
+							doubleNote.kill();
+						}
+						notes.remove(doubleNote, true);
+						if (shouldKillNotes)
+						{
+							doubleNote.destroy();
+						}
+					} else {
+						notesStopped = true;
+					}
+
+					// eee jack detection before was not super good
+					if (!notesStopped) {
+					goodNoteHit(epicNote);
+						pressNotes.push(epicNote);
+					}
+					if (sortedNotesList.length > 2 && ClientPrefs.data.ezSpam) //literally all you need to allow you to spam though impossiblely hard jacks
+					{
+						var notesThatCanBeHit = sortedNotesList.length;
+						for (i in 1...Std.int(notesThatCanBeHit)) //i may consider making this hit half the notes instead
+						{
+							goodNoteHit(sortedNotesList[i]);
+						}
+					}
+				}
+			}
 		}
 
 		// Needed for the  "Just the Two of Us" achievement.
@@ -3576,24 +3594,15 @@ class PlayState extends MusicBeatState
 				iconP2.updateHitbox();
 			
 			case 'Dave and Bambi': // WTF WHY THIS NOT WORK FOR THIS PSYCH 0.7.x
-				final funny:Float = Math.max(Math.min(healthBar.percent,1.9),0.1);//Math.clamp(healthBar.value,0.02,1.98);//Math.min(Math.min(healthBar.value,1.98),0.02);
+				var bopMult:Float = 1;
+				var scaleMult = 1;
 
-				//health icon bounce but epic
-				if (!opponentChart) // fixing support it
-				{
-					iconP2.setGraphicSize(Std.int(iconP1.width + (50 * funny)),Std.int(iconP1.height - (25 * funny)));
-					iconP1.setGraphicSize(Std.int(iconP2.width + (50 * ((2 - funny) + 0.1))),Std.int(iconP2.height - (25 * ((2 - funny) + 0.1))));
+				var funny:Float = (info.healthBarPercent * 0.01) + 0.01;
+				final trueFunny:Float = type > 0 ? (scaleMult * (2 - funny)) * bopMult : (scaleMult * funny) * bopMult;
+				final stretchValues = type == 2 ? [25, 12] : [50, 25];
 
-					iconP2.updateHitbox();
-					iconP1.updateHitbox();
-				} else
-				{
-					iconP1.setGraphicSize(Std.int(iconP1.width + (50 * (funny + 0.1))),Std.int(iconP1.height - (25 * funny)));
-					iconP2.setGraphicSize(Std.int(iconP2.width + (50 * ((2 - funny) + 0.1))),Std.int(iconP2.height - (25 * ((2 - funny) + 0.1))));
-
-					iconP1.updateHitbox();
-					iconP2.updateHitbox();
-				}
+				iconP1.setGraphicSize(Std.int(width + (stretchValues[0] * trueFunny)),Std.int(height - (stretchValues[1] * trueFunny)));
+				iconP2.setGraphicSize(Std.int(width + (stretchValues[0] * trueFunny)),Std.int(height - (stretchValues[1] * trueFunny)));
 			
 			case 'Golden Apple':
 				if (curBeat % gfSpeed == 0) {

@@ -122,7 +122,7 @@ class VisualsUISubState extends BaseOptionsMenu
 			'bool');
 		addOption(option);
 
-		var option:Option = new Option('Health Bar Opacity',
+		var option:Option = new Option('Health Bar Opacity: ',
 			'How much transparent should the health bar and icons be.',
 			'healthBarAlpha',
 			'percent');
@@ -186,7 +186,7 @@ class VisualsUISubState extends BaseOptionsMenu
 		
 		var option:Option = new Option('Show NPS',
 			"If checked, score text with show NPS Counter.",
-			'showNps',
+			'showNPS',
 			'bool');
 		addOption(option);
 		
