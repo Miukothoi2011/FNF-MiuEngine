@@ -73,7 +73,7 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 		optionsArray.push(new GameplayOption('Botplay', 'botplay', 'bool', false));
 
 		optionsArray.push(new GameplayOption('Play as Opponent', 'opponentplay', 'bool', false));
-		optionsArray.onChange = onChangeChartOption;
+		//optionsArray.onChange = onChangeChartOption;
 	}
 
 	public function getOptionByName(name:String)

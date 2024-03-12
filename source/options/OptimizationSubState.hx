@@ -11,8 +11,7 @@ class OptimizationSubState extends BaseOptionsMenu
 		var option:Option = new Option('Chars & BG', //Name
 			'If unchecked, gameplay will only show the HUD.', //Description
 			'charsAndBG', //Save data variable name
-			'bool', //Variable type
-			true); //Default value
+			'bool'); //Variable type
 		addOption(option);
 
 		var option:Option = new Option('Enable GC',

@@ -92,7 +92,7 @@ class LoadingState extends MusicBeatState
 			}
 		);
 		
-		PlayState.callOnScripts('onLoadingCreate');
+		//PlayState.callOnScripts('onLoadingCreate');
 	}
 	
 	function checkLoadSong(path:String)
@@ -139,7 +139,7 @@ class LoadingState extends MusicBeatState
 			loadBar.scale.x += 0.5 * (targetShit - loadBar.scale.x);
 		}
 		
-		PlayState.callOnScripts('onLoadingUpdate', elapsed);
+		//PlayState.callOnScripts('onLoadingUpdate', elapsed);
 	}
 	
 	function onLoad()

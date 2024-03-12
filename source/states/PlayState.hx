@@ -3060,15 +3060,10 @@ class PlayState extends MusicBeatState
 		if (!opponentChart)
 		{
 			boyfriend.playAnim(singAnimations[Std.int(Math.abs(key))], true);
-			if (ClientPrefs.cameraPanning) camPanRoutine(singAnimations[Std.int(Math.abs(key))], 'bf');
 			boyfriend.holdTimer = 0;
 		} else {
 			dad.playAnim(singAnimations[Std.int(Math.abs(key))], true);
-			if (ClientPrefs.cameraPanning) camPanRoutine(singAnimations[Std.int(Math.abs(key))], 'dad');
 			dad.holdTimer = 0;
-		}
-		if (canMiss) {
-			noteMissPress(key);
 		}
 
 		// Needed for the  "Just the Two of Us" achievement.
@@ -3311,7 +3306,7 @@ class PlayState extends MusicBeatState
 		}
 
 		if(note.noteType == 'Hey!' && dad.animOffsets.exists('hey')) {
-			final char:Character = !daNote.gfNote ? !opponentChart ? dad : boyfriend : gf;
+			final char:Character = !note.gfNote ? !opponentChart ? dad : boyfriend : gf;
 
 			char.playAnim('hey', true);
 			char.specialAnim = true;
@@ -3579,7 +3574,7 @@ class PlayState extends MusicBeatState
 				iconP2.updateHitbox();
 			
 			case 'Dave and Bambi': // WTF WHY THIS NOT WORK FOR THIS PSYCH 0.7.x
-				final funny:Float = Math.max(Math.min(healthBar.value,1.9),0.1);//Math.clamp(healthBar.value,0.02,1.98);//Math.min(Math.min(healthBar.value,1.98),0.02);
+				final funny:Float = Math.max(Math.min(healthBar.percent,1.9),0.1);//Math.clamp(healthBar.value,0.02,1.98);//Math.min(Math.min(healthBar.value,1.98),0.02);
 
 				//health icon bounce but epic
 				if (!opponentChart) // fixing support it
@@ -3598,7 +3593,7 @@ class PlayState extends MusicBeatState
 					iconP2.updateHitbox();
 				}
 			
-			case 'Golden Apple' && 'Default':
+			case 'Golden Apple':
 				if (curBeat % gfSpeed == 0) {
 					curBeat % (gfSpeed * 2) == 0 * playbackRate ? {
 						iconP1.scale.set(1.1, 0.8);
@@ -3613,20 +3608,30 @@ class PlayState extends MusicBeatState
 						FlxTween.angle(iconP1, 15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
 						FlxTween.angle(iconP2, -15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
 					}
-					if (ClientPrefs.data.iconBounce == 'Golden Apple') {
-						FlxTween.tween(iconP1, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-						FlxTween.tween(iconP2, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+					FlxTween.tween(iconP1, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+					FlxTween.tween(iconP2, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
 
-						iconP1.updateHitbox();
-						iconP2.updateHitbox();
-					} else if (ClientPrefs.data.iconBounce == 'Default') {
-						final scaleThing:Float = type == 2 ? 0.75 : 1;
-						FlxTween.tween(iconP1, {'scale.x': 1 * scaleThing, 'scale.y': 1 * scaleThing}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-						FlxTween.tween(iconP2, {'scale.x': 1 * scaleThing, 'scale.y': 1 * scaleThing}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-					}
+					iconP1.updateHitbox();
+					iconP2.updateHitbox();
 				}
 			case 'Default':
 				if (curBeat % gfSpeed == 0) {
+					curBeat % (gfSpeed * 2) == 0 * playbackRate ? {
+						iconP1.scale.set(1.1, 0.8);
+						iconP2.scale.set(1.1, 1.3);
+					
+						FlxTween.angle(iconP1, -15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+						FlxTween.angle(iconP2, 15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+					} : {
+						iconP1.scale.set(1.1, 1.3);
+						iconP2.scale.set(1.1, 0.8);
+						
+						FlxTween.angle(iconP1, 15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+						FlxTween.angle(iconP2, -15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+					}
+					final scaleThing:Float = type == 2 ? 0.75 : 1;
+					FlxTween.tween(iconP1, {'scale.x': 1 * scaleThing, 'scale.y': 1 * scaleThing}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+					FlxTween.tween(iconP2, {'scale.x': 1 * scaleThing, 'scale.y': 1 * scaleThing}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
 					if (curBeat % (gfSpeed * 2) == 0) {
 						iconP1.scale.set(0.8, 0.8);
 						iconP2.scale.set(1.2, 1.3);
