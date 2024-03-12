@@ -27,8 +27,7 @@ class FPSCounter extends TextField
 	public var memoryMegas(get, never):Float;
 	public var memoryLeakMegas:Float; // memory leak
 
-	//@:noCompletion private var cacheCount:Int;
-	//@:noCompletion private var currentTime:Float;
+	@:noCompletion private var currentTime:Float;
 	@:noCompletion private var times:Array<Float>;
 
 	public function new(x:Float = 10, y:Float = 10, color:Int = 0x000000)
