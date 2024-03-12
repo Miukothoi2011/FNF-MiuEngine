@@ -2122,10 +2122,10 @@ class PlayState extends MusicBeatState
 				var bopMult:Float = 1;
 				var scaleMult = 1;
 
-				iconP1.setGraphicSize(Std.int(FlxMath.lerp(150 * scaleMult, width, 0.8)), Std.int(FlxMath.lerp(150 * scaleMult, height, 0.8)));
+				iconP1.setGraphicSize(Std.int(FlxMath.lerp(150 * scaleMult, iconP1.width, 0.8)), Std.int(FlxMath.lerp(150 * scaleMult, iconP1.height, 0.8)));
 				iconP1.updateHitbox();
 				
-				iconP2.setGraphicSize(Std.int(FlxMath.lerp(150 * scaleMult, width, 0.8)), Std.int(FlxMath.lerp(150 * scaleMult, height, 0.8)));
+				iconP2.setGraphicSize(Std.int(FlxMath.lerp(150 * scaleMult, iconP2.width, 0.8)), Std.int(FlxMath.lerp(150 * scaleMult, iconP2.height, 0.8)));
 				iconP2.updateHitbox();
 
 			case 'Golden Apple':
@@ -3597,12 +3597,12 @@ class PlayState extends MusicBeatState
 				var bopMult:Float = 1;
 				var scaleMult = 1;
 
-				var funny:Float = (info.healthBarPercent * 0.01) + 0.01;
+				var funny:Float = (healthBar.percent * 0.01) + 0.01;
 				final trueFunny:Float = type > 0 ? (scaleMult * (2 - funny)) * bopMult : (scaleMult * funny) * bopMult;
 				final stretchValues = type == 2 ? [25, 12] : [50, 25];
 
-				iconP1.setGraphicSize(Std.int(width + (stretchValues[0] * trueFunny)),Std.int(height - (stretchValues[1] * trueFunny)));
-				iconP2.setGraphicSize(Std.int(width + (stretchValues[0] * trueFunny)),Std.int(height - (stretchValues[1] * trueFunny)));
+				iconP1.setGraphicSize(Std.int(iconP1.width + (stretchValues[0] * trueFunny)),Std.int(iconP1.height - (stretchValues[1] * trueFunny)));
+				iconP2.setGraphicSize(Std.int(iconP2.width + (stretchValues[0] * trueFunny)),Std.int(iconP2.height - (stretchValues[1] * trueFunny)));
 			
 			case 'Golden Apple':
 				if (curBeat % gfSpeed == 0) {
