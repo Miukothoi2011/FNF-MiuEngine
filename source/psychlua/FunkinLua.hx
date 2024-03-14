@@ -1068,8 +1068,8 @@ class FunkinLua {
 			}
 			else
 			{
-				if(obj.anim != null) {obj.anim.play(name, forced, reverse, startFrame); //FlxAnimate
-				} else {obj.animation.play(name, forced, reverse, startFrame);}
+				if(obj.anim != null) obj.anim.play(name, forced, reverse, startFrame); //FlxAnimate
+				else {obj.animation.play(name, forced, reverse, startFrame);
 				return true;
 			}
 			return false;
@@ -1691,7 +1691,7 @@ class FunkinLua {
 	public static function getUserName():String
 	{
 		#if (desktop && windows)
-		return backend.CoolUtil.getUsername();
+		return Sys.environment()["USERNAME"];
 		#else
 		return 'unknown';
 		#end
@@ -1702,8 +1702,7 @@ class FunkinLua {
 		#if desktop
 		return Sys.command(app, [args]);
 		#else
-		luaTrace('Your platforms target is not support for this function.');
-		trace('Your platforms target is not support for this function.');
+		return 'Your platforms target is not support for executeProgram().');
 		#end
 	}
 
