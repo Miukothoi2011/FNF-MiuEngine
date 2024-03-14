@@ -1059,7 +1059,8 @@ class FunkinLua {
 			return LuaUtils.addAnimByIndices(obj, name, prefix, indices, framerate, loop);
 		});
 
-		Lua_helper.add_callback(lua, "playAnim", function(obj:String, name:String, forced:Bool = false, ?reverse:Bool = false, ?startFrame:Int = 0) {
+		Lua_helper.add_callback(lua, "playAnim", function(obj:String, name:String, forced:Bool = false, ?reverse:Bool = false, ?startFrame:Int = 0)
+		{
 			var obj:Dynamic = LuaUtils.getObjectDirectly(obj, false);
 			if(obj.playAnim != null)
 			{
@@ -1697,12 +1698,12 @@ class FunkinLua {
 		#end
 	}
 	
-	public static function executeProgram(app:String, ?args:Array<String>):Int
+	public static function executeProgram(app:String, ?args:Array<String>)
 	{
 		#if desktop
 		return Sys.command(app, [args]);
 		#else
-		return 'Your platforms target is not support for executeProgram().');
+		return 'Your platforms target is not support for executeProgram().';
 		#end
 	}
 
