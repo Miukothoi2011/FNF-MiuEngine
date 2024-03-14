@@ -157,7 +157,7 @@ class VisualsUISubState extends BaseOptionsMenu
 			"?",
 			'iconBounce',
 			'string',
-			['None', 'Default', 'New Psych', 'Old Psych', 'Golden Apple', 'Dave and Bambi', 'VS Steve']);
+			['None', 'Default', 'New Psych', 'Old Psych'/*, 'Golden Apple', 'Dave and Bambi', 'VS Steve'*/]); //THIS TEMP. ONLY, IT NOT MEANT I REMOVE ALL ELSE ICON BOUNCE, I FIX THIS.
 		addOption(option);
 		
 		var option:Option = new Option('Hide Score Text',

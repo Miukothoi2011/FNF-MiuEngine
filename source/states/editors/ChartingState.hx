@@ -3315,6 +3315,11 @@ class ChartingState extends MusicBeatState
 
 	private function saveLevel()
 	{
+		if (CoolUtil.getNoteAmount(_song) > 1000000) 
+		{
+			Paths.gc(true);
+			cpp.vm.Gc.enable(false);
+		}
 		if(_song.events != null && _song.events.length > 1) _song.events.sort(sortByTime);
 		var json = {
 			"song": _song
@@ -3330,6 +3335,7 @@ class ChartingState extends MusicBeatState
 			_file.addEventListener(IOErrorEvent.IO_ERROR, onSaveError);
 			_file.save(data.trim(), Paths.formatToSongPath(_song.song) + ".json");
 		}
+		cpp.vm.Gc.enable(true);
 	}
 
 	function sortByTime(Obj1:Array<Dynamic>, Obj2:Array<Dynamic>):Int

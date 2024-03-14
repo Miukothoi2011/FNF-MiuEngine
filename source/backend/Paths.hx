@@ -17,6 +17,13 @@ import flash.media.Sound;
 
 import haxe.Json;
 
+#if cpp
+import cpp.vm.Gc;
+#elseif hl
+import hl.Gc;
+#elseif neko
+import neko.vm.Gc;
+#end
 
 #if MODS_ALLOWED
 import backend.Mods;
@@ -38,6 +45,28 @@ class Paths
 		'assets/shared/music/breakfast.$SOUND_EXT',
 		'assets/shared/music/tea-time.$SOUND_EXT',
 	];
+	
+	@:noCompletion private inline static function _gc(major:Bool) {
+		#if (cpp || neko)
+		Gc.run(major);
+		#elseif hl
+		Gc.major();
+		#end
+	}
+
+	@:noCompletion public inline static function compress() {
+		#if cpp
+		Gc.compact();
+		#elseif hl
+		Gc.major();
+		#elseif neko
+		Gc.run(true);
+		#end
+	}
+
+	public inline static function gc(major:Bool = false, repeat:Int = 1) {
+		while(repeat-- > 0) _gc(major);
+	}
 	/// haya I love you for the base cache dump I took to the max
 	public static function clearUnusedMemory() {
 		// clear non local assets in the tracked assets list

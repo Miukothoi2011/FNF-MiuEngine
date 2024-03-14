@@ -182,6 +182,9 @@ class PlayState extends MusicBeatState
 	public var unspawnNotes:Array<Note> = [];
 	public var eventNotes:Array<EventNote> = [];
 
+	public var isEkSong:Bool = false; //we'll use this so that the game doesn't load all notes twice?
+	public var usingEkFile:Bool = false; //we'll also use this so that the game doesn't load all notes twice?
+
 	public var camFollow:FlxObject;
 	private static var prevCamFollow:FlxObject;
 
@@ -313,6 +316,8 @@ class PlayState extends MusicBeatState
 
 	var textStuffLol:Array<String> = ['F(* $#*$#(*))', 'FUCK YOU#)(@)$@#', '*(IF@*(F*(H%G)))', 'null reference found.'];
 
+	var ratingsCounter:FlxText;
+	
 	// stores the last judgement object
 	public static var lastRating:FlxSprite;
 	
@@ -320,8 +325,13 @@ class PlayState extends MusicBeatState
 	{
 		//trace('Playback Rate: ' + playbackRate);
 
-		cpp.vm.Gc.enable(ClientPrefs.data.enableGC); //lagspike prevention
-		Paths.clearStoredMemory();
+		#if cpp //lagspike prevention
+		cpp.vm.Gc.enable(ClientPrefs.data.enableGC);
+		#elseif neko
+		neko.vm.Gc.enable(ClientPrefs.data.enableGC);
+		#elseif hl
+		hl.Gc.enable(ClientPrefs.data.enableGC);
+		#end
 
 		#if sys
 		openfl.system.System.gc();
@@ -705,6 +715,11 @@ class PlayState extends MusicBeatState
 					new FunkinLua(folder + file);
 				if(file.toLowerCase().endsWith('.hx'))
 					initHScript(folder + file);
+				if(file.toLowerCase() == 'extra keys hscript.lua') {
+					new FunkinLua(folder + 'extra keys hscript.lua');
+					trace ('theres a lua extra keys file');
+					usingEkFile = true;
+				}
 			}
 		#end
 
@@ -3037,14 +3052,14 @@ class PlayState extends MusicBeatState
 			noteMissPress(key);
 		}
 
-		if (!opponentChart)
+		/*if (!opponentChart)
 		{
 			boyfriend.playAnim(singAnimations[Std.int(Math.abs(key))], true);
 			boyfriend.holdTimer = 0;
 		} else {
 			dad.playAnim(singAnimations[Std.int(Math.abs(key))], true);
 			dad.holdTimer = 0;
-		}
+		}*/
 		
 		var pressNotes:Array<Note> = [];
 		var notesStopped:Bool = false;
@@ -3511,6 +3526,13 @@ class PlayState extends MusicBeatState
 		Note.globalRgbShaders = [];
 		backend.NoteTypesConfig.clearNoteTypesData();
 		instance = null;
+		#if cpp
+		cpp.vm.Gc.enable(true);
+		#elseif neko
+		neko.vm.Gc.enable(true);
+		#elseif hl
+		hl.Gc.enable(true);
+		#end
 		super.destroy();
 	}
 

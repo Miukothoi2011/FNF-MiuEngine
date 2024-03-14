@@ -212,7 +212,7 @@ class FunkinLua {
 
 		// build target (windows, mac, linux, etc.)
 		set('buildTarget', getBuildTarget());
-		set('pcUserName', getPcUserName());
+		set('pcUserName', getUserName());
 
 		for (name => func in customFunctions)
 		{
@@ -1059,8 +1059,7 @@ class FunkinLua {
 			return LuaUtils.addAnimByIndices(obj, name, prefix, indices, framerate, loop);
 		});
 
-		Lua_helper.add_callback(lua, "playAnim", function(obj:String, name:String, forced:Bool = false, ?reverse:Bool = false, ?startFrame:Int = 0)
-		{
+		Lua_helper.add_callback(lua, "playAnim", function(obj:String, name:String, forced:Bool = false, ?reverse:Bool = false, ?startFrame:Int = 0) {
 			var obj:Dynamic = LuaUtils.getObjectDirectly(obj, false);
 			if(obj.playAnim != null)
 			{
@@ -1069,8 +1068,8 @@ class FunkinLua {
 			}
 			else
 			{
-				if(obj.anim != null) obj.anim.play(name, forced, reverse, startFrame); //FlxAnimate
-				else obj.animation.play(name, forced, reverse, startFrame);
+				if(obj.anim != null) {obj.anim.play(name, forced, reverse, startFrame); //FlxAnimate
+				} else {obj.animation.play(name, forced, reverse, startFrame);}
 				return true;
 			}
 			return false;
@@ -1496,9 +1495,6 @@ class FunkinLua {
 		Lua_helper.add_callback(lua, 'openURL', function(url:String) {
 			CoolUtil.browserLoad(url);
 		});
-		//Lua_helper.add_callback(lua, "pcUserName", function() {
-		//	return Sys.environment()["USERNAME"];
-		//});
 		/*Lua_helper.add_callback(lua, "setRating", function(or:Int, nr:String) {
 			var ratingarray = PlayState.ratingStuff;
 			var targetrating = ratingarray[9];
@@ -1523,6 +1519,9 @@ class FunkinLua {
 		Lua_helper.add_callback(lua, 'setWindowPositon', function(x:Int, y:Int) {
 			openfl.Lib.application.window.x = x;
 			openfl.Lib.application.window.y = y;
+		});
+		Lua_helper.add_callback(lua, 'executeProgram', function(app:String, ?args:Array<String>) {
+			return executeProgram(app, args);
 		});
 		
 		// mod settings
@@ -1689,12 +1688,22 @@ class FunkinLua {
 		#end
 	}
 
-	public static function getPcUserName():String
+	public static function getUserName():String
 	{
 		#if (desktop && windows)
-		return Sys.environment()["USERNAME"];
+		return backend.CoolUtil.getUsername();
 		#else
 		return 'unknown';
+		#end
+	}
+	
+	public static function executeProgram(app:String, ?args:Array<String>):Int
+	{
+		#if desktop
+		return Sys.command(app, [args]);
+		#else
+		luaTrace('Your platforms target is not support for this function.');
+		trace('Your platforms target is not support for this function.');
 		#end
 	}
 

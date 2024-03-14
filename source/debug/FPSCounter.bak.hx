@@ -1,9 +1,6 @@
-package debug; /* NOTE: this fps display are from openfl to accuracy fps display cuz psych fps is fucking up only 60 fps
-				* not down like psych < 0.7.2
-				*/
-import haxe.Timer;
+package debug;
+
 import flixel.FlxG;
-import openfl.events.Event;
 import openfl.text.TextField;
 import openfl.text.TextFormat;
 import openfl.system.System;
@@ -23,14 +20,13 @@ class FPSCounter extends TextField
 		The current frame rate, expressed using frames-per-second
 	**/
 	public var currentFPS(default, null):Int;
-	
+
 	/**
 		The current memory usage (WARNING: this is NOT your total program memory usage, rather it shows the garbage collector memory)
 	**/
 	public var memoryMegas(get, never):Float;
-	public var memoryLeakMegas(default, null):Float; // memory leak
+	public var memoryLeakMegas:Float; // memory leak
 
-	@:noCompletion private var cacheCount:Int;
 	@:noCompletion private var currentTime:Float;
 	@:noCompletion private var times:Array<Float>;
 
@@ -53,11 +49,9 @@ class FPSCounter extends TextField
 		multiline = true;
 		text = "FPS: ";
 
-		cacheCount = 0;
-		currentTime = 0;
 		times = [];
 	}
-	
+
 	var deltaTimeout:Float = 0.0;
 	
 	// All the colors:			      Red,	        Orange,        Yellow,       Green,        Blue,         Violet/Purple
@@ -66,30 +60,29 @@ class FPSCounter extends TextField
 	var currentColor:Int = 0;
 
 	// Event Handlers
-	@:noCompletion
-	private #if !flash override #end function __enterFrame(deltaTime:Float):Void
+	private override function __enterFrame(deltaTime:Float):Void
 	{
-		currentTime += deltaTime;
-		times.push(currentTime);
-
-		while (times[0] < currentTime - 1000)
-		{
-			times.shift();
+		if (deltaTimeout > 1000) {
+			deltaTimeout = 0.0;
+			return;
 		}
 
-		var currentCount = times.length;
-		currentFPS = Math.round((currentCount + cacheCount) / 2);
-		if (currentFPS > ClientPrefs.data.framerate) currentFPS = ClientPrefs.data.framerate;
+		var now:Float = haxe.Timer.stamp();
+		currentTime += deltaTime;
+		times.push(now);
+		while (times[0] < now - 1000)
+			times.shift();
+
+		currentFPS = currentFPS < FlxG.updateFramerate ? times.length : FlxG.updateFramerate;
 		updateText();
-		
 		deltaTimeout += deltaTime;
-		colorInterp += deltaTime / 330; // Division so that it doesn't give you a seizure on 60 FPS
 		
-		cacheCount = currentCount;
+		colorInterp += deltaTime / 330; // Division so that it doesn't give you a seizure on 60 FPS
 	}
 
 	public dynamic function updateText():Void { // so people can override it in hscript
-		if (memoryMegas >= memoryLeakMegas) memoryLeakMegas = memoryMegas;
+		if (memoryMegas >= memoryLeakMegas) 
+			memoryLeakMegas = memoryMegas;
 		
 		if (ClientPrefs.data.showFPS) {
 			text = 'FPS: ${currentFPS}';
@@ -122,9 +115,12 @@ class FPSCounter extends TextField
 			if (ClientPrefs.data.showRainbowFPS) {
 				var colorIndex1:Int = Math.floor(colorInterp);
 				var colorIndex2:Int = (colorIndex1 + 1) % rainbowColors.length;
+
 				var startColor:Int = rainbowColors[colorIndex1];
 				var endColor:Int = rainbowColors[colorIndex2];
+
 				var segmentInterp:Float = colorInterp - colorIndex1;
+
 				var interpolatedColor:Int = interpolateColor(startColor, endColor, segmentInterp);
 
 				textColor = interpolatedColor;
@@ -137,15 +133,8 @@ class FPSCounter extends TextField
 				}
 			} else {
 				textColor = 0xFFFFFFFF;
-				/*if (currentFPS < FlxG.drawFramerate * 0.5)
-					textColor = 0xFFFF0000;*/
-				if (currentFPS <= ClientPrefs.data.framerate / 2 && currentFPS >= ClientPrefs.data.framerate / 3) {
-					textColor = 0xFFFFFF00;
-				} else if (currentFPS <= ClientPrefs.data.framerate / 3 && currentFPS >= ClientPrefs.data.framerate / 4) {
-					textColor = 0xFFFF8000;
-				} else if (currentFPS <= ClientPrefs.data.framerate / 4) {
+				if (currentFPS < FlxG.drawFramerate * 0.5)
 					textColor = 0xFFFF0000;
-				}
 			}
 		}
 	}
