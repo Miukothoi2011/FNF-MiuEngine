@@ -1070,7 +1070,7 @@ class FunkinLua {
 			else
 			{
 				if(obj.anim != null) obj.anim.play(name, forced, reverse, startFrame); //FlxAnimate
-				else {obj.animation.play(name, forced, reverse, startFrame);
+				else obj.animation.play(name, forced, reverse, startFrame);
 				return true;
 			}
 			return false;
