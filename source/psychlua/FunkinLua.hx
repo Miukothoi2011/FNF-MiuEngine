@@ -1701,7 +1701,7 @@ class FunkinLua {
 	public static function executeProgram(app:String, ?args:Array<String>)
 	{
 		#if desktop
-		return Sys.command(app, [args]);
+		return Sys.command(app, args);
 		#else
 		return 'Your platforms target is not support for executeProgram().';
 		#end
