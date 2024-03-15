@@ -32,19 +32,15 @@ class CoolUtil
 		return text.charAt(0).toUpperCase() + text.substr(1).toLowerCase();
 
 	inline public static function boundTo(value:Float, min:Float, max:Float):Float {
-		var newValue:Float = value;
+		/*var newValue:Float = value;
 		if(newValue < min) {
 			newValue = min;
 		} else if(newValue > max) {
 			newValue = max;
 		}
-		return newValue;
-	}
-
-	public static function getUsername():String
-	{
-		// uhh this one is self explanatory
-		return Sys.getEnv("USERNAME");
+		return newValue;*/
+		
+		return Math.max(min, Math.min(max, value));
 	}
 
 	inline public static function coolTextFile(path:String):Array<String>
