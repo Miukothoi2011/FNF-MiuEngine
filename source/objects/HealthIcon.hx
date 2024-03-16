@@ -32,24 +32,25 @@ class HealthIcon extends FlxSprite
 			if(!Paths.fileExists('images/' + name + '.png', IMAGE)) name = 'icons/icon-face'; //Prevents crash from missing icon
 			var graphic = Paths.image(name, allowGPU);
 			
-			loadGraphic(graphic);
+			loadGraphic(graphic); // Load icon first to check width icon size to if icon has 3 frames or 2 frames.
 			var width2 = width;
-			switch(width) {
-				case 450:
-					loadGraphic(graphic, true, Math.floor(/*graphic.*/width / 3), Math.floor(/*graphic.*/height));
-					iconOffsets[0] = (width - 150) / 3;
-					iconOffsets[1] = (width - 150) / 3;
-					iconOffsets[2] = (width - 150) / 3;
-				case 300:
-					loadGraphic(graphic, true, Math.floor(/*graphic.*/width / 2), Math.floor(/*graphic.*/height));
-					iconOffsets[0] = (width - 150) / 2;
-					iconOffsets[1] = (width - 150) / 2;
+			if(width >= 450) {
+				loadGraphic(graphic, true, Math.floor(/*graphic.*/width / 3), Math.floor(/*graphic.*/height));
+				iconOffsets[0] = (width - 150) / 3;
+				iconOffsets[1] = (width - 150) / 3;
+				iconOffsets[2] = (width - 150) / 3;
+			} else if(width >= 300 || width != 450 && width > 450) {
+				loadGraphic(graphic, true, Math.floor(/*graphic.*/width / 2), Math.floor(/*graphic.*/height));
+				iconOffsets[0] = (width - 150) / 2;
+				iconOffsets[1] = (width - 150) / 2;
 			}
 			updateHitbox();
-			switch(width2) {
-				case 450: animation.add(char, [0, 1, 2], 0, false, isPlayer);
-				case 300: animation.add(char, [0, 1], 0, false, isPlayer);
-			}
+			
+			if(width2 >= 450)
+				animation.add(char, [0, 1, 2], 0, false, isPlayer);
+			else if(width2 >= 300 || width2 != 450 && width2 > 450)
+				animation.add(char, [0, 1], 0, false, isPlayer);
+
 			animation.play(char);
 			this.char = char;
 

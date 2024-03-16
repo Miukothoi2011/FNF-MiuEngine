@@ -154,26 +154,26 @@ class VisualsUISubState extends BaseOptionsMenu
 		addOption(option);*/
 		
 		var option:Option = new Option('Icon Bounce:',
-			"?",
+			"What icon bounce you want use?",
 			'iconBounce',
 			'string',
-			['None', 'Default', 'New Psych', 'Old Psych'/*, 'Golden Apple', 'Dave and Bambi', 'VS Steve'*/]); //THIS TEMP. ONLY, IT NOT MEANT I REMOVE ALL ELSE ICON BOUNCE, I FIX THIS.
+			['None', 'Default', 'New Psych', 'Old Psych', 'OS Engine', 'Strident Crisis'/*, 'Golden Apple', 'Dave and Bambi'*/]); //THIS TEMP. ONLY, IT NOT MEANT I REMOVE ALL ELSE ICON BOUNCE, I FIX THIS.
 		addOption(option);
 		
 		var option:Option = new Option('Hide Score Text',
-			"?",
+			"It checked, the Score Text is hide.",
 			'hideScoreTxt',
 			'bool');
 		addOption(option);
 
 		var option:Option = new Option('Hide Watermark Text',
-			"?",
+			"It checked, the Watermark Text is hide.",
 			'hideWatermarkTxt',
 			'bool');
 		addOption(option);
 		
 		var option:Option = new Option('Time Bounce',
-			"(unfinished)",
+			"(UNFINISHED, DON'T ENABLE THIS!)",
 			'timeBounce',
 			'bool');
 		addOption(option);
@@ -214,10 +214,10 @@ class VisualsUISubState extends BaseOptionsMenu
 		option.defaultValue = 12;
 		
 		var option:Option = new Option('FPS Text Font: ',
-			'?',
+			'What FPS Font you want use?',
 			'FPSTxtFont',
 			'string',
-			['Default', 'VCR', 'MS Sans Comic']);
+			['Default', 'VCR']);
 		addOption(option);
 		
 		var option:Option = new Option('Show Memory',

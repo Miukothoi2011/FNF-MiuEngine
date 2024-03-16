@@ -2166,6 +2166,32 @@ class PlayState extends MusicBeatState
 						iconP2.angle += 1 * playbackRate;
 					}
 				}*/
+			case 'OS Engine':
+				iconP1.setGraphicSize(Std.int(FlxMath.lerp(150, iconP1.width, CoolUtil.boundTo(1 - (elapsed * 30), 0, 1))));
+				iconP1.updateHitbox();
+				iconP2.setGraphicSize(Std.int(FlxMath.lerp(150, iconP2.width, CoolUtil.boundTo(1 - (elapsed * 30), 0, 1))));
+				iconP2.updateHitbox();
+			
+			case 'Strident Crisis':
+				var mult:Float = FlxMath.lerp(1, iconP1.scale.x, CoolUtil.boundTo(1 - (elapsed * 9), 0, 2));
+				iconP1.scale.set(mult, mult);
+				iconP1.updateHitbox();
+
+				var mult:Float = FlxMath.lerp(1, iconP2.scale.x, CoolUtil.boundTo(1 - (elapsed * 9), 0, 2));
+				iconP2.scale.set(mult, mult);
+				iconP2.updateHitbox();
+				
+				iconP1.centerOffsets();
+				iconP2.centerOffsets();
+
+				iconP1.updateHitbox();
+				iconP2.updateHitbox();
+
+				iconP1.setGraphicSize(Std.int(FlxMath.lerp(150, iconP1.width, 0.50)));
+				iconP1.updateHitbox();
+
+				iconP2.setGraphicSize(Std.int(FlxMath.lerp(150, iconP2.width, 0.50)));
+				iconP2.updateHitbox();
 		}
 	}
 
@@ -2197,7 +2223,7 @@ class PlayState extends MusicBeatState
 			case 3:
 				if (healthBar.percent < 20)
 					iconP1.animation.curAnim.curFrame = 1;
-				else if (healthBar.percent >80)
+				else if (healthBar.percent > 80)
 					iconP1.animation.curAnim.curFrame = 2;
 				else
 					iconP1.animation.curAnim.curFrame = 0;
@@ -2210,14 +2236,14 @@ class PlayState extends MusicBeatState
 		
 		switch(iconP2.animation.frames) {
 			case 3:
-				if (healthBar.percent < 20)
+				if (healthBar.percent > 80)
 					iconP2.animation.curAnim.curFrame = 1;
-				else if (healthBar.percent >80)
+				else if (healthBar.percent < 20)
 					iconP2.animation.curAnim.curFrame = 2;
 				else
 					iconP2.animation.curAnim.curFrame = 0;
 			case 2:
-				if (healthBar.percent < 20)
+				if (healthBar.percent > 80)
 					iconP2.animation.curAnim.curFrame = 1;
 				else
 					iconP2.animation.curAnim.curFrame = 0;
@@ -3671,6 +3697,7 @@ class PlayState extends MusicBeatState
 					iconP1.updateHitbox();
 					iconP2.updateHitbox();
 				}
+			
 			case 'Default':
 				if (curBeat % gfSpeed == 0) {
 					curBeat % (gfSpeed * 2) == 0 * playbackRate ? {
@@ -3706,6 +3733,37 @@ class PlayState extends MusicBeatState
 				}
 				iconP1.updateHitbox();
 				iconP2.updateHitbox();*/
+			
+			case 'OS Engine':
+				iconP1.scale.set(1.2, 1.2);
+				iconP2.scale.set(1.2, 1.2);
+				
+				iconP1.updateHitbox();
+				iconP2.updateHitbox();
+				
+				iconP1.angle = 8;
+				iconP2.angle = 8;
+				if (curBeat % 2 == 0)
+					iconP1.angle = -8;
+					iconP2.angle = -8;
+				
+				FlxTween.angle(iconP1, iconP1.angle, 0, Conductor.crochet / 0, {ease: FlxEase.quadOut});
+				FlxTween.angle(iconP2, iconP2.angle, 0, Conductor.crochet / 0, {ease: FlxEase.quadOut});
+			
+			case 'Strident Crisis':
+				var funny:Float = (healthBar.percent * 0.01) + 0.01;
+		
+				//health icon bounce but epic
+				iconP1.setGraphicSize(Std.int(iconP1.width + (50 * (2 + funny))),Std.int(iconP2.height - (25 * (2 + funny))));
+				iconP2.setGraphicSize(Std.int(iconP2.width + (50 * (2 - funny))),Std.int(iconP2.height - (25 * (2 - funny))));	
+				
+				iconP1.scale.set(1.1, 1.8);
+				iconP2.scale.set(1.1, 1.8);
+				
+				iconP1.angle = -15;
+				iconP2.angle = 15;
+				FlxTween.angle(iconP1, iconP1.angle, 0, Conductor.crochet / 1300, {ease: FlxEase.quadOut});
+				FlxTween.angle(iconP2, iconP2.angle, 0, Conductor.crochet / 1300, {ease: FlxEase.quadOut});
 		}
 
 		characterBopper(curBeat);
