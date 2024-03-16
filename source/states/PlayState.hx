@@ -1965,11 +1965,11 @@ class PlayState extends MusicBeatState
 			if(secondsTotal < 0) secondsTotal = 0;
 
 			if(ClientPrefs.data.timeBarType != 'Song Name')
-				timeTxt.text = FlxStringUtil.formatTime(secondsTotal, false);
-				
-			if(ClientPrefs.data.timeBarType == 'Song Name + Time') {
+				timeTxt.text = FlxStringUtil.formatTime(secondsTotal, false);		
+			else if(ClientPrefs.data.timeBarType == 'Song Name + Time')
 				timeTxt.text = SONG.song + ' (' + CoolUtil.formatTime(Conductor.songPosition) + ' / ' + CoolUtil.formatTime(songLength) + ')';
-			}
+			else if(ClientPrefs.data.timeBarType == 'Time Left/Elapsed')
+				timeTxt.text = CoolUtil.formatTime(Conductor.songPosition) + ' / ' + CoolUtil.formatTime(songLength);
 		}
 
 		if (camZooming)
@@ -3658,24 +3658,13 @@ class PlayState extends MusicBeatState
 				iconP1.updateHitbox();
 				iconP2.updateHitbox();
 			
-			case 'Old Psych': // THIS CODE IS FROM PSYCH 0.4.2, NOT A COPY OF DENPA ENGINE. // WTF WHY THIS NOT WORK FOR THIS PSYCH 0.7.x
+			case 'Old Psych': // THIS CODE IS FROM PSYCH 0.4.2.
 				iconP1.setGraphicSize(Std.int(iconP1.width + 30));
 				iconP2.setGraphicSize(Std.int(iconP2.width + 30));
 
 				iconP1.updateHitbox();
 				iconP2.updateHitbox();
-			
-			/*case 'Dave and Bambi': // WTF WHY THIS NOT WORK FOR THIS PSYCH 0.7.x
-				var bopMult:Float = 1;
-				var scaleMult = 1;
 
-				var funny:Float = (healthBar.percent * 0.01) + 0.01;
-				final trueFunny:Float = type > 0 ? (scaleMult * (2 - funny)) * bopMult : (scaleMult * funny) * bopMult;
-				final stretchValues = type == 2 ? [25, 12] : [50, 25];
-
-				iconP1.setGraphicSize(Std.int(iconP1.width + (stretchValues[0] * trueFunny)),Std.int(iconP1.height - (stretchValues[1] * trueFunny)));
-				iconP2.setGraphicSize(Std.int(iconP2.width + (stretchValues[0] * trueFunny)),Std.int(iconP2.height - (stretchValues[1] * trueFunny)));
-			*/
 			case 'Golden Apple':
 				if (curBeat % gfSpeed == 0) {
 					curBeat % (gfSpeed * 2) == 0 * playbackRate ? {
@@ -3717,44 +3706,26 @@ class PlayState extends MusicBeatState
 					FlxTween.tween(iconP1, {'scale.x': 1 * scaleThing, 'scale.y': 1 * scaleThing}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
 					FlxTween.tween(iconP2, {'scale.x': 1 * scaleThing, 'scale.y': 1 * scaleThing}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
 				}
-					/*if (curBeat % (gfSpeed * 2) == 0) {
-						//iconP1.scale.set(0.8, 0.8);
-						//iconP2.scale.set(1.2, 1.3);
-					
-						iconP1.angle = -15;
-						iconP2.angle = 15;
-					} else {
-						//iconP2.scale.set(0.8, 0.8);
-						//iconP1.scale.set(1.2, 1.3);
-						
-						iconP2.angle = -15;
-						iconP1.angle = 15;
-					}
-				}
-				iconP1.updateHitbox();
-				iconP2.updateHitbox();*/
 			
 			case 'OS Engine':
 				iconP1.scale.set(1.2, 1.2);
 				iconP2.scale.set(1.2, 1.2);
 				
+				var angleThing:Int = 8;
+				if (curBeat % 2 == 0)
+					angleThing = -8;
+					
+				iconP1.angle = angleThing;
+				iconP2.angle = angleThing;
+				
 				iconP1.updateHitbox();
 				iconP2.updateHitbox();
-				
-				iconP1.angle = 8;
-				iconP2.angle = 8;
-				if (curBeat % 2 == 0)
-					iconP1.angle = -8;
-					iconP2.angle = -8;
-				
-				FlxTween.angle(iconP1, iconP1.angle, 0, Conductor.crochet / 0, {ease: FlxEase.quadOut});
-				FlxTween.angle(iconP2, iconP2.angle, 0, Conductor.crochet / 0, {ease: FlxEase.quadOut});
 			
 			case 'Strident Crisis':
 				var funny:Float = (healthBar.percent * 0.01) + 0.01;
 		
 				//health icon bounce but epic
-				iconP1.setGraphicSize(Std.int(iconP1.width + (50 * (2 + funny))),Std.int(iconP2.height - (25 * (2 + funny))));
+				iconP1.setGraphicSize(Std.int(iconP1.width + (50 * (2 + funny))),Std.int(iconP1.height - (25 * (2 + funny))));
 				iconP2.setGraphicSize(Std.int(iconP2.width + (50 * (2 - funny))),Std.int(iconP2.height - (25 * (2 - funny))));	
 				
 				iconP1.scale.set(1.1, 1.8);
