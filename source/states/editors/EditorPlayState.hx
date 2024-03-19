@@ -136,7 +136,7 @@ class EditorPlayState extends MusicBeatSubstate
 		pauseTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		pauseTxt.scrollFactor.set();
 		pauseTxt.borderSize = 1.25;
-		pauseTxt.visible = !paused;
+		pauseTxt.visible = paused;
 		add(pauseTxt);
 
 		var tipText:FlxText = new FlxText(10, FlxG.height - 24, 0, 'Press ESC to Go Back to Chart Editor', 16);
@@ -495,15 +495,12 @@ class EditorPlayState extends MusicBeatSubstate
 	public function pauseSong()
 	{
 		persistentUpdate = false;
-		persistentDraw = true;
-		if(FlxG.sound.music != null) {
+		persistentDraw = false;
+		if(FlxG.sound.music != null)
 			FlxG.sound.music.pause();
 			vocals.pause();
-		}
-		if(controls.BACK)
-		{
-			close();
-		}
+
+		if(controls.BACK || FlxG.keys.justPressed.ESCAPE) close();
 	}
 
 	private function cachePopUpScore()

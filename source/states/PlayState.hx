@@ -245,6 +245,7 @@ class PlayState extends MusicBeatState
 	public var cameraSpeed:Float = 1;
 
 	var notesHitArray:Array<Date> = [];
+	var opponentNotesHitArray:Array<Date> = [];
 	var currentFrames:Int = 0;
 
 	public var songScore:Int = 0;
@@ -632,8 +633,7 @@ class PlayState extends MusicBeatState
 			watermarkTxt.updateHitbox();
 			watermarkTxt.alpha = 1;
 			watermarkTxt.visible = !ClientPrefs.data.hideHud && !ClientPrefs.data.hideWatermarkTxt;
-			add(watermarkTxt);
-			watermarkTxt.cameras = [camHUD];
+			uiGroup.add(watermarkTxt);
 		} else {
 			watermarkTxt = new FlxText(10, FlxG.height - 28, 0, SONG.song + " - " + Difficulty.getString() + " - Miu Engine", 74);
 			watermarkTxt.scrollFactor.set();
@@ -642,8 +642,7 @@ class PlayState extends MusicBeatState
 			watermarkTxt.updateHitbox();
 			watermarkTxt.alpha = 1;
 			watermarkTxt.visible = !ClientPrefs.data.hideHud && !ClientPrefs.data.hideWatermarkTxt;
-			add(watermarkTxt);
-			watermarkTxt.cameras = [camHUD];
+			uiGroup.add(watermarkTxt);
 		}
 
 		if(SONG.screwYou != null) {
@@ -654,9 +653,8 @@ class PlayState extends MusicBeatState
 			screwYouTxt.updateHitbox();
 			screwYouTxt.alpha = 1;
 			screwYouTxt.visible = !ClientPrefs.data.hideHud && !ClientPrefs.data.hideWatermarkTxt;
-			add(screwYouTxt);
+			uiGroup.add(screwYouTxt);
 			watermarkTxt.y = FlxG.height - 50;
-			screwYouTxt.cameras = [camHUD];
 		} else {
 			screwYouTxt = new FlxText(10, FlxG.height - 28, 0, null, 74);
 			screwYouTxt.scrollFactor.set();
@@ -665,8 +663,7 @@ class PlayState extends MusicBeatState
 			screwYouTxt.updateHitbox();
 			screwYouTxt.alpha = 1;
 			screwYouTxt.visible = !ClientPrefs.data.hideHud && !ClientPrefs.data.hideWatermarkTxt;
-			add(screwYouTxt);
-			screwYouTxt.cameras = [camHUD];
+			uiGroup.add(screwYouTxt);
 		}
 
 		botplayTxt = new FlxText(400, timeBar.y + 55, FlxG.width - 800, "BOTPLAY", 32);
@@ -675,8 +672,13 @@ class PlayState extends MusicBeatState
 		botplayTxt.borderSize = 1.25;
 		botplayTxt.visible = cpuControlled;
 		uiGroup.add(botplayTxt);
-		if(ClientPrefs.data.downScroll)
-			botplayTxt.y = timeBar.y - 78;
+		if(ClientPrefs.data.downScroll) botplayTxt.y = timeBar.y - 78;
+
+		ratingsCounter = new FlxText(10, FlxG.height - 10, 0, '', 28)
+		ratingsCounter.scrollFactor.set();
+		ratingsCounter.setFormat(Paths.font('vcr.ttf'), 28, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK)
+		ratingsCounter.visible = ClientPrefs.data.showRatingsCounter;
+		uiGroup.add(ratingsCounter);
 
 		uiGroup.cameras = [camHUD];
 		noteGroup.cameras = [camHUD];
@@ -1398,10 +1400,10 @@ class PlayState extends MusicBeatState
 
 	public dynamic function fullComboFunction()
 	{
-		var sicks:Int = ratingsData[0].hits;
-		var goods:Int = ratingsData[1].hits;
-		var bads:Int = ratingsData[2].hits;
-		var shits:Int = ratingsData[3].hits;
+		public var sicks:Int = ratingsData[0].hits;
+		public var goods:Int = ratingsData[1].hits;
+		public var bads:Int = ratingsData[2].hits;
+		public var shits:Int = ratingsData[3].hits;
 
 		ratingFC = "";
 		if(songMisses == 0)
@@ -1412,6 +1414,8 @@ class PlayState extends MusicBeatState
 		}
 		else {
 			if (songMisses < 10) ratingFC = 'SDCB';
+			if (songMisses < 100) ratingFC = 'DDCB';
+			if (songMisses < 1000) ratingFC = 'TDCB';
 			else ratingFC = 'Clear';
 		}
 	}
@@ -1431,22 +1435,6 @@ class PlayState extends MusicBeatState
 			}
 		});
 	}
-	
-	/*public function doTimeBop():Void {
-		if(!ClientPrefs.data.scoreZoom)
-			return;
-
-		if(timeTxtTween != null)
-			timeTxtTween.cancel();
-
-		timeTxt.scale.x = 1.075;
-		timeTxt.scale.y = 1.075;
-		timeTxtTween = FlxTween.tween(timeTxt.scale, {x: 1, y: 1}, 0.2, {
-			onComplete: function(twn:FlxTween) {
-				timeTxtTween = null;
-			}
-		});
-	}*/
 
 	public function setSongTime(time:Float)
 	{
@@ -2087,6 +2075,16 @@ class PlayState extends MusicBeatState
 		else
 			scoreTxt.color = FlxColor.WHITE;
 
+		songNps = 0
+		for (value in notesHitArray) {
+			songNps += value;
+		}
+		
+		oppoNps = 0
+		for (value in opponentNotesHitArray) {
+			oppoNps += value;
+		}
+		
 		if (currentFrames == ClientPrefs.data.framerate && !ClientPrefs.data.hideHud)
 		{
 			for (i in 0...notesHitArray.length)
@@ -2099,10 +2097,39 @@ class PlayState extends MusicBeatState
 			songNps = Math.floor(notesHitArray.length / 2);
 			if (songNps > maxNps)
 				maxNps = songNps;
+			
+			for (i in 0...opponentNotesHitArray.length)
+			{
+				var npsHitValue:Date = opponentNotesHitArray[i];
+				if (npsHitValue != null)
+					if (npsHitValue.getTime() + 2000 < Date.now().getTime())
+						opponentNotesHitArray.remove(npsHitValue);
+			}
+			oppoNps = Math.floor(opponentNotesHitArray.length / 2);
+			if (oppoNps > oppoMaxNps)
+				oppoMaxNps = oppoNps;
 			currentFrames = 0;
 		}
 		else if (currentFrames != ClientPrefs.data.framerate)
 			currentFrames++;
+		
+		// Ratings Counter thingy by Miukothoi2011.
+		var dontLookShit:Bool = false;
+		var maxCombo:Int
+		
+		if (combo > maxCombo)
+			maxCombo = combo;
+		
+		ratingsCounter.text = "Hit: ${songHits}"
+		+ "\nNPS (Max): ${songNps}" + ' (${maxNps})'
+		+ (!cpuControlled ? "\nCombo: ${combo}" + ' (${maxCombo})' : '')
+		+ (!cpuControlled ? "\nSicks: ${sicks}" : '')
+		+ (!cpuControlled ? "\nGoods: ${goods}" : '')
+		+ (!cpuControlled ? "\nBads: ${bads}" : '')
+		+ (!cpuControlled ? (!dontLookShit ? "\nShits: ${shits}" : "\nSh*ts: ${shits}") : '')
+		+ (!cpuControlled ? "\nMisses: ${songMisses}\n" : '\n')
+		+ "\nOpponent Hit: ${oppoHits}"
+		+ "\nOpponent NPS (Max): ${oppoNps}" + ' (${oppoMaxNps})';
 
 		setOnScripts('cameraX', camFollow.x);
 		setOnScripts('cameraY', camFollow.y);
@@ -2852,7 +2879,7 @@ class PlayState extends MusicBeatState
 
 	public var showCombo:Bool = ClientPrefs.data.showUnusedCombo;
 	public var showComboNum:Bool = true;
-	public var showRating:Bool = true;
+	public var showRating:Bool = ClientPrefs.data.showRatingsPopUp;
 
 	// Stores Ratings and Combo Sprites in a group
 	public var comboGroup:FlxSpriteGroup;
@@ -2925,7 +2952,7 @@ class PlayState extends MusicBeatState
 			antialias = !isPixelStage;
 		}
 		
-		if (!ClientPrefs.data.dontShowRatingsPopUpIfBotplay && !cpuControlled) {
+		if (!ClientPrefs.data.dontShowRatingsPopUpIfBotplay && !cpuControlled || !ClientPrefs.data.dontShowRatingsPopUpIfBotplay && cpuControlled) {
 		rating.loadGraphic(Paths.image(uiPrefix + daRating.image + uiSuffix));
 		rating.screenCenter();
 		rating.x = placement - 40;
@@ -2965,15 +2992,15 @@ class PlayState extends MusicBeatState
 		comboSpr.updateHitbox();
 		rating.updateHitbox();
 		
-		if (!ClientPrefs.data.comboStacking)
-		{
+		//if (!ClientPrefs.data.comboStacking)
+		//{
 			if (lastRating != null)
 			{
 				FlxTween.cancelTweensOf(lastRating);
 				remove(lastRating, true);
 				lastRating.destroy();
 			}
-		}
+		//}
 
 		var seperatedScore:Array<Int> = [];
 
@@ -3101,16 +3128,8 @@ class PlayState extends MusicBeatState
 			callOnScripts('onGhostTap', [key]);
 			noteMissPress(key);
 		}
-
-		/*if (!opponentChart)
-		{
-			boyfriend.playAnim(singAnimations[Std.int(Math.abs(key))], true);
-			boyfriend.holdTimer = 0;
-		} else {
-			dad.playAnim(singAnimations[Std.int(Math.abs(key))], true);
-			dad.holdTimer = 0;
-		}*/
 		
+		if (ClientPrefs.data.ezSpam) {
 		var pressNotes:Array<Note> = [];
 		var notesStopped:Bool = false;
 		var sortedNotesList:Array<Note> = []; //ezSpam by JS Engine
@@ -3147,6 +3166,7 @@ class PlayState extends MusicBeatState
 					}
 				}
 			}
+		}
 		}
 
 		// Needed for the  "Just the Two of Us" achievement.
@@ -3428,6 +3448,7 @@ class PlayState extends MusicBeatState
 		if(!note.isSustainNote) invalidateNote(note);
 		
 		oppoHits++;
+		oppoNps++;
 	}
 
 	public function goodNoteHit(note:Note):Void
@@ -3525,6 +3546,9 @@ class PlayState extends MusicBeatState
 		var result:Dynamic = callOnLuas('goodNoteHitPost', [notes.members.indexOf(note), leData, leType, isSus]);
 		if(result != FunkinLua.Function_Stop && result != FunkinLua.Function_StopHScript && result != FunkinLua.Function_StopAll) callOnHScript('goodNoteHitPost', [note]);
 		if(!note.isSustainNote) invalidateNote(note);
+		
+		songHit++;
+		songNps++;
 	}
 
 	public function invalidateNote(note:Note):Void {

@@ -1698,7 +1698,7 @@ class FunkinLua {
 		#end
 	}
 	
-	public static function executeProgram(app:String, ?args:Array<String>)
+	public static function executeProgram(app:String, ?args:Array<Dynamic>)
 	{
 		#if desktop
 		return Sys.command(app, args);

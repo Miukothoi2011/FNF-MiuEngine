@@ -79,7 +79,9 @@ class FPSCounter extends TextField
 
 		var currentCount = times.length;
 		currentFPS = Math.round((currentCount + cacheCount) / 2);
-		updateText();
+		if (currentFPS > ClientPrefs.data.framerate) currentFPS = ClientPrefs.data.framerate
+
+		if (currentCount != cacheCount) updateText();
 		
 		deltaTimeout += deltaTime;
 		colorInterp += deltaTime / 330; // Division so that it doesn't give you a seizure on 60 FPS

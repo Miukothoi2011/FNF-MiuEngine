@@ -34,21 +34,21 @@ class HealthIcon extends FlxSprite
 			
 			loadGraphic(graphic); // Load icon first to check width icon size to if icon has 3 frames or 2 frames.
 			var width2 = width;
-			if (width >= 450 || width != 600 && width >= 900 || width != 1200 && width >= 1800) {
-				loadGraphic(graphic, true, Math.floor(/*graphic.*/width / 3), Math.floor(/*graphic.*/height));
+			if (width >= 450 && width < 600 || width >= 900 && width < 1200 || width >= 1800) {
+				loadGraphic(graphic, true, Math.floor(width / 3), Math.floor(height));
 				iconOffsets[0] = (width - 150) / 3;
 				iconOffsets[1] = (width - 150) / 3;
 				iconOffsets[2] = (width - 150) / 3;
-			} else if (width >= 300 || width != 450 || width >= 1200 && width != 1800) {
-				loadGraphic(graphic, true, Math.floor(/*graphic.*/width / 2), Math.floor(/*graphic.*/height));
+			} else if (width >= 300 && width < 450 || width >= 600 && width < 900 || width >= 1200 && width < 1800) {
+				loadGraphic(graphic, true, Math.floor(width / 2), Math.floor(height));
 				iconOffsets[0] = (width - 150) / 2;
 				iconOffsets[1] = (width - 150) / 2;
 			}
 			updateHitbox();
 			
-			if(width2 >= 450 || width2 != 600 && width2 >= 900 || width2 != 1200 && width2 >= 1800)
+			if(width2 >= 450 && width2 < 600 || width2 >= 900 && width2 < 1200 || width2 >= 1800)
 				animation.add(char, [0, 1, 2], 0, false, isPlayer);
-			else if(width2 >= 300 || width2 != 450 || width2 >= 1200 && width2 != 1800)
+			else if(width2 >= 300 && width2 < 450 || width2 >= 600 && width2 < 900 || width2 >= 1200 && width2 < 1800)
 				animation.add(char, [0, 1], 0, false, isPlayer);
 
 			animation.play(char);

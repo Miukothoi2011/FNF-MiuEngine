@@ -108,7 +108,6 @@ class FreeplayState extends MusicBeatState
 			Mods.currentModDirectory = songs[i].folder;
 			var icon:HealthIcon = new HealthIcon(songs[i].songCharacter);
 			icon.sprTracker = songText;
-
 			
 			// too laggy with a lot of songs, so i had to recode the logic for it
 			songText.visible = songText.active = songText.isMenuItem = false;
@@ -302,7 +301,7 @@ class FreeplayState extends MusicBeatState
 					colorTween.cancel();
 				}
 				FlxG.sound.play(Paths.sound('cancelMenu'));
-				FlxG.switchState(() -> new MainMenuState()); //MusicBeatState.switchState(new MainMenuState());
+				FlxG.switchState(() -> new MainMenuState());
 			}
 		}
 
@@ -340,6 +339,10 @@ class FreeplayState extends MusicBeatState
 				{
 					vocals.play();
 					vocals.volume = 0.8;
+				} else {
+					vocals.stop();
+					vocals.destroy();
+					vocals = null;
 				}
 				instPlaying = curSelected;
 

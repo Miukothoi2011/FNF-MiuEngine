@@ -48,6 +48,7 @@ import shaders.Shaders;
 	public var dontShowRatingsPopUpIfBotplay:Bool = true;
 	public var iconBounce:String = 'Default';
 	public var timeBounce:Bool = false;
+	public var showRatingsCounter:Bool = false;
 	public var lowQuality:Bool = false;
 	public var shaders:Bool = true;
 	public var cacheOnGPU:Bool = #if !switch false #else true #end; //From Stilic
@@ -61,12 +62,14 @@ import shaders.Shaders;
 		[0xFFC24B99, 0xFFFFFFFF, 0xFF3C1F56],
 		[0xFF00FFFF, 0xFFFFFFFF, 0xFF1542B7],
 		[0xFF12FA05, 0xFFFFFFFF, 0xFF0A4447],
-		[0xFFF9393F, 0xFFFFFFFF, 0xFF651038]];
+		[0xFFF9393F, 0xFFFFFFFF, 0xFF651038]
+	];
 	public var arrowRGBPixel:Array<Array<FlxColor>> = [
 		[0xFFE276FF, 0xFFFFF9FF, 0xFF60008D],
 		[0xFF3DCAFF, 0xFFF4FFFF, 0xFF003060],
 		[0xFF71E300, 0xFFF6FFE6, 0xFF003100],
-		[0xFFFF884E, 0xFFFFFAF5, 0xFF6C0000]];
+		[0xFFFF884E, 0xFFFFFAF5, 0xFF6C0000]
+	];
 
 	public var ghostTapping:Bool = true;
 	public var timeBarType:String = 'Time Left';

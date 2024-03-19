@@ -109,24 +109,24 @@ class GraphicsSettingsSubState extends BaseOptionsMenu
 	}
 	
 	function onChangeResolution() {
-		#if desktop
-    		var resolutionValue = cast(ClientPrefs.data.resolution, String); // Assuming 'clientprefs.data.resolution' holds the selected resolution
+	#if desktop
+		var resolutionValue = cast(ClientPrefs.data.resolution, String); // Assuming 'ClientPrefs.data.resolution' holds the selected resolution
 
-    		if (resolutionValue != null) {
-        		var parts = resolutionValue.split('x');
-        
-        		if (parts.length == 2) {
-            		var width = Std.parseInt(parts[0]);
-            		var height = Std.parseInt(parts[1]);
-            
-            		if (width != null && height != null) {
-						CoolUtil.resetResScale(width, height);
-                		FlxG.resizeGame(width, height);
-						lime.app.Application.current.window.width = width;
-						lime.app.Application.current.window.height = height;
-            		}
-        		}
-    		}
-		#end
+		if (resolutionValue != null) {
+			var parts = resolutionValue.split('x');
+	
+			if (parts.length == 2) {
+				var width = Std.parseInt(parts[0]);
+				var height = Std.parseInt(parts[1]);
+		
+				if (width != null && height != null) {
+					CoolUtil.resetResScale(width, height);
+					FlxG.resizeGame(width, height);
+					lime.app.Application.current.window.width = width;
+					lime.app.Application.current.window.height = height;
+				}
+			}
+		}
+	#end
 	}
 }
