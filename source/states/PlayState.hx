@@ -207,6 +207,7 @@ class PlayState extends MusicBeatState
 	private var displayedHealth:Float;
 	public var maxHealth:Float = 2;
 	public var combo:Int = 0;
+	var maxCombo:Int;
 
 	public var healthBar:Bar;
 	public var timeBar:Bar;
@@ -2113,7 +2114,6 @@ class PlayState extends MusicBeatState
 		
 		// Ratings Counter thingy by Miukothoi2011.
 		var dontLookShit:Bool = false;
-		var maxCombo:Int;
 		
 		if (combo > maxCombo)
 			maxCombo = combo;
