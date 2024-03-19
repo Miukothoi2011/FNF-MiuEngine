@@ -2073,7 +2073,7 @@ class PlayState extends MusicBeatState
 		else
 			scoreTxt.color = FlxColor.WHITE;
 
-		songNps = 0;
+		/*songNps = 0;
 		for (value in notesHitArray) {
 			songNps += value;
 		}
@@ -2081,7 +2081,7 @@ class PlayState extends MusicBeatState
 		oppoNps = 0;
 		for (value in opponentNotesHitArray) {
 			oppoNps += value;
-		}
+		}*/
 		
 		if (currentFrames == ClientPrefs.data.framerate && !ClientPrefs.data.hideHud)
 		{

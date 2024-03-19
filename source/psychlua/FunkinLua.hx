@@ -1521,9 +1521,9 @@ class FunkinLua {
 			openfl.Lib.application.window.x = x;
 			openfl.Lib.application.window.y = y;
 		});
-		Lua_helper.add_callback(lua, 'executeProgram', function(app:String, ?args:Array<String>) {
+		/*Lua_helper.add_callback(lua, 'executeProgram', function(app:String, ?args:Array<String>) {
 			return executeProgram(app, args);
-		});
+		});*/
 		
 		// mod settings
 		#if MODS_ALLOWED
@@ -1698,14 +1698,14 @@ class FunkinLua {
 		#end
 	}
 	
-	public static function executeProgram(app:String, ?args:Array<Dynamic>)
+	/*public static function executeProgram(app:String, ?args:Array<Dynamic> = null)
 	{
 		#if desktop
-		return Sys.command(app, args);
+		return Sys.command(app, [args]);
 		#else
 		return 'Your platforms target is not support for executeProgram().';
 		#end
-	}
+	}*/
 
 	function oldTweenFunction(tag:String, vars:String, tweenValue:Any, duration:Float, ease:String, funcName:String)
 	{

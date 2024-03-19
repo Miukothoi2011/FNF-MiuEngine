@@ -30,7 +30,7 @@ class FPSCounter extends TextField
 		The current memory usage (WARNING: this is NOT your total program memory usage, rather it shows the garbage collector memory)
 	**/
 	public var memoryMegas(get, never):Float;
-	public var memoryLeakMegas(get, never):Float; // memory leak
+	public var memoryLeakMegas(get, null):Float; // memory leak
 
 	@:noCompletion private var cacheCount:Int;
 	@:noCompletion private var currentTime:Float;
