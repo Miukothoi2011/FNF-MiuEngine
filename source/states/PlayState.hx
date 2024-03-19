@@ -66,6 +66,10 @@ import psychlua.HScript;
 import tea.SScript;
 #end
 
+#if cpp
+import cpp.vm.Gc;
+#end
+
 /**
  * This is where all the Gameplay stuff happens and is managed
  *
@@ -209,10 +213,6 @@ class PlayState extends MusicBeatState
 	var songPercent:Float = 0;
 
 	public var ratingsData:Array<Rating> = Rating.loadDefault();
-	public var sicks:Int = ratingsData[0].hits;
-	public var goods:Int = ratingsData[1].hits;
-	public var bads:Int = ratingsData[2].hits;
-	public var shits:Int = ratingsData[3].hits;
 
 	private var generatedMusic:Bool = false;
 	public var endingSong:Bool = false;
@@ -330,18 +330,12 @@ class PlayState extends MusicBeatState
 	{
 		//trace('Playback Rate: ' + playbackRate);
 
-		#if cpp //lagspike prevention
-		cpp.vm.Gc.enable(ClientPrefs.data.enableGC);
-		#elseif neko
-		neko.vm.Gc.enable(ClientPrefs.data.enableGC);
-		#elseif hl
-		hl.Gc.enable(ClientPrefs.data.enableGC);
-		#end
+		Gc.enable(ClientPrefs.data.enableGC); //lagspike prevention
 
 		#if sys
 		openfl.system.System.gc();
 		#end
-		//Paths.clearStoredMemory();
+		Paths.clearStoredMemory();
 
 		startCallback = startCountdown;
 		endCallback = endSong;
@@ -1404,6 +1398,12 @@ class PlayState extends MusicBeatState
 
 	public dynamic function fullComboFunction()
 	{
+		var sicks:Int = ratingsData[0].hits;
+		var goods:Int = ratingsData[1].hits;
+		var bads:Int = ratingsData[2].hits;
+		var shits:Int = ratingsData[3].hits;
+		shareRatingsVar();
+
 		ratingFC = "";
 		if(songMisses == 0)
 		{
@@ -1417,6 +1417,13 @@ class PlayState extends MusicBeatState
 			if (songMisses < 1000) ratingFC = 'TDCB';
 			else ratingFC = 'Clear';
 		}
+	}
+	
+	public function shareRatingsVar() {
+		public var publicSicks:Int = sicks;
+		public var publicGoods:Int = goods;
+		public var publicBads:Int = bads;
+		public var publicShits:Int = shits;
 	}
 
 	public function doScoreBop():Void {
@@ -3546,7 +3553,7 @@ class PlayState extends MusicBeatState
 		if(result != FunkinLua.Function_Stop && result != FunkinLua.Function_StopHScript && result != FunkinLua.Function_StopAll) callOnHScript('goodNoteHitPost', [note]);
 		if(!note.isSustainNote) invalidateNote(note);
 		
-		songHit++;
+		songHits++;
 		songNps++;
 	}
 

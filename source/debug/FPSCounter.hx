@@ -1,7 +1,5 @@
-package debug; /* NOTE: this fps display are from openfl to accuracy fps display cuz psych fps is fucking up only 60 fps
-				* not down like psych < 0.7.2
-				*/
-import haxe.Timer;
+package debug;
+
 import flixel.FlxG;
 import openfl.events.Event;
 import openfl.text.TextField;
@@ -12,6 +10,10 @@ import states.MainMenuState;
 
 import Main;
 import flixel.util.FlxColor;
+
+#if cpp
+import external.memory.Memory;
+#end
 
 /**
 	The FPS class provides an easy-to-use monitor to display
@@ -28,7 +30,7 @@ class FPSCounter extends TextField
 		The current memory usage (WARNING: this is NOT your total program memory usage, rather it shows the garbage collector memory)
 	**/
 	public var memoryMegas(get, never):Float;
-	public var memoryLeakMegas(default, null):Float; // memory leak
+	public var memoryLeakMegas(get, never):Float; // memory leak
 
 	@:noCompletion private var cacheCount:Int;
 	@:noCompletion private var currentTime:Float;
@@ -60,7 +62,7 @@ class FPSCounter extends TextField
 	
 	var deltaTimeout:Float = 0.0;
 	
-	// All the colors:			      Red,	        Orange,        Yellow,       Green,        Blue,         Violet/Purple
+	// All the colors:			      Red,	      Orange,     Yellow,     Green,      Blue,       Violet/Purple
     final rainbowColors:Array<Int> = [0xFFFF0000, 0xFFFFA500, 0xFFFFFF00, 0xFF00FF00, 0xFF0000FF, 0xFFFF00FF];
 	var colorInterp:Float = 0;
 	var currentColor:Int = 0;
@@ -118,6 +120,7 @@ class FPSCounter extends TextField
 					text += '\nSubstate: ${Type.getClassName(Type.getClass(FlxG.state.subState))}';
 				text += "\nFlixel: " + FlxG.VERSION;
 			}
+			text += '\n';
 			
 			if (ClientPrefs.data.showRainbowFPS) {
 				var colorIndex1:Int = Math.floor(colorInterp);
@@ -176,5 +179,8 @@ class FPSCounter extends TextField
     }
 
 	inline function get_memoryMegas():Float
-		return cast(System.totalMemory, UInt);
+		return Memory.getCurrentUsage();
+
+	inline function get_memoryLeakMegas():Float
+		return Memory.getPeakUsage();
 }
