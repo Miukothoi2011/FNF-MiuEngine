@@ -2114,7 +2114,7 @@ class PlayState extends MusicBeatState
 		
 		// Ratings Counter thingy by Miukothoi2011.
 		var dontLookShit:Bool = false;
-		var maxCombo:Int
+		var maxCombo:Int;
 		
 		if (combo > maxCombo)
 			maxCombo = combo;
