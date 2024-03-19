@@ -676,7 +676,7 @@ class PlayState extends MusicBeatState
 
 		ratingsCounter = new FlxText(10, FlxG.height - 10, 0, '', 28);
 		ratingsCounter.scrollFactor.set();
-		ratingsCounter.setFormat(Paths.font('vcr.ttf'), 28, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK)
+		ratingsCounter.setFormat(Paths.font('vcr.ttf'), 28, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		ratingsCounter.visible = ClientPrefs.data.showRatingsCounter;
 		uiGroup.add(ratingsCounter);
 
