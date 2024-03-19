@@ -674,7 +674,7 @@ class PlayState extends MusicBeatState
 		uiGroup.add(botplayTxt);
 		if(ClientPrefs.data.downScroll) botplayTxt.y = timeBar.y - 78;
 
-		ratingsCounter = new FlxText(10, FlxG.height - 10, 0, '', 28)
+		ratingsCounter = new FlxText(10, FlxG.height - 10, 0, '', 28);
 		ratingsCounter.scrollFactor.set();
 		ratingsCounter.setFormat(Paths.font('vcr.ttf'), 28, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK)
 		ratingsCounter.visible = ClientPrefs.data.showRatingsCounter;
