@@ -1420,10 +1420,10 @@ class PlayState extends MusicBeatState
 	}
 	
 	public function shareRatingsVar() {
-		public var publicSicks:Int = sicks;
-		public var publicGoods:Int = goods;
-		public var publicBads:Int = bads;
-		public var publicShits:Int = shits;
+		public var publicSicks:Int = ratingsData[0].hits;
+		public var publicGoods:Int = ratingsData[1].hits;
+		public var publicBads:Int = ratingsData[3].hits;
+		public var publicShits:Int = ratingsData[4].hits;
 	}
 
 	public function doScoreBop():Void {
