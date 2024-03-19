@@ -1402,7 +1402,6 @@ class PlayState extends MusicBeatState
 		var goods:Int = ratingsData[1].hits;
 		var bads:Int = ratingsData[2].hits;
 		var shits:Int = ratingsData[3].hits;
-		shareRatingsVar();
 
 		ratingFC = "";
 		if(songMisses == 0)
@@ -1417,13 +1416,6 @@ class PlayState extends MusicBeatState
 			if (songMisses < 1000) ratingFC = 'TDCB';
 			else ratingFC = 'Clear';
 		}
-	}
-	
-	public function shareRatingsVar() {
-		public var publicSicks:Int = ratingsData[0].hits;
-		public var publicGoods:Int = ratingsData[1].hits;
-		public var publicBads:Int = ratingsData[3].hits;
-		public var publicShits:Int = ratingsData[4].hits;
 	}
 
 	public function doScoreBop():Void {
