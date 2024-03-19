@@ -681,7 +681,7 @@ class PlayState extends MusicBeatState
 		ratingsCounter = new FlxText(10, FlxG.height - 10, 0, '', 28);
 		ratingsCounter.scrollFactor.set();
 		ratingsCounter.setFormat(Paths.font('vcr.ttf'), 28, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		ratingsCounter.visible = ClientPrefs.data.showRatingsCounter;
+		ratingsCounter.visible = !ClientPrefs.data.hideHud && ClientPrefs.data.showRatingsCounter;
 		uiGroup.add(ratingsCounter);
 
 		uiGroup.cameras = [camHUD];
@@ -2074,12 +2074,12 @@ class PlayState extends MusicBeatState
 		else
 			scoreTxt.color = FlxColor.WHITE;
 
-		songNps = 0
+		songNps = 0;
 		for (value in notesHitArray) {
 			songNps += value;
 		}
 		
-		oppoNps = 0
+		oppoNps = 0;
 		for (value in opponentNotesHitArray) {
 			oppoNps += value;
 		}
