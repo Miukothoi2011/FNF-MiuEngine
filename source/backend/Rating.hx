@@ -11,7 +11,7 @@ class Rating
 	public var score:Int = 500;
 	public var noteSplash:Bool = true;
 	public var hits:Int = 0;
-	var ratingsData:Array<Rating>
+	var ratingsData:Array<Rating>;
 
 	public function new(name:String)
 	{
