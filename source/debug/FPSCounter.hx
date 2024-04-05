@@ -1,7 +1,6 @@
 package debug;
 
 import flixel.FlxG;
-import openfl.events.Event;
 import openfl.text.TextField;
 import openfl.text.TextFormat;
 import openfl.system.System;
@@ -82,7 +81,7 @@ class FPSCounter extends TextField
 		var currentCount = times.length;
 		currentFPS = Math.round((currentCount + cacheCount) / 2);
 		if (currentFPS > ClientPrefs.data.framerate) currentFPS = ClientPrefs.data.framerate;
-		if (currentCount != cacheCount) updateText();
+		if (currentCount != cacheCount) updateText(); // Psych Dev mistake remove the 'if (currentCount != cacheCount)' so i fix this. -Miukothoi2011
 
 		deltaTimeout += deltaTime;
 		colorInterp += deltaTime / 330; // Division so that it doesn't give you a seizure on 60 FPS
@@ -91,66 +90,52 @@ class FPSCounter extends TextField
 	}
 
 	public dynamic function updateText():Void { // so people can override it in hscript
-		if (memoryMegas >= memoryLeakMegas) memoryLeakMegas = memoryMegas;
+		if (ClientPrefs.data.showFPS) text = 'FPS: ${currentFPS}';
+
+		if (ClientPrefs.data.showMemory) {
+			text += '\nMemory: ${flixel.util.FlxStringUtil.formatBytes(memoryMegas)}';
+			if (ClientPrefs.data.showMemoryLeak)
+				text += ' / ${flixel.util.FlxStringUtil.formatBytes(memoryLeakMegas)}';
+		}
+
+		if (ClientPrefs.data.showEngineVersion)
+			text += '\nMiu Engine ' + MainMenuState.miuEngineVersion + " (PE " + MainMenuState.psychEngineVersion + ")"; // Inspired by SB Engine by Stefan2008 (https://github.com/Stefan2008Git)
 		
-		if (ClientPrefs.data.showFPS) {
-			text = 'FPS: ${currentFPS}';
+		if (ClientPrefs.data.showDebugInfo) {
+			text += "\nOS: " + '${lime.system.System.platformLabel} ${lime.system.System.platformVersion}';
+			text += '\nState: ${Type.getClassName(Type.getClass(FlxG.state))}';
+			if (FlxG.state.subState != null)
+				text += '\nSubstate: ${Type.getClassName(Type.getClass(FlxG.state.subState))}';
+			text += "\nFlixel: " + FlxG.VERSION;
+		}
+		
+		if (ClientPrefs.data.showRainbowFPS) {
+			var colorIndex1:Int = Math.floor(colorInterp);
+			var colorIndex2:Int = (colorIndex1 + 1) % rainbowColors.length;
+			var startColor:Int = rainbowColors[colorIndex1];
+			var endColor:Int = rainbowColors[colorIndex2];
+			var segmentInterp:Float = colorInterp - colorIndex1;
+			var interpolatedColor:Int = interpolateColor(startColor, endColor, segmentInterp);
 
-			if (ClientPrefs.data.FPSTxtSize != ClientPrefs.defaultData.FPSTxtSize)
-				defaultTextFormat = new TextFormat("_sans", ClientPrefs.data.FPSTxtSize, textColor);
+			textColor = interpolatedColor;
 
-			switch (ClientPrefs.data.FPSTxtFont) {
-				case 'Default': defaultTextFormat = new TextFormat("_sans", ClientPrefs.data.FPSTxtSize, textColor);
-				case 'VCR': defaultTextFormat = new TextFormat("vcr.ttf", ClientPrefs.data.FPSTxtSize, textColor);
+			// Check if the current color segment interpolation is complete
+			if (colorInterp >= rainbowColors.length) {
+				// Reset colorInterp to start the interpolation cycle again
+				textColor = rainbowColors[0];
+				colorInterp = 0;
 			}
-
-			if (ClientPrefs.data.showMemory) {
-				text += '\nMemory: ${flixel.util.FlxStringUtil.formatBytes(memoryMegas)}';
-				if (ClientPrefs.data.showMemoryLeak)
-					text += ' / ${flixel.util.FlxStringUtil.formatBytes(memoryLeakMegas)}';
-			}
-
-			if (ClientPrefs.data.showEngineVersion)
-				text += '\nMiu Engine ' + MainMenuState.miuEngineVersion + " (PE " + MainMenuState.psychEngineVersion + ")"; // Inspired by SB Engine by Stefan2008 https://github.com/Stefan2008Git
-			
-			if (ClientPrefs.data.showDebugInfo) {
-				text += "\nOS: " + '${lime.system.System.platformLabel} ${lime.system.System.platformVersion}';
-				text += '\nState: ${Type.getClassName(Type.getClass(FlxG.state))}';
-				if (FlxG.state.subState != null)
-					text += '\nSubstate: ${Type.getClassName(Type.getClass(FlxG.state.subState))}';
-				text += "\nFlixel: " + FlxG.VERSION;
-			}
-			text += '\n';
-			
-			if (ClientPrefs.data.showRainbowFPS) {
-				var colorIndex1:Int = Math.floor(colorInterp);
-				var colorIndex2:Int = (colorIndex1 + 1) % rainbowColors.length;
-				var startColor:Int = rainbowColors[colorIndex1];
-				var endColor:Int = rainbowColors[colorIndex2];
-				var segmentInterp:Float = colorInterp - colorIndex1;
-				var interpolatedColor:Int = interpolateColor(startColor, endColor, segmentInterp);
-
-				textColor = interpolatedColor;
-
-				// Check if the current color segment interpolation is complete
-				if (colorInterp >= rainbowColors.length) {
-					// Reset colorInterp to start the interpolation cycle again
-					textColor = rainbowColors[0];
-					colorInterp = 0;
-				}
-			} else {
-				textColor = 0xFFFFFFFF;
-				/*if (currentFPS < FlxG.drawFramerate * 0.5)
-					textColor = 0xFFFF0000;*/
-				if (currentFPS <= ClientPrefs.data.framerate / 2 && currentFPS >= ClientPrefs.data.framerate / 3) {
-					textColor = 0xFFFFFF00;
-				} else if (currentFPS <= ClientPrefs.data.framerate / 3 && currentFPS >= ClientPrefs.data.framerate / 4) {
-					textColor = 0xFFFF8000;
-				} else if (currentFPS <= ClientPrefs.data.framerate / 4) {
-					textColor = 0xFFFF0000;
-				}
+		} else {
+			textColor = 0xFFFFFFFF;
+			if (currentFPS <= ClientPrefs.data.framerate / 2 && currentFPS >= ClientPrefs.data.framerate / 3) {
+				textColor = 0xFFFFFF00;
+			} else if (currentFPS <= ClientPrefs.data.framerate / 3 && currentFPS >= ClientPrefs.data.framerate / 4) {
+				textColor = 0xFFFF8000;
+			} else if (currentFPS <= ClientPrefs.data.framerate / 4) {
+				textColor = 0xFFFF0000;
 			}
 		}
+		
 	}
 	
 	private function interpolateColor(startColor:Int, endColor:Int, t:Float):Int {

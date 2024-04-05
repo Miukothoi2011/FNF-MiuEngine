@@ -200,26 +200,6 @@ class VisualsUISubState extends BaseOptionsMenu
 		#end
 
 		if (ClientPrefs.data.showFPS) {
-		var option:Option = new Option('FPS Text Size: ',
-			'?',
-			'FPSTxtSize',
-			'int');
-		addOption(option);
-		#if !mobile
-		option.minValue = 8;
-		#else
-		option.minValue = 12;
-		#end
-		option.maxValue = 50; //i not want max value is 100 or otherwise, FPS text is big and can't show gameplay. -Miukothoi2011
-		option.defaultValue = 12;
-		
-		var option:Option = new Option('FPS Text Font: ',
-			'What FPS Font you want use?',
-			'FPSTxtFont',
-			'string',
-			['Default', 'VCR']);
-		addOption(option);
-		
 		var option:Option = new Option('Show Memory',
 			'If checked, the game will show your Memory (a.k.a RAM) usage.',
 			'showMemory',

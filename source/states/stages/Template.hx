@@ -1,4 +1,4 @@
-package states.stages;
+package states.stages; // DON'T EDIT THIS FILE UNTIL YOU COPY THIS TO ANOTHER NAME.
 
 import states.stages.objects.*;
 
@@ -9,7 +9,7 @@ class Template extends BaseStage
 
 	override function create()
 	{
-		// Spawn your stage sprites here.
+		// Spawn your stage sprites here. Ex: var stage = new FlxSprite();
 		// Characters are not ready yet on this function, so you can't add things above them yet.
 		// Use createPost() if that's what you want to do.
 	}
