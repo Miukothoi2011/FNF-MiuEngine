@@ -32,7 +32,7 @@ class Rating
 			var ratingsData:Array<Rating> = [new Rating('perfects')]; //highest rating goes first
 			
 			var rating:Rating = new Rating('sick');
-			rating.score:Int = 350;
+			rating.score = 350;
 			ratingsData.push(rating);
 		} else {
 			var ratingsData:Array<Rating> = [new Rating('sick')];
