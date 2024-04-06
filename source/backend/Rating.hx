@@ -11,7 +11,7 @@ class Rating
 	public var score:Int = 500;
 	public var noteSplash:Bool = true;
 	public var hits:Int = 0;
-	var ratingsData:Array<Rating>;
+	static var ratingsData:Array<Rating>;
 
 	public function new(name:String)
 	{
@@ -32,7 +32,7 @@ class Rating
 		if (!ClientPrefs.data.noPerfectJudge) {
 			ratingsData = [new Rating('perfects')]; //highest rating goes first
 			
-			rating = new Rating('sick');
+			var rating = new Rating('sick');
 			rating.score = 350;
 			ratingsData.push(rating);
 		} else {

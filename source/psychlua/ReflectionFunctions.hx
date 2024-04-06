@@ -181,7 +181,7 @@ class ReflectionFunctions
 			else FunkinLua.luaTrace('addInstance: Can\'t add what doesn\'t exist~ ($objectName)', false, false, FlxColor.RED);
 		});
 		Lua_helper.add_callback(lua, "instanceArg", function(instanceName:String, ?className:String = null) {
-			var retStr:String ='$instanceStr::$instanceName';
+			var retStr:String = '$instanceStr::$instanceName';
 			if(className != null) retStr += '::$className';
 			return retStr;
 		});
@@ -236,6 +236,7 @@ class ReflectionFunctions
 
 		funcToRun = cast obj;
 		//trace('end: $obj');
-		return funcToRun != null ? Reflect.callMethod(obj, funcToRun, args) : null;
+		//return funcToRun != null ? Reflect.callMethod(obj, funcToRun, args) : null;
+		return funcToRun != null ? Reflect.callMethod(obj, Reflect.field(obj, funcToRun), args) : null; // This is the consequence of not learning Haxe Reflect function. (https://haxe.org/manual/std-reflection.html)
 	}
 }

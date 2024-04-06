@@ -1345,11 +1345,19 @@ class PlayState extends MusicBeatState
 
 	public dynamic function fullComboFunction()
 	{
-		perfects = ratingsData[0].hits;
-		sicks = ratingsData[1].hits;
-		goods = ratingsData[2].hits;
-		bads = ratingsData[3].hits;
-		shits = ratingsData[4].hits;
+		if(!ClientPrefs.data.noPerfectJudge)
+		{
+			perfects = ratingsData[0].hits;
+			sicks = ratingsData[1].hits;
+			goods = ratingsData[2].hits;
+			bads = ratingsData[3].hits;
+			shits = ratingsData[4].hits;
+		} else {
+			sicks = ratingsData[0].hits;
+			goods = ratingsData[1].hits;
+			bads = ratingsData[2].hits;
+			shits = ratingsData[3].hits;
+		}
 
 		ratingFC = "";
 		if(songMisses == 0) {

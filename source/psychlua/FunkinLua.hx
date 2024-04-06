@@ -1521,9 +1521,12 @@ class FunkinLua {
 			openfl.Lib.application.window.x = x;
 			openfl.Lib.application.window.y = y;
 		});
-		/*Lua_helper.add_callback(lua, 'executeProgram', function(app:String, ?args:Array<String>) {
-			return executeProgram(app, args);
-		});*/
+		Lua_helper.add_callback(lua, 'changeResolution', function(wid:Int = 1280, hei:Int = 720) {
+			changeResolution(wid, hei);
+		});
+		Lua_helper.add_callback(lua, 'modifiedFPSTextFormat', function(?font:String = "_sans", size:Int = 12, color:Int = 0xFFFFFFFF) {
+			debug.FPSCounter.modifiedFPSTextFormat(font, size, color);
+		});
 		
 		// mod settings
 		#if MODS_ALLOWED
@@ -1698,14 +1701,25 @@ class FunkinLua {
 		#end
 	}
 	
-	/*public static function executeProgram(app:String, ?args:Array<Dynamic> = null)
-	{
-		#if desktop
-		return Sys.command(app, [args]);
-		#else
-		return 'Your platforms target is not support for executeProgram().';
-		#end
-	}*/
+	#if desktop
+	public static function changeResolution(width:Int = 1280, height:Int = 720) {
+		var defaultWidthRes = 1280;
+		var defaultHeightRes = 720;
+		
+		function limeAppCurRes(wid:Int = 1280, hei:Int = 720) {
+			Application.current.window.width = wid;
+			Application.current.window.height = hei;
+		}
+		
+		if (width != defaultWidthRes && height != defaultHeightRes) {
+			if (width != null && height != null) {
+				CoolUtil.resetResScale(width, height);
+				FlxG.resizeGame(width, height);
+				limeAppCurRes(width, height);
+			}
+        }
+	}
+	#end
 
 	function oldTweenFunction(tag:String, vars:String, tweenValue:Any, duration:Float, ease:String, funcName:String)
 	{

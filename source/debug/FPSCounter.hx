@@ -81,7 +81,10 @@ class FPSCounter extends TextField
 		var currentCount = times.length;
 		currentFPS = Math.round((currentCount + cacheCount) / 2);
 		if (currentFPS > ClientPrefs.data.framerate) currentFPS = ClientPrefs.data.framerate;
-		if (currentCount != cacheCount) updateText(); // Psych Dev mistake remove the 'if (currentCount != cacheCount)' so i fix this. -Miukothoi2011
+		if(modifiedFont != "_sans" && modifiedSize != 12 && modifiedColor != 0xFFFFFFFF)
+			modifiedFPSTextFormat(modifiedFont, modifiedSize, modifiedColor);
+		
+		if(currentCount != cacheCount) updateText(); // Psych Dev mistake remove the 'if (currentCount != cacheCount)' so i fix this
 
 		deltaTimeout += deltaTime;
 		colorInterp += deltaTime / 330; // Division so that it doesn't give you a seizure on 60 FPS
@@ -94,8 +97,7 @@ class FPSCounter extends TextField
 
 		if (ClientPrefs.data.showMemory) {
 			text += '\nMemory: ${flixel.util.FlxStringUtil.formatBytes(memoryMegas)}';
-			if (ClientPrefs.data.showMemoryLeak)
-				text += ' / ${flixel.util.FlxStringUtil.formatBytes(memoryLeakMegas)}';
+			if (ClientPrefs.data.showMemoryLeak) text += ' / ${flixel.util.FlxStringUtil.formatBytes(memoryLeakMegas)}';
 		}
 
 		if (ClientPrefs.data.showEngineVersion)
@@ -109,6 +111,7 @@ class FPSCounter extends TextField
 			text += "\nFlixel: " + FlxG.VERSION;
 		}
 		
+		var isColorModified:Bool = modifiedColor != 0xFFFFFFFF;
 		if (ClientPrefs.data.showRainbowFPS) {
 			var colorIndex1:Int = Math.floor(colorInterp);
 			var colorIndex2:Int = (colorIndex1 + 1) % rainbowColors.length;
@@ -126,7 +129,7 @@ class FPSCounter extends TextField
 				colorInterp = 0;
 			}
 		} else {
-			textColor = 0xFFFFFFFF;
+			textColor = (!isColorModified ? 0xFFFFFFFF : modifiedColor);
 			if (currentFPS <= ClientPrefs.data.framerate / 2 && currentFPS >= ClientPrefs.data.framerate / 3) {
 				textColor = 0xFFFFFF00;
 			} else if (currentFPS <= ClientPrefs.data.framerate / 3 && currentFPS >= ClientPrefs.data.framerate / 4) {
@@ -168,4 +171,12 @@ class FPSCounter extends TextField
 
 	inline function get_memoryLeakMegas():Float
 		return Memory.getPeakUsage();
+	
+	// I do this because of hscript modified :)))
+	// You can change this to lua (ex: modifiedFPSTextFormat('comic.ttf', 16, 0x00FF0000))
+	public static function modifiedFPSTextFormat(?font:String = "_sans", size:Int = 12, color:Int = 0xFFFFFFFF) {
+		var isSansFont = font == "_sans";
+		if (font != "_sans" && size != 12 && color != 0xFFFFFFFF && !ClientPrefs.data.showRainbowFPS)
+			defaultTextFormat = new TextFormat((!isSansFont ? Paths.font(font) : "_sans"), size, color);
+	}
 }
