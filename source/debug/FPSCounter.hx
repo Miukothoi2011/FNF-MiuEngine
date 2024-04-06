@@ -81,9 +81,6 @@ class FPSCounter extends TextField
 		var currentCount = times.length;
 		currentFPS = Math.round((currentCount + cacheCount) / 2);
 		if (currentFPS > ClientPrefs.data.framerate) currentFPS = ClientPrefs.data.framerate;
-		if(modifiedFont != "_sans" && modifiedSize != 12 && modifiedColor != 0xFFFFFFFF)
-			modifiedFPSTextFormat(modifiedFont, modifiedSize, modifiedColor);
-		
 		if(currentCount != cacheCount) updateText(); // Psych Dev mistake remove the 'if (currentCount != cacheCount)' so i fix this
 
 		deltaTimeout += deltaTime;
