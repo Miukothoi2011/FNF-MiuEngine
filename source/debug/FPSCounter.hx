@@ -108,7 +108,6 @@ class FPSCounter extends TextField
 			text += "\nFlixel: " + FlxG.VERSION;
 		}
 		
-		var isColorModified:Bool = modifiedColor != 0xFFFFFFFF;
 		if (ClientPrefs.data.showRainbowFPS) {
 			var colorIndex1:Int = Math.floor(colorInterp);
 			var colorIndex2:Int = (colorIndex1 + 1) % rainbowColors.length;
@@ -126,7 +125,7 @@ class FPSCounter extends TextField
 				colorInterp = 0;
 			}
 		} else {
-			textColor = (!isColorModified ? 0xFFFFFFFF : modifiedColor);
+			textColor = 0xFFFFFFFF;
 			if (currentFPS <= ClientPrefs.data.framerate / 2 && currentFPS >= ClientPrefs.data.framerate / 3) {
 				textColor = 0xFFFFFF00;
 			} else if (currentFPS <= ClientPrefs.data.framerate / 3 && currentFPS >= ClientPrefs.data.framerate / 4) {
