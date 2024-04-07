@@ -150,6 +150,7 @@ class FunkinLua {
 		set('ratingName', '');
 		set('ratingFC', '');
 		set('version', MainMenuState.psychEngineVersion.trim());
+		set('miuVersion', MainMenuState.miuEngineVersion.trim());
 
 		set('inGameOver', false);
 		set('mustHitSection', false);
@@ -1523,9 +1524,6 @@ class FunkinLua {
 		});
 		Lua_helper.add_callback(lua, 'changeResolution', function(wid:Int = 1280, hei:Int = 720) {
 			changeResolution(wid, hei);
-		});
-		Lua_helper.add_callback(lua, 'modifiedFPSTextFormat', function(?font:String = "_sans", size:Int = 12, color:Int = 0xFFFFFFFF) {
-			debug.FPSCounter.modifiedFPSTextFormat(font, size, color);
 		});
 		
 		// mod settings

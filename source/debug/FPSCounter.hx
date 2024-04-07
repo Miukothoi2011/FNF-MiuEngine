@@ -91,6 +91,7 @@ class FPSCounter extends TextField
 
 	public dynamic function updateText():Void { // so people can override it in hscript
 		if (ClientPrefs.data.showFPS) text = 'FPS: ${currentFPS}';
+		if(ClientPrefs.data.ffmpegMode) text += '(Rendering Mode)';
 
 		if (ClientPrefs.data.showMemory) {
 			text += '\nMemory: ${flixel.util.FlxStringUtil.formatBytes(memoryMegas)}';
@@ -167,13 +168,4 @@ class FPSCounter extends TextField
 
 	inline function get_memoryLeakMegas():Float
 		return Memory.getPeakUsage();
-	
-	// I do this because of hscript modified :)))
-	// You can change this to lua (ex: modifiedFPSTextFormat('comic.ttf', 16, 0x00FF0000))
-	static var defTextFmtStatic:TextFromat = defaultTextFormat;
-	public static function modifiedFPSTextFormat(?font:String = "_sans", size:Int = 12, color:Int = 0xFFFFFFFF) {
-		var isSansFont = font == "_sans";
-		if (font != "_sans" && size != 12 && color != 0xFFFFFFFF && !ClientPrefs.data.showRainbowFPS)
-			defTextFmtStatic = new TextFormat((!isSansFont ? Paths.font(font) : "_sans"), size, color);
-	}
 }
