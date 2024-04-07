@@ -1,34 +1,5 @@
 package options;
 
-#if desktop
-import DiscordClient;
-#end
-import flash.text.TextField;
-import flixel.FlxCamera;
-import flixel.FlxG;
-import flixel.FlxSprite;
-import flixel.addons.display.FlxGridOverlay;
-import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.math.FlxMath;
-import flixel.text.FlxText;
-import flixel.util.FlxColor;
-import lime.utils.Assets;
-import flixel.FlxSubState;
-import flash.text.TextField;
-import flixel.FlxG;
-import flixel.FlxSprite;
-import flixel.util.FlxSave;
-import haxe.Json;
-import flixel.tweens.FlxEase;
-import flixel.tweens.FlxTween;
-import flixel.util.FlxTimer;
-import flixel.input.keyboard.FlxKey;
-import flixel.graphics.FlxGraphic;
-import Controls;
-import openfl.Lib;
-
-using StringTools;
-
 class GameRendererSettingsSubState extends BaseOptionsMenu
 {
 	var fpsOption:Option;
@@ -40,22 +11,19 @@ class GameRendererSettingsSubState extends BaseOptionsMenu
 		var option:Option = new Option('Video Rendering Mode', //Name
 			#if windows 'If checked, the game will render songs you play to an MP4.\nThey will be located in a folder inside assets called gameRenders.' #else 'If checked, the game will render each frame as a screenshot into a folder. They can then be rendered into MP4s using FFmpeg.\nThey are located in a folder called gameRenders.' #end,
 			'ffmpegMode',
-			'bool',
-			false);
+			'bool');
 		addOption(option);
 
         	var option:Option = new Option('Show Debug Info',
 			"If checked, the Botplay text will show how long it took to render 1 frame.",
 			'ffmpegInfo',
-			'bool',
-			false);
+			'bool');
 		addOption(option);
 
         	var option:Option = new Option('Video Framerate',
 			"How much FPS would you like for your videos?",
 			'targetFPS',
-			'float',
-			60);
+			'float');
 		addOption(option);
 
 		final refreshRate:Int = FlxG.stage.application.window.displayMode.refreshRate;
@@ -72,8 +40,7 @@ class GameRendererSettingsSubState extends BaseOptionsMenu
 		var option:Option = new Option('Video Bitrate: ',
 			"Use this option to set your video's bitrate!",
 			'renderBitrate',
-			'float',
-			5.00);
+			'float');
 		addOption(option);
 
 		option.minValue = 1.0;
@@ -88,15 +55,13 @@ class GameRendererSettingsSubState extends BaseOptionsMenu
 		var option:Option = new Option('Lossless Screenshots',
 			"If checked, screenshots will save as PNGs.\nOtherwise, It uses JPEG.",
 			'lossless',
-			'bool',
-			false);
+			'bool');
 		addOption(option);
 
 		var option:Option = new Option('JPEG Quality',
 			"Change the JPEG quality in here.\nThe recommended value is 50.",
 			'quality',
-			'int',
-			50);
+			'int');
 		addOption(option);
 
 		option.minValue = 1;
@@ -107,8 +72,7 @@ class GameRendererSettingsSubState extends BaseOptionsMenu
 		var option:Option = new Option('Garbage Collection Rate',
 			"After how many seconds rendered should a garbage collection be performed?\nIf it's set to 0, the game will not garbage collect at all.",
 			'renderGCRate',
-			'float',
-			5.0);
+			'float');
 		addOption(option);
 
 		option.minValue = 1.0;
@@ -121,13 +85,11 @@ class GameRendererSettingsSubState extends BaseOptionsMenu
        		var option:Option = new Option('No Screenshot',
 			"If checked, Skip taking of screenshot.\nIt's a function for debug.",
 			'noCapture',
-			'bool',
-			false);
+			'bool');
 		addOption(option);
 		#end
 
-		cameras = [FlxG.cameras.list[FlxG.cameras.list.length-1]];
-		
+		//cameras = [FlxG.cameras.list[FlxG.cameras.list.length-1]];
 		super();
 	}
 	function onChangeFramerate()

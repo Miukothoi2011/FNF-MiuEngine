@@ -4142,11 +4142,10 @@ class PlayState extends MusicBeatState
 		if (!ffmpegMode) return;
 
 		if (!sys.FileSystem.exists(#if linux 'ffmpeg' #else 'ffmpeg.exe' #end)) {
-			var ffmpegStr:String = #if !linux "\"FFmpeg.exe\"" #else "\"FFmpeg\" command" #end
+			var ffmpegStr:String = #if !linux "\"FFmpeg.exe\"" #else "\"FFmpeg\" command" #end;
 			trace("${ffmpegStr} not found! (Is it in the same folder as the Miu Engine exe?");
 			return;
 		}
-
 		ffmpegExists = true;
 
 		process = new Process('ffmpeg', ['-v', 'quiet', '-y', '-f', 'rawvideo', '-pix_fmt', 'rgba', '-s', Application.current.window.width + 'x' + Application.current.window.height, '-r', Std.string(targetFPS), '-i', '-', '-b', Std.string(ClientPrefs.data.renderBitrate * 1000000),  'assets/gameRenders/' + Paths.formatToSongPath(SONG.song) + '.mp4']);
