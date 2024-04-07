@@ -62,7 +62,7 @@ class FPSCounter extends TextField
 	var deltaTimeout:Float = 0.0;
 	
 	// All the colors:			      Red,	      Orange,     Yellow,     Green,      Blue,       Violet/Purple
-    final rainbowColors:Array<Int> = [0xFFFF0000, 0xFFFFA500, 0xFFFFFF00, 0xFF00FF00, 0xFF0000FF, 0xFFFF00FF];
+	final rainbowColors:Array<Int> = [0xFFFF0000, 0xFFFFA500, 0xFFFFFF00, 0xFF00FF00, 0xFF0000FF, 0xFFFF00FF];
 	var colorInterp:Float = 0;
 	var currentColor:Int = 0;
 
@@ -160,7 +160,7 @@ class FPSCounter extends TextField
         var interpolatedColor:Int = (interpolatedA << 24) | (interpolatedR << 16) | (interpolatedG << 8) | interpolatedB;
 
         return interpolatedColor;
-    }
+	}
 
 	inline function get_memoryMegas():Float
 		return Memory.getCurrentUsage();
@@ -170,9 +170,10 @@ class FPSCounter extends TextField
 	
 	// I do this because of hscript modified :)))
 	// You can change this to lua (ex: modifiedFPSTextFormat('comic.ttf', 16, 0x00FF0000))
+	static var defTextFmtStatic:TextFromat = defaultTextFormat;
 	public static function modifiedFPSTextFormat(?font:String = "_sans", size:Int = 12, color:Int = 0xFFFFFFFF) {
 		var isSansFont = font == "_sans";
 		if (font != "_sans" && size != 12 && color != 0xFFFFFFFF && !ClientPrefs.data.showRainbowFPS)
-			defaultTextFormat = new TextFormat((!isSansFont ? Paths.font(font) : "_sans"), size, color);
+			defTextFmtStatic = new TextFormat((!isSansFont ? Paths.font(font) : "_sans"), size, color);
 	}
 }

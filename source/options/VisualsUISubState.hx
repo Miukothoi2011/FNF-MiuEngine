@@ -171,9 +171,9 @@ class VisualsUISubState extends BaseOptionsMenu
 			'hideWatermarkTxt',
 			'bool');
 		addOption(option);
-		
-		var option:Option = new Option('Time Bounce',
-			"(UNFINISHED, DON'T ENABLE THIS!)",
+
+		var option:Option = new Option('Time Text Bounce',
+			'If checked, the time bar text will bounce on every beat hit.',
 			'timeBounce',
 			'bool');
 		addOption(option);
@@ -185,7 +185,7 @@ class VisualsUISubState extends BaseOptionsMenu
 		addOption(option);
 		
 		var option:Option = new Option('Show NPS',
-			"If checked, score text with show NPS Counter.",
+			"(UNFINISHED)",
 			'showNPS',
 			'bool');
 		addOption(option);

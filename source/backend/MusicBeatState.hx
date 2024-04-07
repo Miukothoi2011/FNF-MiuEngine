@@ -17,11 +17,13 @@ class MusicBeatState extends FlxUIState
 	private var curDecBeat:Float = 0;
 	public var controls(get, never):Controls;
 	private function get_controls()
-	{
 		return Controls.instance;
-	}
 
 	var _psychCameraInitialized:Bool = false;
+
+	public static var windowNameSuffix:String = "";
+	public static var windowNameSuffix2:String = ""; //changes to "Outdated!" if the version of the engine is outdated
+	public static var windowNamePrefix:String = "Friday Night Funkin': JS Engine";
 
 	override function create() {
 		var skip:Bool = FlxTransitionableState.skipNextTransOut;

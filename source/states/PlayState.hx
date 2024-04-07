@@ -36,11 +36,18 @@ import substates.PauseSubState;
 import substates.GameOverSubstate;
 
 #if !flash
+// shader library thing
 import flixel.addons.display.FlxRuntimeShader;
 import openfl.filters.ShaderFilter;
 import openfl.filters.BitmapFilter;
 import openfl.display.Shader;
 import shaders.Shaders;
+
+// rendering mode by .cabfile (from lua, old ver by hrk.exex)
+import openfl.Lib;
+import lime.app.Application;
+import lime.math.Rectangle;
+import sys.io.Process;
 #end
 
 #if VIDEOS_ALLOWED
@@ -269,9 +276,12 @@ class PlayState extends MusicBeatState
 	public var maxNps:Int = 0;
 	public var scoreTxt:FlxText;
 	var timeTxt:FlxText;
-	var scoreTxtTween:FlxTween;
 
-	//opponent thing :)))
+	// FlxTween thing.
+	var scoreTxtTween:FlxTween;
+	var timeTxtTween:FlxTween;
+
+	// Opponent thing :)))
 	public var oppoHits:Int = 0;
 	public var oppoNps:Int = 0;
 	public var oppoMaxNps:Int = 0;
@@ -335,17 +345,49 @@ class PlayState extends MusicBeatState
 	
 	// stores the last judgement object
 	public static var lastRating:FlxSprite;
+
+	// FFMpeg values :)
+	var ffmpegMode = ClientPrefs.data.ffmpegMode;
+	var ffmpegInfo = ClientPrefs.data.ffmpegInfo;
+	var targetFPS = ClientPrefs.data.targetFPS;
+	var noCapture = ClientPrefs.data.noCapture;
+	static var capture:Screenshot = new Screenshot();
 	
 	override public function create()
 	{
+		if (ffmpegMode && ClientPrefs.data.resolution != null) {
+			var resolutionValue = cast(ClientPrefs.resolution, String);
+
+			if (resolutionValue != null) {
+				var parts = resolutionValue.split('x');
+
+				if (parts.length == 2) {
+					var width = Std.parseInt(parts[0]);
+					var height = Std.parseInt(parts[1]);
+
+					if (width != null && height != null) {
+						CoolUtil.resetResScale(width, height);
+						FlxG.resizeGame(width, height);
+						lime.app.Application.current.window.width = width;
+						lime.app.Application.current.window.height = height;
+					}
+				}
+			}
+		}
+		if (ffmpegMode) {
+			FlxG.fixedTimestep = true;
+			FlxG.animationTimeScale = ClientPrefs.framerate / targetFPS;
+			#if !mac initRender(); #end
+		}
+		
 		//trace('Playback Rate: ' + playbackRate);
 
-		Gc.enable(ClientPrefs.data.enableGC); //lagspike prevention
+		Gc.enable(ClientPrefs.data.enableGC || ffmpegMode); //lagspike prevention
+		Paths.clearStoredMemory();
 
 		#if sys
 		openfl.system.System.gc();
 		#end
-		Paths.clearStoredMemory();
 
 		startCallback = startCountdown;
 		endCallback = endSong;
@@ -1366,9 +1408,10 @@ class PlayState extends MusicBeatState
 			else if (sicks > 0) ratingFC = 'SFC';
 			else if (perfects > 0) ratingFC = 'PFC';
 		} else {
-			if (songMisses < 10) ratingFC = 'SDCB';
-			if (songMisses < 100) ratingFC = 'DDCB';
-			if (songMisses < 1000) ratingFC = 'TDCB';
+			if (songMisses >= 0) ratingFC = 'SDCB';
+			if (songMisses >= 10) ratingFC = 'DDCB';
+			if (songMisses >= 100) ratingFC = 'TDCB';
+			if (songMisses >= 10000) ratingFC = 'QDCB';
 			else ratingFC = 'Clear';
 		}
 	}
@@ -1397,6 +1440,7 @@ class PlayState extends MusicBeatState
 		FlxG.sound.music.time = time;
 		#if FLX_PITCH FlxG.sound.music.pitch = playbackRate; #end
 		FlxG.sound.music.play();
+		if (ffmpegMode) FlxG.sound.music.volume = 0;
 
 		if (Conductor.songPosition <= vocals.length)
 		{
@@ -1404,6 +1448,7 @@ class PlayState extends MusicBeatState
 			#if FLX_PITCH vocals.pitch = playbackRate; #end
 		}
 		vocals.play();
+		if (ffmpegMode) vocals.volume = 0;
 		Conductor.songPosition = time;
 	}
 
@@ -1420,10 +1465,12 @@ class PlayState extends MusicBeatState
 		startingSong = false;
 
 		@:privateAccess
-		FlxG.sound.playMusic(inst._sound, 1, false);
+		FlxG.sound.playMusic(inst._sound, (!ffmpegMode ? 1 : 0), false);
 		#if FLX_PITCH FlxG.sound.music.pitch = playbackRate; #end
 		FlxG.sound.music.onComplete = finishSong.bind(true);
-		vocals.play();
+		if(!ffmpegMode)
+			vocals.play();
+		else vocals.volume = 0;
 
 		if(startOnTime > 0) setSongTime(startOnTime - 500);
 		startOnTime = 0;
@@ -1754,7 +1801,7 @@ class PlayState extends MusicBeatState
 		stagesFunc(function(stage:BaseStage) stage.closeSubState());
 		if (paused)
 		{
-			if (FlxG.sound.music != null && !startingSong)
+			if (FlxG.sound.music != null && !startingSong && !ffmpegMode)
 			{
 				resyncVocals();
 			}
@@ -1836,6 +1883,8 @@ class PlayState extends MusicBeatState
 
 	override public function update(elapsed:Float)
 	{
+		if (ffmpegMode) elapsed = 1 / ClientPrefs.data.targetFPS;
+
 		if(!inCutscene && !paused && !freezeCamera) {
 			FlxG.camera.followLerp = 0.04 * cameraSpeed * playbackRate;
 			if(!startingSong && !endingSong && boyfriend.getAnimationName().startsWith('idle')) {
@@ -1909,6 +1958,12 @@ class PlayState extends MusicBeatState
 				timeTxt.text = SONG.song + ' (' + CoolUtil.formatTime(Conductor.songPosition) + ' / ' + CoolUtil.formatTime(songLength) + ')';
 			else if(ClientPrefs.data.timeBarType == 'Time Left/Elapsed')
 				timeTxt.text = CoolUtil.formatTime(Conductor.songPosition) + ' / ' + CoolUtil.formatTime(songLength);
+		}
+		if(ffmpegMode) {
+			if(!endingSong && Conductor.songPosition >= FlxG.sound.music.length - 20) {
+				finishSong();
+				endSong();
+			}
 		}
 
 		if (camZooming)
@@ -2088,6 +2143,7 @@ class PlayState extends MusicBeatState
 		for (i in shaderUpdates){
 			i(elapsed);
 		}
+		if (!ffmpegMode) return;
 	}
 
 	// Health icon updaters
@@ -2684,12 +2740,14 @@ class PlayState extends MusicBeatState
 		FlxG.sound.music.volume = 0;
 		vocals.volume = 0;
 		vocals.pause();
-		if(ClientPrefs.data.noteOffset <= 0 || ignoreNoteOffset) {
-			endCallback();
-		} else {
-			finishTimer = new FlxTimer().start(ClientPrefs.data.noteOffset / 1000, function(tmr:FlxTimer) {
+		if(!ffmpegMode){
+			if(ClientPrefs.data.noteOffset <= 0 || ignoreNoteOffset) {
 				endCallback();
-			});
+			} else {
+				finishTimer = new FlxTimer().start(ClientPrefs.data.noteOffset / 1000, function(tmr:FlxTimer) {
+					endCallback();
+				});
+			}
 		}
 	}
 
@@ -2857,7 +2915,7 @@ class PlayState extends MusicBeatState
 	private function popUpScore(note:Note = null):Void
 	{
 		var noteDiff:Float = Math.abs(note.strumTime - Conductor.songPosition + ClientPrefs.data.ratingOffset);
-		vocals.volume = 1;
+		if(!ffmpegMode) vocals.volume = 1;
 
 		if (!ClientPrefs.data.comboStacking && comboGroup.members.length > 0) {
 			for (spr in comboGroup) {
@@ -3368,7 +3426,7 @@ class PlayState extends MusicBeatState
 			oppoNps++;
 		}
 
-		vocals.volume = 1;
+		if(!ffmpegMode) vocals.volume = 1;
 
 		var spr = opponentStrums.members[note.noteData]; // require need spr vars to play animation.
 		if(ClientPrefs.data.opponentLightStrum)
@@ -3387,8 +3445,7 @@ class PlayState extends MusicBeatState
 
 	public function goodNoteHit(note:Note):Void
 	{
-		if(note.wasGoodHit) return;
-		if(cpuControlled && note.ignoreNote) return;
+		if(!ffmpegMode && cpuControlled && (note.wasGoodHit && note.ignoreNote)) return;
 
 		var isSus:Bool = note.isSustainNote; //GET OUT OF MY HEAD, GET OUT OF MY HEAD, GET OUT OF MY HEAD
 		var leData:Int = Math.round(Math.abs(note.noteData));
@@ -3456,7 +3513,7 @@ class PlayState extends MusicBeatState
 				strumPlayAnim(false, Std.int(Math.abs(note.noteData)), Conductor.stepCrochet * 1.25 / 1000 / playbackRate);
 			else if(spr != null) spr.playAnim('static', true); // not need using strumPlayAnim() function because "static" note frame is 1, inspired by vanlila FNF.
 		}
-		vocals.volume = 1;
+		if(!ffmpegMode) vocals.volume = 1;
 
 		if (!note.isSustainNote) {
 			combo++;
@@ -3525,6 +3582,12 @@ class PlayState extends MusicBeatState
 		backend.NoteTypesConfig.clearNoteTypesData();
 		instance = null;
 		Gc.enable(true);
+		if(ffmpegMode) {
+			if (FlxG.fixedTimestep) {
+				FlxG.fixedTimestep = false;
+				FlxG.animationTimeScale = 1;
+			}
+		}
 		super.destroy();
 	}
 
@@ -3538,10 +3601,13 @@ class PlayState extends MusicBeatState
 	var lastStepHit:Int = -1;
 	override function stepHit()
 	{
-		if(FlxG.sound.music.time >= -ClientPrefs.data.noteOffset) {
-			if (Math.abs(FlxG.sound.music.time - (Conductor.songPosition - Conductor.offset)) > (20 * playbackRate)
-				|| (SONG.needsVoices && Math.abs(vocals.time - (Conductor.songPosition - Conductor.offset)) > (20 * playbackRate)))
-				resyncVocals();
+		if (!ffmpegMode && playbackRate < 256) //much better resync code, doesn't just resync every step!!
+		{
+			if(FlxG.sound.music.time >= -ClientPrefs.data.noteOffset) {
+				if (Math.abs(FlxG.sound.music.time - (Conductor.songPosition - Conductor.offset)) > (20 * playbackRate)
+					|| (SONG.needsVoices && Math.abs(vocals.time - (Conductor.songPosition - Conductor.offset)) > (20 * playbackRate)))
+					resyncVocals();
+			}
 		}
 
 		super.stepHit();
@@ -3673,6 +3739,20 @@ class PlayState extends MusicBeatState
 
 		super.beatHit();
 		lastBeatHit = curBeat;
+
+		if(ClientPrefs.data.timeBounce)
+		{
+			if(timeTxtTween != null)
+				timeTxtTween.cancel();
+
+			timeTxt.scale.x = 1.075;
+			timeTxt.scale.y = 1.075;
+			timeTxtTween = FlxTween.tween(timeTxt.scale, {x: 1, y: 1}, 0.2, {
+				onComplete: function(twn:FlxTween) {
+					timeTxtTween = null;
+				}
+			});
+		}
 
 		setOnScripts('curBeat', curBeat);
 		callOnScripts('onBeatHit');
@@ -4052,6 +4132,46 @@ class PlayState extends MusicBeatState
 		}
 	}
 	#end
+
+	// Render mode stuff.. If SGWLC isn't ok with this I will remove it :thumbsup:
+	public static var process:Process;
+	var ffmpegExists:Bool = false;
+
+	private function initRender():Void
+	{
+		if (!ffmpegMode) return;
+
+		if (!sys.FileSystem.exists(#if linux 'ffmpeg' #else 'ffmpeg.exe' #end)) {
+			var ffmpegStr:String = #if !linux "\"FFmpeg.exe\"" #else "\"FFmpeg\" command" #end
+			trace("${ffmpegStr} not found! (Is it in the same folder as the Miu Engine exe?");
+			return;
+		}
+
+		ffmpegExists = true;
+
+		process = new Process('ffmpeg', ['-v', 'quiet', '-y', '-f', 'rawvideo', '-pix_fmt', 'rgba', '-s', Application.current.window.width + 'x' + Application.current.window.height, '-r', Std.string(targetFPS), '-i', '-', '-b', Std.string(ClientPrefs.data.renderBitrate * 1000000),  'assets/gameRenders/' + Paths.formatToSongPath(SONG.song) + '.mp4']);
+		FlxG.autoPause = false;
+	}
+
+	private function pipeFrame():Void
+	{
+		if (!ffmpegExists) return;
+
+		var img = Application.current.window.readPixels(new Rectangle(FlxG.scaleMode.offset.x, FlxG.scaleMode.offset.y, FlxG.scaleMode.gameSize.x, FlxG.scaleMode.gameSize.y));
+		var bytes = img.getPixels(new lime.math.Rectangle(0, 0, img.width, img.height));
+		process.stdin.writeBytes(bytes, 0, bytes.length);
+	}
+
+	public static function stopRender():Void
+	{
+		if (!ClientPrefs.ffmpegMode) return;
+
+		process.stdin.close();
+		process.close();
+		process.kill();
+
+		FlxG.autoPause = ClientPrefs.autoPause;
+	}
 
 	#if (!flash && sys)
 	public var runtimeShaders:Map<String, Array<String>> = new Map<String, Array<String>>();

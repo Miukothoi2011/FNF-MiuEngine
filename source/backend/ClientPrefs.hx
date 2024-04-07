@@ -6,8 +6,6 @@ import flixel.input.gamepad.FlxGamepadInputID;
 
 import states.TitleState;
 
-import shaders.Shaders;
-
 // Add a variable here and it will get automatically saved
 @:structInit class SaveVariables {
 	public var downScroll:Bool = false;
@@ -46,7 +44,7 @@ import shaders.Shaders;
 	public var noPerfectJudge:Bool = false;
 	public var dontShowRatingsPopUpIfBotplay:Bool = true;
 	public var iconBounce:String = 'Default';
-	public var timeBounce:Bool = false;
+	public var timeBounce:Bool = true;
 	public var showRatingsCounter:Bool = false;
 	public var lowQuality:Bool = false;
 	public var shaders:Bool = true;
@@ -55,6 +53,17 @@ import shaders.Shaders;
 	public var camZooms:Bool = true;
 	public var hideHud:Bool = false;
 	public var enableGC:Bool = false;
+
+	// Game Renderer
+	public var ffmpegMode:Bool = false;
+	public var ffmpegInfo:Bool = false;
+	public var targetFPS:Float = 60;
+	public var lossless:Bool = false;
+	public var quality:Int = 80;
+	public var noCapture:Bool = false;
+	public var renderGCRate:Float = 5.0;
+	public var renderBitrate:Float = 5.0;
+
 	public var controllerMode:Bool = #if android true #else false #end;
 	public var noteOffset:Int = 0;
 	public var arrowRGB:Array<Array<FlxColor>> = [
@@ -202,6 +211,8 @@ class ClientPrefs {
 		FlxG.log.add("Settings saved!");
 	}
 
+	public var widthMod:Int = 0;
+	public var heightMod:Int = 0;
 	public static function loadPrefs() {
 		#if ACHIEVEMENTS_ALLOWED Achievements.load(); #end
 
@@ -248,6 +259,9 @@ class ClientPrefs {
                 		FlxG.resizeGame(width, height);
 						lime.app.Application.current.window.width = width;
 						lime.app.Application.current.window.height = height;
+
+						widthMod = width;
+						heightMod = height;
             		}
         		}
     		}
@@ -262,7 +276,7 @@ class ClientPrefs {
 		}
 		
 		// flixel automatically saves your volume!
-		if(FlxG.save.data.volume != null)
+		if (FlxG.save.data.volume != null)
 			FlxG.sound.volume = FlxG.save.data.volume;
 		if (FlxG.save.data.mute != null)
 			FlxG.sound.muted = FlxG.save.data.mute;
