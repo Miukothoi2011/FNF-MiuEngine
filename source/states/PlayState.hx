@@ -126,7 +126,7 @@ class PlayState extends MusicBeatState
 	public var gfMap:Map<String, Character> = new Map<String, Character>();
 	public var variables:Map<String, Dynamic> = new Map<String, Dynamic>();
 	
-	public var type = HealthIcon.type;
+	public var type:HealthIcon.IconType = DEFAULT;
 
 	#if HSCRIPT_ALLOWED
 	public var hscriptArray:Array<HScript> = [];
@@ -353,6 +353,8 @@ class PlayState extends MusicBeatState
 	var targetFPS = ClientPrefs.data.targetFPS;
 	var noCapture = ClientPrefs.data.noCapture;
 	static var capture:Screenshot = new Screenshot();
+	
+	public var frameCaptured:Int = 0;
 	
 	override public function create()
 	{
@@ -645,14 +647,15 @@ class PlayState extends MusicBeatState
 		reloadHealthBarColors();
 		uiGroup.add(healthBar);
 
+		var oldIconBounceStyle:Bool = ClientPrefs.data.iconBounce == 'Old Psych';
 		iconP1 = new HealthIcon(boyfriend.healthIcon, true);
-		iconP1.y = healthBar.y - 75;
+		iconP1.y = healthBar.y - (!oldIconBounceStyle ? 75 : (iconP1.height / 2));
 		iconP1.visible = !ClientPrefs.data.hideHud;
 		iconP1.alpha = ClientPrefs.data.healthBarAlpha;
 		uiGroup.add(iconP1);
 
 		iconP2 = new HealthIcon(dad.healthIcon, false);
-		iconP2.y = healthBar.y - 75;
+		iconP2.y = healthBar.y - (!oldIconBounceStyle ? 75 : (iconP2.height / 2));
 		iconP2.visible = !ClientPrefs.data.hideHud;
 		iconP2.alpha = ClientPrefs.data.healthBarAlpha;
 		uiGroup.add(iconP2);

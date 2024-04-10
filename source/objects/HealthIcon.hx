@@ -27,9 +27,10 @@ class HealthIcon extends FlxSprite
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-
+		
+		var oldIconBounceStyle:Bool = ClientPrefs.data.iconBounce == 'Old Psych';
 		if (sprTracker != null)
-			setPosition(sprTracker.x + sprTracker.width + 12, sprTracker.y - 30);
+			setPosition(sprTracker.x + sprTracker.width + (!oldIconBounceStyle ? 12 : 10), sprTracker.y - 30);
 	}
 
 	private var iconOffsets:Array<Float> = [0, 0, 0];
@@ -78,7 +79,7 @@ class HealthIcon extends FlxSprite
 		return char;
 	
 	public function swapOldIcon() { // add back the swap bf icon to old.
-		changeIcon('bf-old');
-		isOldIcon = true;
+		if(isOldIcon = !isOldIcon) changeIcon('bf-old');
+		else changeIcon('bf-old');
 	}
 }
