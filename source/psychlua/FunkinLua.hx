@@ -1720,7 +1720,7 @@ class FunkinLua {
 		var defaultWidthRes = 1280;
 		var defaultHeightRes = 720;
 		
-		var limeAppCurRes = function(wid:Int = 1280, hei:Int = 720) {
+		function limeAppCurRes(wid:Int = 1280, hei:Int = 720) {
 			Application.current.window.width = wid;
 			Application.current.window.height = hei;
 		}
