@@ -1,4 +1,4 @@
-package;
+package backend;
 
 import haxe.io.Bytes;
 import lime.app.Application;
@@ -80,9 +80,9 @@ class Screenshot {
 			path = "scr-" + DateTools.format(Date.now(), "%Y-%m-%d_%H-%M-%S-") + millis;
 		}
 
-		path = target + slash + fixFilename(path + name, ClientPrefs.lossless);
+		path = target + slash + fixFilename(path + name, ClientPrefs.data.lossless);
 
-		byteData = image.encode(ClientPrefs.lossless ? PNG : JPEG, ClientPrefs.quality);
+		byteData = image.encode(ClientPrefs.data.lossless ? PNG : JPEG, ClientPrefs.data.quality);
 		var f:FileOutput = sys.io.File.write(path, true);
 		if(byteData != null && f != null && FileSystem.exists(path)) {
 			f.write(byteData);

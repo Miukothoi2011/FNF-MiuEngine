@@ -35,6 +35,10 @@ class CoolUtil
 		return Math.max(min, Math.min(max, value));
 	}
 
+	inline public static function clamp(value:Float, min:Float, max:Float):Float { // WAIT WHAT???? IT WAS SAME LIKE boundTo() ?????!?!?!?!?!
+		return Math.max(min, Math.min(max, value));
+	}
+
 	inline public static function coolTextFile(path:String):Array<String>
 	{
 		var daList:String = null;
@@ -324,5 +328,16 @@ class CoolUtil
 			shit = hour+":"+mins + ":" + secs;
 		}
 		return shit;
+	}
+
+	public static function zeroFill(value:Int, digits:Int) {
+		var length:Int = Std.string(value).length;
+		var format:String = "";
+		if(length < digits) {
+			for (i in 0...(digits - length))
+				format += "0";
+			format += Std.string(value);
+		} else format = Std.string(value);
+		return format;
 	}
 }

@@ -211,8 +211,8 @@ class ClientPrefs {
 		FlxG.log.add("Settings saved!");
 	}
 
-	public var widthMod:Int = 0;
-	public var heightMod:Int = 0;
+	public static var widthMod:Int = 0;
+	public static var heightMod:Int = 0;
 	public static function loadPrefs() {
 		#if ACHIEVEMENTS_ALLOWED Achievements.load(); #end
 

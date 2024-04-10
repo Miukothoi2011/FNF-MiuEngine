@@ -357,7 +357,7 @@ class PlayState extends MusicBeatState
 	override public function create()
 	{
 		if (ffmpegMode && ClientPrefs.data.resolution != null) {
-			var resolutionValue = cast(ClientPrefs.resolution, String);
+			var resolutionValue = cast(ClientPrefs.data.resolution, String);
 
 			if (resolutionValue != null) {
 				var parts = resolutionValue.split('x');
@@ -377,7 +377,7 @@ class PlayState extends MusicBeatState
 		}
 		if (ffmpegMode) {
 			FlxG.fixedTimestep = true;
-			FlxG.animationTimeScale = ClientPrefs.framerate / targetFPS;
+			FlxG.animationTimeScale = ClientPrefs.data.framerate / targetFPS;
 			#if !mac initRender(); #end
 		}
 		
@@ -1883,7 +1883,7 @@ class PlayState extends MusicBeatState
 	var allowDebugKeys:Bool = true;
 	
 	public var preElapsed:Float = 0;
-	public var postElapsed:Float = 1 / ClientPrefs.targetFPS;
+	public var postElapsed:Float = 1 / ClientPrefs.data.targetFPS;
 	public var takenTime:Float = haxe.Timer.stamp();
 
 	override public function update(elapsed:Float)
@@ -4187,13 +4187,13 @@ class PlayState extends MusicBeatState
 
 	public static function stopRender():Void
 	{
-		if (!ClientPrefs.ffmpegMode) return;
+		if (!ClientPrefs.data.ffmpegMode) return;
 
 		process.stdin.close();
 		process.close();
 		process.kill();
 
-		FlxG.autoPause = ClientPrefs.autoPause;
+		FlxG.autoPause = ClientPrefs.data.autoPause;
 	}
 
 	#if (!flash && sys)

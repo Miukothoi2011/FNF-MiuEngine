@@ -1,7 +1,15 @@
 package objects;
 
+enum abstract IconType(Int) to Int from Int //abstract so it can hold int values for the frame count
+{
+    var SINGLE = 0;
+    var DEFAULT = 1;
+    var WINNING = 2;
+}
+
 class HealthIcon extends FlxSprite
 {
+	public var type:IconType = DEFAULT;
 	public var sprTracker:FlxSprite;
 	private var isOldIcon:Bool = false;
 	private var isPlayer:Bool = false;
@@ -68,4 +76,9 @@ class HealthIcon extends FlxSprite
 
 	public function getCharacter():String
 		return char;
+	
+	public function swapOldIcon() { // add back the swap bf icon to old.
+		changeIcon('bf-old');
+		isOldIcon = true;
+	}
 }

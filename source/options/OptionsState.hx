@@ -1,5 +1,7 @@
 package options;
 
+import flixel.FlxCamera;
+
 import states.MainMenuState;
 import backend.StageData;
 
@@ -10,6 +12,9 @@ class OptionsState extends MusicBeatState
 	private static var curSelected:Int = 0;
 	public static var menuBG:FlxSprite;
 	public static var onPlayState:Bool = false;
+	private var mainCamera:FlxCamera;
+	private var subCamera:FlxCamera;
+	private var otherCamera:FlxCamera;
 
 	function openSelectedSubstate(label:String) {
 		switch(label) {
@@ -34,6 +39,8 @@ class OptionsState extends MusicBeatState
 
 	var selectorLeft:Alphabet;
 	var selectorRight:Alphabet;
+	var camFollow:FlxObject;
+	var camFollowPos:FlxObject;
 
 	override function create() {
 		Paths.clearStoredMemory();
