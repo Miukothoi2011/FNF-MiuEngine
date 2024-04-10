@@ -32,14 +32,6 @@ class CoolUtil
 		return text.charAt(0).toUpperCase() + text.substr(1).toLowerCase();
 
 	inline public static function boundTo(value:Float, min:Float, max:Float):Float {
-		/*var newValue:Float = value;
-		if(newValue < min) {
-			newValue = min;
-		} else if(newValue > max) {
-			newValue = max;
-		}
-		return newValue;*/
-		
 		return Math.max(min, Math.min(max, value));
 	}
 
@@ -208,8 +200,8 @@ class CoolUtil
 	 * 
 	 * [`Format`, `Divisor`]
 	 */
-	 public static var byte_formats:Array<Array<Dynamic>> = [
-		["$bytes B", 1.0],
+	public static var byte_formats:Array<Array<Dynamic>> = [
+		["$bytes B",  1.0],
 		["$bytes KB", 1024.0],
 		["$bytes MB", 1048576.0],
 		["$bytes GB", 1073741824.0],
@@ -233,7 +225,7 @@ class CoolUtil
 	 * @param onlyValue (Optional, Default = `false`) Whether or not to only format the value of bytes (ex: `'1.5 mb' -> '1.5'`).
 	 * @param precision (Optional, Default = `2`) The precision of the decimal value of bytes. (ex: `1 -> 1.5, 2 -> 1.53, etc`).
 	 * @return Formatted byte string.
-	 */
+	**/
 	public static function formatBytes(bytes:Float, onlyValue:Bool = false, precision:Int = 2):String {
 		var formatted_bytes:String = "?";
 
@@ -261,13 +253,28 @@ class CoolUtil
         var data = 0;
         var dataTexts = ["B", "KB", "MB", "GB", "TB", "PB"]; // IS THAT A QT MOD REFERENCE!!!??!!111!!11???
         while(size > 1024 && data < dataTexts.length - 1) {
-          data++;
-          size = size / 1024;
+			data++;
+			size = size / 1024;
         }
         
         size = Math.round(size * 100) / 100;
         return size + " " + dataTexts[data];
     }
+
+	public static function floatToStringPrecision(n:Float, prec:Int) { // used for rendering mode sec per 1 frame count.
+		n = Math.round(n * Math.pow(10, prec));
+		var str = '' + n;
+		var len = str.length;
+		if(len <= prec) {
+			while(len < prec) {
+				str = '0'+str;
+				len++;
+			}
+			return '0.' + str;
+		} else {
+			return str.substr(0, str.length-prec) + '.' + str.substr(str.length - prec);
+		}
+	}
 
 	/**
 		Helper Function to Fix Save Files for Flixel 5

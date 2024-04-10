@@ -45,7 +45,7 @@ class FPSCounter extends TextField
 		currentFPS = 0;
 		selectable = false;
 		mouseEnabled = false;
-		#if android
+		#if mobile
 		defaultTextFormat = new TextFormat("_sans", 14, color);
 		#else
 		defaultTextFormat = new TextFormat("_sans", 12, color);
@@ -135,7 +135,6 @@ class FPSCounter extends TextField
 				textColor = 0xFFFF0000;
 			}
 		}
-		
 	}
 	
 	private function interpolateColor(startColor:Int, endColor:Int, t:Float):Int {

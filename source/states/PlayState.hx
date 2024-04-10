@@ -48,6 +48,7 @@ import openfl.Lib;
 import lime.app.Application;
 import lime.math.Rectangle;
 import sys.io.Process;
+import backend.Screenshot;
 #end
 
 #if VIDEOS_ALLOWED
@@ -94,13 +95,6 @@ import cpp.vm.Gc;
  * "function triggerEvent" - Called when the song hits your event's timestamp, this is probably what you were looking for
 **/
 
-enum abstract IconType(Int) to Int from Int //abstract so it can hold int values for the frame count
-{
-    var SINGLE = 0;
-    var DEFAULT = 1;
-    var WINNING = 2;
-}
-
 class PlayState extends MusicBeatState
 {
 	public static var STRUM_X = 42;
@@ -132,7 +126,7 @@ class PlayState extends MusicBeatState
 	public var gfMap:Map<String, Character> = new Map<String, Character>();
 	public var variables:Map<String, Dynamic> = new Map<String, Dynamic>();
 	
-	public var type:IconType = DEFAULT;
+	public var type = HealthIcon.type;
 
 	#if HSCRIPT_ALLOWED
 	public var hscriptArray:Array<HScript> = [];
@@ -242,11 +236,18 @@ class PlayState extends MusicBeatState
 
 	public var guitarHeroSustains:Bool = false;
 	public var instakillOnMiss:Bool = false;
-	public var cpuControlled:Bool = false;
+	public var cpuControlled(default, set):Bool = false;
+	inline function set_cpuControlled(value:Bool){
+		cpuControlled = value;
+		if (botplayTxt != null) // this assures it'll always show up
+			botplayTxt.visible = (!ClientPrefs.data.hideHud) ? cpuControlled : false;
+
+		return cpuControlled;
+	}
 	public var practiceMode:Bool = false;
 
 	// Setting shortcut from ClientPrefs
-	public var dontShowRatingsPopUpIfBotplay = ClientPrefs.data.dontShowRatingsPopUpIfBotplay;
+	var dontShowRatingsPopUpIfBotplay:Bool = ClientPrefs.data.dontShowRatingsPopUpIfBotplay;
 
 	public static var opponentChart:Bool = false;
 	
@@ -1880,9 +1881,18 @@ class PlayState extends MusicBeatState
 	var canPause:Bool = true;
 	var freezeCamera:Bool = false;
 	var allowDebugKeys:Bool = true;
+	
+	public var preElapsed:Float = 0;
+	public var postElapsed:Float = 1 / ClientPrefs.targetFPS;
+	public var takenTime:Float = haxe.Timer.stamp();
 
 	override public function update(elapsed:Float)
 	{
+		if (FlxG.keys.justPressed.NINE) // add back the swap bf icon to old.
+		{
+			iconP1.swapOldIcon();
+		}
+		
 		if (ffmpegMode) elapsed = 1 / ClientPrefs.data.targetFPS;
 
 		if(!inCutscene && !paused && !freezeCamera) {
@@ -2144,6 +2154,20 @@ class PlayState extends MusicBeatState
 			i(elapsed);
 		}
 		if (!ffmpegMode) return;
+
+		#if !mac pipeFrame();
+		#else
+			var filename = CoolUtil.zeroFill(frameCaptured, 7);
+			capture.save(Paths.formatToSongPath(SONG.song) + #if linux '/' #else '\\' #end, filename);
+			if (ClientPrefs.renderGCRate > 0 && (frameCaptured / targetFPS) % ClientPrefs.renderGCRate == 0) openfl.system.System.gc();
+		#end
+		frameCaptured++;
+
+		if(botplayTxt != null && botplayTxt.visible) {
+			if (ffmpegInfo)
+				botplayTxt.text = CoolUtil.floatToStringPrecision(haxe.Timer.stamp() - takenTime, 3);
+		}
+		takenTime = haxe.Timer.stamp();
 	}
 
 	// Health icon updaters

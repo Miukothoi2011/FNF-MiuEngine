@@ -23,7 +23,7 @@ class MusicBeatState extends FlxUIState
 
 	public static var windowNameSuffix:String = "";
 	public static var windowNameSuffix2:String = ""; //changes to "Outdated!" if the version of the engine is outdated
-	public static var windowNamePrefix:String = "Friday Night Funkin': JS Engine";
+	public static var windowNamePrefix:String = "Friday Night Funkin': Miu Engine";
 
 	override function create() {
 		var skip:Bool = FlxTransitionableState.skipNextTransOut;

@@ -1526,6 +1526,22 @@ class FunkinLua {
 			changeResolution(wid, hei);
 		});
 		
+		// fps text format thing.
+		Lua_helper.add_callback(lua, 'changeFPSTextFormat', function(font:String = '_sans', size:Int = #if mobile 14 #else 12 #end, color:Int = -1) {
+			var isSansFont:Bool = font == '_sans';
+			Main.fpsVar.defaultTextFormat = new openfl.text.TextFormat((!isSansFont ? Paths.font(font) : font), size, color);
+		});
+		Lua_helper.add_callback(lua, 'changeFPSTextFont', function(font:String = '_sans') {
+			var isSansFont:Bool = font == '_sans';
+			Main.fpsVar.defaultTextFormat.font = (!isSansFont ? Paths.font(font) : font);
+		});
+		Lua_helper.add_callback(lua, 'changeFPSTextSize', function(size:Int = #if mobile 14 #else 12 #end) {
+			Main.fpsVar.defaultTextFormat.size = size;
+		});
+		Lua_helper.add_callback(lua, 'changeFPSTextColor', function(color:Int = 0xFFFFFF) {
+			Main.fpsVar.textColor = color;
+		});
+		
 		// mod settings
 		#if MODS_ALLOWED
 		addLocalCallback("getModSetting", function(saveTag:String, ?modName:String = null) {
@@ -1692,7 +1708,7 @@ class FunkinLua {
 
 	public static function getUserName():String
 	{
-		#if (desktop && windows)
+		#if desktop
 		return Sys.environment()["USERNAME"];
 		#else
 		return 'unknown';
@@ -1704,7 +1720,7 @@ class FunkinLua {
 		var defaultWidthRes = 1280;
 		var defaultHeightRes = 720;
 		
-		function limeAppCurRes(wid:Int = 1280, hei:Int = 720) {
+		var limeAppCurRes = function(wid:Int = 1280, hei:Int = 720) {
 			Application.current.window.width = wid;
 			Application.current.window.height = hei;
 		}
