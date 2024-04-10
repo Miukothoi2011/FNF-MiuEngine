@@ -1,6 +1,7 @@
 package options;
 
 import flixel.FlxCamera;
+import flixel.FlxObject;
 
 import states.MainMenuState;
 import backend.StageData;
