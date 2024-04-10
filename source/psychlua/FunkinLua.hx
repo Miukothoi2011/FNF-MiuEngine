@@ -1726,11 +1726,9 @@ class FunkinLua {
 		}
 		
 		if (width != defaultWidthRes && height != defaultHeightRes) {
-			if (width != null && height != null) {
-				CoolUtil.resetResScale(width, height);
-				FlxG.resizeGame(width, height);
-				limeAppCurRes(width, height);
-			}
+			CoolUtil.resetResScale(width, height);
+			FlxG.resizeGame(width, height);
+			limeAppCurRes(width, height);
         }
 	}
 	#end
