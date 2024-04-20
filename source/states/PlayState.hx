@@ -42,6 +42,7 @@ import openfl.filters.ShaderFilter;
 import openfl.filters.BitmapFilter;
 import openfl.display.Shader;
 import shaders.Shaders;
+import shaders.WiggleEffect;
 
 // rendering mode by .cabfile (from lua, old ver by hrk.exex)
 import openfl.Lib;
@@ -241,7 +242,6 @@ class PlayState extends MusicBeatState
 		cpuControlled = value;
 		if (botplayTxt != null) // this assures it'll always show up
 			botplayTxt.visible = (!ClientPrefs.data.hideHud) ? cpuControlled : false;
-
 		return cpuControlled;
 	}
 	public var practiceMode:Bool = false;
@@ -353,7 +353,6 @@ class PlayState extends MusicBeatState
 	var targetFPS = ClientPrefs.data.targetFPS;
 	var noCapture = ClientPrefs.data.noCapture;
 	static var capture:Screenshot = new Screenshot();
-	
 	public var frameCaptured:Int = 0;
 	
 	override public function create()
@@ -668,11 +667,8 @@ class PlayState extends MusicBeatState
 		updateScore(false);
 		uiGroup.add(scoreTxt);
 
-		if(SONG.credit != null) {
-			watermarkTxt = new FlxText(10, FlxG.height - 28, 0, 'By ' + SONG.credit + ' - ' + SONG.song + " - " + Difficulty.getString().toUpperCase() + " - Miu Engine", 74);
-		} else {
-			watermarkTxt = new FlxText(10, FlxG.height - 28, 0, SONG.song + " - " + Difficulty.getString().toUpperCase() + " - Miu Engine", 74);
-		}
+		var watermarkEqualtoNull:Bool = SONG.credit == null;
+		watermarkTxt = new FlxText(10, FlxG.height - 28, 0, (!watermarkEqualtoNull ? 'By ' + SONG.credit + ' - ' : '') + SONG.song + " - " + Difficulty.getString().toUpperCase() + " - Miu Engine", 74);
 		watermarkTxt.scrollFactor.set();
 		watermarkTxt.setFormat(Paths.font("vcr.ttf"), 18, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		watermarkTxt.updateHitbox();
@@ -681,7 +677,7 @@ class PlayState extends MusicBeatState
 		uiGroup.add(watermarkTxt);
 
 		var screwYouEqualtoNull:Bool = SONG.screwYou == null; // i do this cuz for short time and optimize code i think. -Miukothoi2011
-		screwYouTxt = new FlxText(10, FlxG.height - 28, 0, SONG.screwYou, 74);
+		screwYouTxt = new FlxText(10, FlxG.height - 28, 0, (!screwYouEqualtoNull ? SONG.screwYou : ''), 74);
 		screwYouTxt.scrollFactor.set();
 		screwYouTxt.setFormat(Paths.font("vcr.ttf"), 18, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		screwYouTxt.updateHitbox();
@@ -1968,9 +1964,9 @@ class PlayState extends MusicBeatState
 			if(ClientPrefs.data.timeBarType != 'Song Name')
 				timeTxt.text = FlxStringUtil.formatTime(secondsTotal, false);		
 			else if(ClientPrefs.data.timeBarType == 'Song Name + Time')
-				timeTxt.text = SONG.song + ' (' + CoolUtil.formatTime(Conductor.songPosition) + ' / ' + CoolUtil.formatTime(songLength) + ')';
+				timeTxt.text = SONG.song + ' (' + FlxStringUtil.formatTime(Conductor.songPosition) + ' / ' + FlxStringUtil.formatTime(songLength) + ')';
 			else if(ClientPrefs.data.timeBarType == 'Time Left/Elapsed')
-				timeTxt.text = CoolUtil.formatTime(Conductor.songPosition) + ' / ' + CoolUtil.formatTime(songLength);
+				timeTxt.text = FlxStringUtil.formatTime(Conductor.songPosition, false) + ' / ' + FlxStringUtil.formatTime(songLength, false);
 		}
 		if(ffmpegMode) {
 			if(!endingSong && Conductor.songPosition >= FlxG.sound.music.length - 20) {
@@ -2162,7 +2158,7 @@ class PlayState extends MusicBeatState
 		#else
 			var filename = CoolUtil.zeroFill(frameCaptured, 7);
 			capture.save(Paths.formatToSongPath(SONG.song) + #if linux '/' #else '\\' #end, filename);
-			if (ClientPrefs.renderGCRate > 0 && (frameCaptured / targetFPS) % ClientPrefs.renderGCRate == 0) openfl.system.System.gc();
+			if (ClientPrefs.data.renderGCRate > 0 && (frameCaptured / targetFPS) % ClientPrefs.data.renderGCRate == 0) openfl.system.System.gc();
 		#end
 		frameCaptured++;
 
@@ -3164,10 +3160,10 @@ class PlayState extends MusicBeatState
 			noteMissPress(key);
 		}
 		
-		if (ClientPrefs.data.ezSpam) {
+		if (ClientPrefs.data.ezSpam) { //ezSpam by JS Engine
 			var pressNotes:Array<Note> = [];
 			var notesStopped:Bool = false;
-			var sortedNotesList:Array<Note> = []; //ezSpam by JS Engine
+			var sortedNotesList:Array<Note> = [];
 			if (sortedNotesList.length > 0) {
 				for (epicNote in sortedNotesList)
 				{
