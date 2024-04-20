@@ -93,7 +93,7 @@
 	<haxelib name="flxanimate"/>
 
 	<!--Emitter-->
-	<haxelib name="emitter" />
+	<haxelib name="Emitter" />
 
 	<!-- Disable Discord IO Thread -->
 	<haxedef name="DISCORD_DISABLE_IO_THREAD" if="hxdiscord_rpc" />
