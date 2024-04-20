@@ -52,11 +52,11 @@ class OptionsState extends MusicBeatState
 		subCamera.bgColor.alpha = 0;
 		otherCamera.bgColor.alpha = 0;
 
-		FlxG.cameras.reset(mainCamera);
+		//FlxG.cameras.reset(mainCamera);
 		FlxG.cameras.add(subCamera, false);
 		FlxG.cameras.add(otherCamera, false);
 
-		FlxG.cameras.setDefaultDrawTarget(mainCamera, true);
+		//FlxG.cameras.setDefaultDrawTarget(mainCamera, true);
 		CustomFadeTransition.nextCamera = otherCamera;
 
 		camFollow = new FlxObject(0, 0, 1, 1);
@@ -71,11 +71,13 @@ class OptionsState extends MusicBeatState
 
 		var yScroll:Float = Math.max(0.25 - (0.05 * (options.length - options.length)), 0.1);
 		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
-		bg.antialiasing = ClientPrefs.data.antialiasing;
 		bg.color = 0xFFea71fd;
 		bg.updateHitbox();
+		bg.scrollFactor.set(0, 0);
 
 		bg.screenCenter();
+		bg.y -= 5;
+		bg.antialiasing = ClientPrefs.data.antialiasing;
 		add(bg);
 
 		grpOptions = new FlxTypedGroup<Alphabet>();
@@ -90,7 +92,7 @@ class OptionsState extends MusicBeatState
 			optionText.cameras = [subCamera];
 			grpOptions.add(optionText);
 		}
-
+		//I TOOK THIS FROM THE MAIN MENU STATE, NOT FROM DENPA ENGINE
 		selectorLeft = new Alphabet(0, 0, '>', true);
 		selectorLeft.scrollFactor.set(0, yScroll*1.5);
 		selectorLeft.cameras = [subCamera];
