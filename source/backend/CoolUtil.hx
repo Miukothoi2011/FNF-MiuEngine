@@ -253,17 +253,18 @@ class CoolUtil
 	}
 
 	public static function getSizeLabel(num:UInt):String {
-        var size:Float = num;
-        var data = 0;
-        var dataTexts = ["B", "KB", "MB", "GB", "TB", "PB"]; // IS THAT A QT MOD REFERENCE!!!??!!111!!11???
-        while(size > 1024 && data < dataTexts.length - 1) {
+		var size:Float = num;
+		var data = 0;
+		var dataTexts = ["B", "KB", "MB", "GB", "TB", "PB"]; // IS THAT A QT MOD REFERENCE!!!??!!111!!11???
+		while(size > 1024 && data < dataTexts.length - 1)
+		{
 			data++;
 			size = size / 1024;
-        }
-        
-        size = Math.round(size * 100) / 100;
-        return size + " " + dataTexts[data];
-    }
+		}
+		
+		size = Math.round(size * 100) / 100;
+		return size + " " + dataTexts[data];
+	}
 
 	public static function floatToStringPrecision(n:Float, prec:Int) { // used for rendering mode sec per 1 frame count.
 		n = Math.round(n * Math.pow(10, prec));

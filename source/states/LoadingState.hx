@@ -54,22 +54,28 @@ class LoadingState extends MusicBeatState
 
 	var funkay:FlxSprite;
 	var loadBar:FlxSprite;
+	// Stores HUD Objects in a Group
+	var uiGroup:FlxSpriteGroup;
 	override function create()
 	{
 		var bg:FlxSprite = new FlxSprite(0, 0).makeGraphic(FlxG.width, FlxG.height, 0xffcaff4d);
 		bg.antialiasing = ClientPrefs.data.antialiasing;
 		add(bg);
+		bg.visible = ClientPrefs.data.showLoadingScreen;
+		
 		funkay = new FlxSprite(0, 0).loadGraphic(Paths.getPath('images/funkay.png', IMAGE));
-		funkay.setGraphicSize(0, FlxG.height);
+		funkay.setGraphicSize(FlxG.width, FlxG.height);
 		funkay.updateHitbox();
 		add(funkay);
 		funkay.antialiasing = ClientPrefs.data.antialiasing;
 		funkay.scrollFactor.set();
 		funkay.screenCenter();
+		funkay.visible = ClientPrefs.data.showLoadingScreen;
 
 		loadBar = new FlxSprite(0, FlxG.height - 20).makeGraphic(FlxG.width, 10, 0xffff16d2);
 		loadBar.screenCenter(X);
 		add(loadBar);
+		loadBar.visible = ClientPrefs.data.showLoadingScreen;
 		
 		initSongsManifest().onComplete
 		(
@@ -138,8 +144,6 @@ class LoadingState extends MusicBeatState
 			targetShit = FlxMath.remapToRange(callbacks.numRemaining / callbacks.length, 1, 0, 0, 1);
 			loadBar.scale.x += 0.5 * (targetShit - loadBar.scale.x);
 		}
-		
-		//PlayState.callOnScripts('onLoadingUpdate', elapsed);
 	}
 	
 	function onLoad()

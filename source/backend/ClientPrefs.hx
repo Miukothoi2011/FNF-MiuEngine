@@ -24,7 +24,6 @@ import states.TitleState;
 	public var splashSkin:String = 'Psych';
 	public var splashAlpha:Float = 0.6;
 	public var noteSplashes:Bool = true;
-	public var playerNoteSplashes:Bool = true;
 	public var opponentNoteSplashes:Bool = false;
 	public var smoothHealth:Bool = true;
 	public var smoothHealthType:String = 'Golden Apple 1.5';
@@ -53,6 +52,8 @@ import states.TitleState;
 	public var camZooms:Bool = true;
 	public var hideHud:Bool = false;
 	public var enableGC:Bool = false;
+	public var showLoadingScreen:Bool = false;
+	public var randomBotplayText:Bool = false;
 
 	// Game Renderer
 	public var ffmpegMode:Bool = false;

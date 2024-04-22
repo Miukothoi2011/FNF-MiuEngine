@@ -80,6 +80,6 @@ class HealthIcon extends FlxSprite
 	
 	public function swapOldIcon() { // add back the swap bf icon to old.
 		if(isOldIcon = !isOldIcon) changeIcon('bf-old');
-		else changeIcon('bf-old');
+		else changeIcon('bf');
 	}
 }

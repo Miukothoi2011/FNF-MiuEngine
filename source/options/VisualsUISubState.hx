@@ -77,19 +77,11 @@ class VisualsUISubState extends BaseOptionsMenu
 			'bool');
 		addOption(option);
 
-		if (ClientPrefs.data.noteSplashes) {
-		var option:Option = new Option('Player Note Splashes',
-			"If checked, player note hits will show particles.",
-			'playerNoteSplashes',
-			'bool');
-		addOption(option);
-
 		var option:Option = new Option('Opponent Note Splashes',
 			"If checked, opponent note hits will show particles.",
 			'opponentNoteSplashes',
 			'bool');
 		addOption(option);
-		}
 
 		var option:Option = new Option('Hide HUD',
 			'If checked, hides most HUD elements.',
