@@ -1374,12 +1374,12 @@ class PlayState extends MusicBeatState
 			str += ' (${percent}%) - ${ratingFC}';
 		}
 	
-		if (!practice && !cpuControlled) {
+		if (!practiceMode && !cpuControlled) {
 			tempScore = 'Score: ${songScore}'
 			+= (!instakillOnMiss ? ' | Misses: ${songMisses}' : "")
 			+= (ClientPrefs.data.showNotesCounting ? ' | Combo: ${combo} (${maxCombo})' : '')
 			+= ' | Rating: ${str}';
-		} else if (practice) {
+		} else if (practiceMode) {
 			tempScore = (!instakillOnMiss ? ' | Misses: ${songMisses} | ' : "")
 			+= (ClientPrefs.data.showNotesCounting ? ' | Combo: ${combo} (${maxCombo})' : '')
 			+= 'Practice Mode';
@@ -2098,34 +2098,6 @@ class PlayState extends MusicBeatState
 
 		var newPercent:Null<Float> = FlxMath.remapToRange(FlxMath.bound(healthBar.valueFunction(), healthBar.bounds.min, healthBar.bounds.max), healthBar.bounds.min, healthBar.bounds.max, 0, 100);
 		healthBar.percent = (newPercent != null ? newPercent : 0);
-		
-		if (currentFrames == ClientPrefs.data.framerate && !ClientPrefs.data.hideHud)
-		{
-			for (i in 0...notesHitArray.length)
-			{
-				var npsHitValue:Date = notesHitArray[i];
-				if (npsHitValue != null)
-					if (npsHitValue.getTime() + 2000 < Date.now().getTime())
-						notesHitArray.remove(npsHitValue);
-			}
-			songNps = Math.floor(notesHitArray.length / 2);
-			if (songNps > maxNps)
-				maxNps = songNps;
-			
-			for (i in 0...opponentNotesHitArray.length)
-			{
-				var npsHitValue:Date = opponentNotesHitArray[i];
-				if (npsHitValue != null)
-					if (npsHitValue.getTime() + 2000 < Date.now().getTime())
-						opponentNotesHitArray.remove(npsHitValue);
-			}
-			oppoNps = Math.floor(opponentNotesHitArray.length / 2);
-			if (oppoNps > oppoMaxNps)
-				oppoMaxNps = oppoNps;
-			currentFrames = 0;
-		}
-		else if (currentFrames != ClientPrefs.data.framerate)
-			currentFrames++;
 		
 		if (combo > maxCombo)
 			maxCombo = combo;
@@ -4052,7 +4024,7 @@ class PlayState extends MusicBeatState
 		setOnScripts('score', songScore);
 		setOnScripts('misses', songMisses);
 		setOnScripts('hits', songHits);
-		setOnScripts('nps', songNps);
+		setOnScripts('nps', nps);
 		setOnScripts('maxNps', maxNps);
 		setOnScripts('combo', combo);
 		setOnScripts('oppoHits', oppoHits);

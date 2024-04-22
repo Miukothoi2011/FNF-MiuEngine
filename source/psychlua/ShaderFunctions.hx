@@ -49,7 +49,7 @@ class ShaderFunctions
 				#end
 				return false;
 			});
-			funk.set(lua, "removeSpriteShader", function(obj:String) {
+			Lua_helper.add_callback(lua, "removeSpriteShader", function(obj:String) {
 				var split:Array<String> = obj.split('.');
 				var leObj:FlxSprite = LuaUtils.getObjectDirectly(split[0]);
 				if(split.length > 1) {
@@ -64,7 +64,7 @@ class ShaderFunctions
 			});
 
 
-			funk.set(lua, "getShaderBool", function(obj:String, prop:String) {
+			Lua_helper.add_callback(lua, "getShaderBool", function(obj:String, prop:String) {
 				#if (!flash && MODS_ALLOWED && sys)
 				var shader:FlxRuntimeShader = getShader(obj);
 				if (shader == null)
@@ -78,7 +78,7 @@ class ShaderFunctions
 				return null;
 				#end
 			});
-			funk.set(lua, "getShaderBoolArray", function(obj:String, prop:String) {
+			Lua_helper.add_callback(lua, "getShaderBoolArray", function(obj:String, prop:String) {
 				#if (!flash && MODS_ALLOWED && sys)
 				var shader:FlxRuntimeShader = getShader(obj);
 				if (shader == null)
@@ -92,7 +92,7 @@ class ShaderFunctions
 				return null;
 				#end
 			});
-			funk.set(lua, "getShaderInt", function(obj:String, prop:String) {
+			Lua_helper.add_callback(lua, "getShaderInt", function(obj:String, prop:String) {
 				#if (!flash && MODS_ALLOWED && sys)
 				var shader:FlxRuntimeShader = getShader(obj);
 				if (shader == null)
@@ -106,7 +106,7 @@ class ShaderFunctions
 				return null;
 				#end
 			});
-			funk.set(lua, "getShaderIntArray", function(obj:String, prop:String) {
+			Lua_helper.add_callback(lua, "getShaderIntArray", function(obj:String, prop:String) {
 				#if (!flash && MODS_ALLOWED && sys)
 				var shader:FlxRuntimeShader = getShader(obj);
 				if (shader == null)
@@ -120,7 +120,7 @@ class ShaderFunctions
 				return null;
 				#end
 			});
-			funk.set(lua, "getShaderFloat", function(obj:String, prop:String) {
+			Lua_helper.add_callback(lua, "getShaderFloat", function(obj:String, prop:String) {
 				#if (!flash && MODS_ALLOWED && sys)
 				var shader:FlxRuntimeShader = getShader(obj);
 				if (shader == null)
@@ -134,7 +134,7 @@ class ShaderFunctions
 				return null;
 				#end
 			});
-			funk.set(lua, "getShaderFloatArray", function(obj:String, prop:String) {
+			Lua_helper.add_callback(lua, "getShaderFloatArray", function(obj:String, prop:String) {
 				#if (!flash && MODS_ALLOWED && sys)
 				var shader:FlxRuntimeShader = getShader(obj);
 				if (shader == null)
@@ -150,7 +150,7 @@ class ShaderFunctions
 			});
 
 
-			funk.set(lua, "setShaderBool", function(obj:String, prop:String, value:Bool) {
+			Lua_helper.add_callback(lua, "setShaderBool", function(obj:String, prop:String, value:Bool) {
 				#if (!flash && MODS_ALLOWED && sys)
 				var shader:FlxRuntimeShader = getShader(obj);
 				if(shader == null)
@@ -165,7 +165,7 @@ class ShaderFunctions
 				return false;
 				#end
 			});
-			funk.set(lua, "setShaderBoolArray", function(obj:String, prop:String, values:Dynamic) {
+			Lua_helper.add_callback(lua, "setShaderBoolArray", function(obj:String, prop:String, values:Dynamic) {
 				#if (!flash && MODS_ALLOWED && sys)
 				var shader:FlxRuntimeShader = getShader(obj);
 				if(shader == null)
@@ -180,7 +180,7 @@ class ShaderFunctions
 				return false;
 				#end
 			});
-			funk.set(lua, "setShaderInt", function(obj:String, prop:String, value:Int) {
+			Lua_helper.add_callback(lua, "setShaderInt", function(obj:String, prop:String, value:Int) {
 				#if (!flash && MODS_ALLOWED && sys)
 				var shader:FlxRuntimeShader = getShader(obj);
 				if(shader == null)
@@ -195,7 +195,7 @@ class ShaderFunctions
 				return false;
 				#end
 			});
-			funk.set(lua, "setShaderIntArray", function(obj:String, prop:String, values:Dynamic) {
+			Lua_helper.add_callback(lua, "setShaderIntArray", function(obj:String, prop:String, values:Dynamic) {
 				#if (!flash && MODS_ALLOWED && sys)
 				var shader:FlxRuntimeShader = getShader(obj);
 				if(shader == null)
@@ -210,7 +210,7 @@ class ShaderFunctions
 				return false;
 				#end
 			});
-			funk.set(lua, "setShaderFloat", function(obj:String, prop:String, value:Float) {
+			Lua_helper.add_callback(lua, "setShaderFloat", function(obj:String, prop:String, value:Float) {
 				#if (!flash && MODS_ALLOWED && sys)
 				var shader:FlxRuntimeShader = getShader(obj);
 				if(shader == null)
@@ -225,7 +225,7 @@ class ShaderFunctions
 				return false;
 				#end
 			});
-			funk.set(lua, "setShaderFloatArray", function(obj:String, prop:String, values:Dynamic) {
+			Lua_helper.add_callback(lua, "setShaderFloatArray", function(obj:String, prop:String, values:Dynamic) {
 				#if (!flash && MODS_ALLOWED && sys)
 				var shader:FlxRuntimeShader = getShader(obj);
 				if(shader == null)
@@ -242,7 +242,7 @@ class ShaderFunctions
 				#end
 			});
 
-			funk.set(lua, "setShaderSampler2D", function(obj:String, prop:String, bitmapdataPath:String) {
+			Lua_helper.add_callback(lua, "setShaderSampler2D", function(obj:String, prop:String, bitmapdataPath:String) {
 				#if (!flash && MODS_ALLOWED && sys)
 				var shader:FlxRuntimeShader = getShader(obj);
 				if(shader == null)
@@ -267,50 +267,50 @@ class ShaderFunctions
 			});
 			
 			// SHADER freak
-			funk.set(lua, "addChromaticAbberationEffect", function(camera:String, chromeOffset:Float = 0.005) {
+			Lua_helper.add_callback(lua, "addChromaticAbberationEffect", function(camera:String, chromeOffset:Float = 0.005) {
 				PlayState.instance.addLuaShaderToCamera(camera, new ChromaticAberrationEffect(chromeOffset));
 			});
-			funk.set(lua, "addScanlineEffect", function(camera:String, lockAlpha:Bool = false) {
+			Lua_helper.add_callback(lua, "addScanlineEffect", function(camera:String, lockAlpha:Bool = false) {
 				PlayState.instance.addLuaShaderToCamera(camera, new ScanlineEffect(lockAlpha));
 			});
-			funk.set(lua, "addGrainEffect", function(camera:String, grainSize:Float, lumAmount:Float, lockAlpha:Bool = false) {
+			Lua_helper.add_callback(lua, "addGrainEffect", function(camera:String, grainSize:Float, lumAmount:Float, lockAlpha:Bool = false) {
 				PlayState.instance.addLuaShaderToCamera(camera, new GrainEffect(grainSize, lumAmount, lockAlpha));
 			});
-			funk.set(lua, "addTiltshiftEffect", function(camera:String, blurAmount:Float, center:Float) {
+			Lua_helper.add_callback(lua, "addTiltshiftEffect", function(camera:String, blurAmount:Float, center:Float) {
 				PlayState.instance.addLuaShaderToCamera(camera, new TiltshiftEffect(blurAmount, center));
 			});
-			funk.set(lua, "addVCREffect", function(camera:String, glitchFactor:Float = 0.0, distortion:Bool = false, perspectiveOn:Bool = false, vignetteMoving:Bool = false) {
+			Lua_helper.add_callback(lua, "addVCREffect", function(camera:String, glitchFactor:Float = 0.0, distortion:Bool = false, perspectiveOn:Bool = false, vignetteMoving:Bool = false) {
 					PlayState.instance.addLuaShaderToCamera(camera, new VCRDistortionEffect(glitchFactor, distortion, perspectiveOn, vignetteMoving));
 				});
-			funk.set(lua, "addGlitchEffect", function(camera:String, waveSpeed:Float = 0.1, waveFrq:Float = 0.1, waveAmp:Float = 0.1) {
+			Lua_helper.add_callback(lua, "addGlitchEffect", function(camera:String, waveSpeed:Float = 0.1, waveFrq:Float = 0.1, waveAmp:Float = 0.1) {
 				PlayState.instance.addLuaShaderToCamera(camera, new GlitchEffect(waveSpeed, waveFrq, waveAmp));
 			});
-			funk.set(lua, "addWiggleEffect", function(camera:String, effectType:String = 'dreamy', waveSpeed:Float = 0.1, waveFrq:Float = 0.1, waveAmp:Float = 0.1) {
+			Lua_helper.add_callback(lua, "addWiggleEffect", function(camera:String, effectType:String = 'dreamy', waveSpeed:Float = 0.1, waveFrq:Float = 0.1, waveAmp:Float = 0.1) {
 				PlayState.instance.addLuaShaderToCamera(camera, new WiggleEffectLUA(effectType, waveSpeed, waveFrq, waveAmp));
 			});
-			funk.set(lua, "addPulseEffect", function(camera:String, waveSpeed:Float = 0.1, waveFrq:Float = 0.1, waveAmp:Float = 0.1) {
+			Lua_helper.add_callback(lua, "addPulseEffect", function(camera:String, waveSpeed:Float = 0.1, waveFrq:Float = 0.1, waveAmp:Float = 0.1) {
 				PlayState.instance.addLuaShaderToCamera(camera, new PulseEffect(waveSpeed, waveFrq, waveAmp));
 			});
-			funk.set(lua, "addDistortionEffect", function(camera:String, waveSpeed:Float = 0.1, waveFrq:Float = 0.1, waveAmp:Float = 0.1) {
+			Lua_helper.add_callback(lua, "addDistortionEffect", function(camera:String, waveSpeed:Float = 0.1, waveFrq:Float = 0.1, waveAmp:Float = 0.1) {
 				PlayState.instance.addLuaShaderToCamera(camera, new DistortBGEffect(waveSpeed, waveFrq, waveAmp));
 			});
-			funk.set(lua, "addInvertEffect", function(camera:String, lockAlpha:Bool = false) {
+			Lua_helper.add_callback(lua, "addInvertEffect", function(camera:String, lockAlpha:Bool = false) {
 				PlayState.instance.addLuaShaderToCamera(camera, new InvertColorsEffect(lockAlpha));
 			});
-			funk.set(lua, "addGreyscaleEffect", function(camera:String) { // for dem funkies
+			Lua_helper.add_callback(lua, "addGreyscaleEffect", function(camera:String) { // for dem funkies
 				PlayState.instance.addLuaShaderToCamera(camera, new GreyscaleEffect());
 			});
-			funk.set(lua, "addGrayscaleEffect", function(camera:String) { // for dem funkies
+			Lua_helper.add_callback(lua, "addGrayscaleEffect", function(camera:String) { // for dem funkies
 				PlayState.instance.addLuaShaderToCamera(camera, new GreyscaleEffect());
 			});
-			funk.set(lua, "add3DEffect",
+			Lua_helper.add_callback(lua, "add3DEffect",
 				function(camera:String, xrotation:Float = 0, yrotation:Float = 0, zrotation:Float = 0, depth:Float = 0) { // for dem funkies
 					PlayState.instance.addLuaShaderToCamera(camera, new ThreeDEffect(xrotation, yrotation, zrotation, depth));
 				});
-			funk.set(lua, "addBloomEffect", function(camera:String, intensity:Float = 0.35, blurSize:Float = 1.0) {
+			Lua_helper.add_callback(lua, "addBloomEffect", function(camera:String, intensity:Float = 0.35, blurSize:Float = 1.0) {
 				PlayState.instance.addLuaShaderToCamera(camera, new BloomEffect(blurSize / 512.0, intensity));
 			});
-			funk.set(lua, "clearEffects", function(camera:String) {
+			Lua_helper.add_callback(lua, "clearEffects", function(camera:String) {
 				PlayState.instance.clearShaderFromCamera(camera);
 			});
 		}

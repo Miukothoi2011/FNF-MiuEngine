@@ -1201,7 +1201,7 @@ class WiggleEffectLUA extends Effect
 		PlayState.instance.shaderUpdates.push(shader.update);
 	}
 
-	function wiggleEffectTypeFromString(type:String):WiggleEffectType {
+	function wiggleEffectTypeFromString(type:String):WiggleEffect.WiggleEffectType {
 		switch(type.toLowerCase()) {
 			case 'dreamy': return DREAMY;
 			case 'wavy': return WAVY;
