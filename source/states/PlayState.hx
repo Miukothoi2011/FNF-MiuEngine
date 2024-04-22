@@ -1377,13 +1377,15 @@ class PlayState extends MusicBeatState
 		if (!practice && !cpuControlled) {
 			tempScore = 'Score: ${songScore}'
 			+= (!instakillOnMiss ? ' | Misses: ${songMisses}' : "")
-			+= (ClientPrefs.data.showNotesCounting ? 'Combo: ${combo} (${maxCombo})')
+			+= (ClientPrefs.data.showNotesCounting ? ' | Combo: ${combo} (${maxCombo})' : '')
 			+= ' | Rating: ${str}';
 		} else if (practice) {
 			tempScore = (!instakillOnMiss ? ' | Misses: ${songMisses} | ' : "")
+			+= (ClientPrefs.data.showNotesCounting ? ' | Combo: ${combo} (${maxCombo})' : '')
 			+= 'Practice Mode';
 		} else if (cpuControlled) {
-			tempScore = 'BOTPLAY';
+			tempScore = (ClientPrefs.data.showNotesCounting ? ' | Combo: ${combo} (${maxCombo})' : '')
+			+= 'BOTPLAY';
 		}
 
 		// "tempScore" variable is used to prevent another memory leak, just in case
@@ -1397,18 +1399,20 @@ class PlayState extends MusicBeatState
 
 	public dynamic function fullComboFunction()
 	{
-		if(!ClientPrefs.data.noPerfectJudge)
-		{
-			perfects = ratingsData[0].hits;
-			sicks = ratingsData[1].hits;
-			goods = ratingsData[2].hits;
-			bads = ratingsData[3].hits;
-			shits = ratingsData[4].hits;
-		} else {
-			sicks = ratingsData[0].hits;
-			goods = ratingsData[1].hits;
-			bads = ratingsData[2].hits;
-			shits = ratingsData[3].hits;
+		if (!cpuControlled) {
+			if(!ClientPrefs.data.noPerfectJudge)
+			{
+				perfects = ratingsData[0].hits;
+				sicks = ratingsData[1].hits;
+				goods = ratingsData[2].hits;
+				bads = ratingsData[3].hits;
+				shits = ratingsData[4].hits;
+			} else {
+				sicks = ratingsData[0].hits;
+				goods = ratingsData[1].hits;
+				bads = ratingsData[2].hits;
+				shits = ratingsData[3].hits;
+			}
 		}
 
 		ratingFC = "";
