@@ -62,6 +62,16 @@ class WiggleEffect
 		shader.uWaveAmplitude.value = [waveAmplitude];
 		return v;
 	}
+	
+	public function wiggleEffectTypeFromString(type:String):WiggleEffectType {
+		switch(type) {
+			case 'dreamy': return DREAMY;
+			case 'wavy': return WAVY;
+			case 'horizontal': return HEAT_WAVE_HORIZONTAL;
+			case 'vertical': return HEAT_WAVE_VERTICAL;
+			case 'flag': return FLAG;
+		}
+	}
 }
 
 class WiggleShader extends FlxShader

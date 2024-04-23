@@ -1190,25 +1190,14 @@ class PulseShader extends FlxShader {
 
 class WiggleEffectLUA extends Effect
 {
-	public var shader:WiggleEffect;
+	public var shader:WiggleEffect = new WiggleEffect();
 
 	public function new(effectType:String, waveSpeed:Float, waveFrequency:Float, waveAmplitude:Float):Void {
-		shader = new WiggleEffect();
-		shader.effectType = this.wiggleEffectTypeFromString(effectType);
+		shader.effectType = shader.wiggleEffectTypeFromString(effectType.toLowerCase());
 		shader.waveSpeed = waveSpeed;
 		shader.waveFrequency = waveFrequency;
 		shader.waveAmplitude = waveAmplitude;
 		PlayState.instance.shaderUpdates.push(shader.update);
-	}
-
-	function wiggleEffectTypeFromString(type:String):WiggleEffect.WiggleEffectType {
-		switch(type.toLowerCase()) {
-			case 'dreamy': return WiggleEffect.WiggleEffectType.DREAMY;
-			case 'wavy': return WiggleEffect.WiggleEffectType.WAVY;
-			case 'horizontal': return WiggleEffect.WiggleEffectType.HEAT_WAVE_HORIZONTAL;
-			case 'vertical': return WiggleEffect.WiggleEffectType.HEAT_WAVE_VERTICAL;
-			case 'flag': return WiggleEffect.WiggleEffectType.FLAG;
-		}
 	}
 }
 
