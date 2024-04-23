@@ -192,36 +192,48 @@ class VisualsUISubState extends BaseOptionsMenu
 		#end
 
 		if (ClientPrefs.data.showFPS) {
-		var option:Option = new Option('Show Memory',
-			'If checked, the game will show your Memory (a.k.a RAM) usage.',
-			'showMemory',
-			'bool');
-		addOption(option);
-		
-		var option:Option = new Option('Show Memory Leak',
-			'If checked, the game will show your maximum Memory \n(a.k.a RAM) usage (Require enable \"Show Memory\").',
-			'showMemoryLeak',
-			'bool');
-		addOption(option);
-		
-		var option:Option = new Option('Show Engine Version',
-			'If checked, shows engine version on FPS Counter.',
-			'showEngineVersion',
-			'bool');
-		addOption(option);
-		
-		var option:Option = new Option('Show Debug Info',
-			'If checked, the game will show additional debug info.\nNote: Turn on FPS Counter before using this!',
-			'showDebugInfo',
-			'bool');
-		addOption(option);
-		
-		var option:Option = new Option('Show Rainbow FPS',
-			'?',
-			'showRainbowFPS',
-			'bool');
-		addOption(option);
+			var option:Option = new Option('Show Memory',
+				'If checked, the game will show your Memory (a.k.a RAM) usage.',
+				'showMemory',
+				'bool');
+			addOption(option);
+			
+			var option:Option = new Option('Show Memory Leak',
+				'If checked, the game will show your maximum Memory \n(a.k.a RAM) usage (Require enable \"Show Memory\").',
+				'showMemoryLeak',
+				'bool');
+			addOption(option);
+			
+			var option:Option = new Option('Show Engine Version',
+				'If checked, shows engine version on FPS Counter.',
+				'showEngineVersion',
+				'bool');
+			addOption(option);
+			
+			var option:Option = new Option('Show Debug Info',
+				'If checked, the game will show additional debug info.\nNote: Turn on FPS Counter before using this!',
+				'showDebugInfo',
+				'bool');
+			addOption(option);
+			
+			var option:Option = new Option('Show Rainbow FPS',
+				'?',
+				'showRainbowFPS',
+				'bool');
+			addOption(option);
 		}
+		
+		var option:Option = new Option('Show Loading Screen on Loading Chart',
+			'?',
+			'showLoadingScreen',
+			'bool');
+		addOption(option);
+		
+		var option:Option = new Option('Random Botplay Text',
+			'?',
+			'showLoadingScreen',
+			'bool');
+		addOption(option);
 		
 		var option:Option = new Option('Pause Screen Song:',
 			"What song do you prefer for the Pause Screen?",

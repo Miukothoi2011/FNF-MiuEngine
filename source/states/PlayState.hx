@@ -1380,11 +1380,11 @@ class PlayState extends MusicBeatState
 			+= (ClientPrefs.data.showNotesCounting ? ' | Combo: ${combo} (${maxCombo})' : '')
 			+= ' | Rating: ${str}';
 		} else if (practiceMode) {
-			tempScore = (!instakillOnMiss ? ' | Misses: ${songMisses} | ' : "")
-			+= (ClientPrefs.data.showNotesCounting ? ' | Combo: ${combo} (${maxCombo})' : '')
+			tempScore = (!instakillOnMiss ? 'Misses: ${songMisses} | ' : "")
+			+= (ClientPrefs.data.showNotesCounting ? 'Combo: ${combo} (${maxCombo}) | ' : '')
 			+= 'Practice Mode';
 		} else if (cpuControlled) {
-			tempScore = (ClientPrefs.data.showNotesCounting ? ' | Combo: ${combo} (${maxCombo})' : '')
+			tempScore = (ClientPrefs.data.showNotesCounting ? 'Combo: ${combo} (${maxCombo}) | ' : '')
 			+= 'BOTPLAY';
 		}
 
