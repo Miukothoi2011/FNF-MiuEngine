@@ -1192,8 +1192,8 @@ class WiggleEffectLUA extends Effect
 {
 	public var shader:WiggleEffect = new WiggleEffect();
 
-	public function new(effectType:String, waveSpeed:Float, waveFrequency:Float, waveAmplitude:Float):Void {
-		shader.effectType = shader.wiggleEffectTypeFromString(effectType.toLowerCase());
+	public function new(effectType:WiggleEffectType, waveSpeed:Float, waveFrequency:Float, waveAmplitude:Float):Void {
+		shader.effectType = effectType;
 		shader.waveSpeed = waveSpeed;
 		shader.waveFrequency = waveFrequency;
 		shader.waveAmplitude = waveAmplitude;

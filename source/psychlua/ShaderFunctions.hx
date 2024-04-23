@@ -286,7 +286,13 @@ class ShaderFunctions
 				PlayState.instance.addLuaShaderToCamera(camera, new GlitchEffect(waveSpeed, waveFrq, waveAmp));
 			});
 			Lua_helper.add_callback(lua, "addWiggleEffect", function(camera:String, effectType:String = 'dreamy', waveSpeed:Float = 0.1, waveFrq:Float = 0.1, waveAmp:Float = 0.1) {
-				PlayState.instance.addLuaShaderToCamera(camera, new WiggleEffectLUA(effectType, waveSpeed, waveFrq, waveAmp));
+				switch(effectType.toLowerCase()) {
+					case 'dreamy': PlayState.instance.addLuaShaderToCamera(camera, new WiggleEffectLUA(DREAMY, waveSpeed, waveFrq, waveAmp));
+					case 'wavy': PlayState.instance.addLuaShaderToCamera(camera, new WiggleEffectLUA(WAVY, waveSpeed, waveFrq, waveAmp));
+					case 'horizontal': PlayState.instance.addLuaShaderToCamera(camera, new WiggleEffectLUA(HEAT_WAVE_HORIZONTAL, waveSpeed, waveFrq, waveAmp));
+					case 'vertical': PlayState.instance.addLuaShaderToCamera(camera, new WiggleEffectLUA(HEAT_WAVE_VERTICAL, waveSpeed, waveFrq, waveAmp));
+					case 'flag': PlayState.instance.addLuaShaderToCamera(camera, new WiggleEffectLUA(FLAG, waveSpeed, waveFrq, waveAmp));
+				}
 			});
 			Lua_helper.add_callback(lua, "addPulseEffect", function(camera:String, waveSpeed:Float = 0.1, waveFrq:Float = 0.1, waveAmp:Float = 0.1) {
 				PlayState.instance.addLuaShaderToCamera(camera, new PulseEffect(waveSpeed, waveFrq, waveAmp));
