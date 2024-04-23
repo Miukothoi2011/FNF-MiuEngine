@@ -140,7 +140,7 @@ class FunkinLua {
 		set('score', 0);
 		set('misses', 0);
 		set('hits', PlayState.instance.songHits);
-		set('nps', PlayState.instance.songNps);
+		set('nps', PlayState.instance.nps);
 		set('maxNps', PlayState.instance.maxNps);
 		set('combo', 0);
 
@@ -220,7 +220,7 @@ class FunkinLua {
 		for (name => func in customFunctions)
 		{
 			if(func != null)
-				set(lua, name, func);
+				Lua_helper.add_callback(lua, name, func);
 		}
 
 		//
@@ -1534,16 +1534,6 @@ class FunkinLua {
 		Lua_helper.add_callback(lua, 'changeFPSTextFormat', function(font:String = '_sans', size:Int = #if mobile 14 #else 12 #end, color:Int = -1) {
 			var isSansFont:Bool = font == '_sans';
 			Main.fpsVar.defaultTextFormat = new openfl.text.TextFormat((!isSansFont ? Paths.font(font) : font), size, color);
-		});
-		Lua_helper.add_callback(lua, 'changeFPSTextFont', function(font:String = '_sans') {
-			var isSansFont:Bool = font == '_sans';
-			Main.fpsVar.defaultTextFormat = new openfl.text.TextFormat().font = (!isSansFont ? Paths.font(font) : font);
-		});
-		Lua_helper.add_callback(lua, 'changeFPSTextSize', function(size:Int = #if mobile 14 #else 12 #end) {
-			Main.fpsVar.defaultTextFormat = new openfl.text.TextFormat().size = size;
-		});
-		Lua_helper.add_callback(lua, 'changeFPSTextColor', function(color:Int = 0xFFFFFF) {
-			Main.fpsVar.textColor = color;
 		});
 		
 		// mod settings

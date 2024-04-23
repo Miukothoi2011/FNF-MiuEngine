@@ -1203,11 +1203,11 @@ class WiggleEffectLUA extends Effect
 
 	function wiggleEffectTypeFromString(type:String):WiggleEffect.WiggleEffectType {
 		switch(type.toLowerCase()) {
-			case 'dreamy': return DREAMY;
-			case 'wavy': return WAVY;
-			case 'horizontal': return HEAT_WAVE_HORIZONTAL;
-			case 'vertical': return HEAT_WAVE_VERTICAL;
-			case 'flag': return FLAG;
+			case 'dreamy': return WiggleEffect.WiggleEffectType.DREAMY;
+			case 'wavy': return WiggleEffect.WiggleEffectType.WAVY;
+			case 'horizontal': return WiggleEffect.WiggleEffectType.HEAT_WAVE_HORIZONTAL;
+			case 'vertical': return WiggleEffect.WiggleEffectType.HEAT_WAVE_VERTICAL;
+			case 'flag': return WiggleEffect.WiggleEffectType.FLAG;
 		}
 	}
 }
