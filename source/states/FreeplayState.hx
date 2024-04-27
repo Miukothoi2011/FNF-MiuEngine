@@ -396,15 +396,15 @@ class FreeplayState extends MusicBeatState
 				
 				CoolUtil.coolError("Your chart JSON name \"${PlayState.SONG.song}\" is missing");*/
 				
-				if(FileSystem.exists(Paths.inst(songLowercase, Difficulty.getString(PlayState.curDifficulty).toLowerCase())) && !FileSystem.exists(Paths.json(poop + '/' + poop))) //the json doesn't exist, but the song files do, or you put a typo in the name
+				if(FileSystem.exists(Paths.inst(songLowercase)) && !FileSystem.exists(Paths.json(poop + '/' + poop))) //the json doesn't exist, but the song files do, or you put a typo in the name
 				{
 					CoolUtil.coolError("The JSON's name does not match with  " + poop + "!\nTry making them match.", "Miu Engine Anti-Crash Tool");
 				}
-				else if(FileSystem.exists(Paths.json(poop + '/' + poop)) && !FileSystem.exists(Paths.inst(songLowercase, Difficulty.getString(PlayState.curDifficulty).toLowerCase()))) //the json exists, but the song files don't
+				else if(FileSystem.exists(Paths.json(poop + '/' + poop)) && !FileSystem.exists(Paths.inst(songLowercase))) //the json exists, but the song files don't
 				{
 					CoolUtil.coolError("Your song seems to not have an Inst.ogg, check the folder name in 'songs'!", "Miu Engine Anti-Crash Tool");
 				}
-				else if(!FileSystem.exists(Paths.json(poop + '/' + poop)) && !FileSystem.exists(Paths.inst(songLowercase, Difficulty.getString(PlayState.curDifficulty).toLowerCase()))) //neither the json nor the song files actually exist
+				else if(!FileSystem.exists(Paths.json(poop + '/' + poop)) && !FileSystem.exists(Paths.inst(songLowercase))) //neither the json nor the song files actually exist
 				{
 					CoolUtil.coolError("It appears that " + poop + " doesn't actually have a JSON, nor does it actually have voices/instrumental files!\nMaybe try fixing its name in weeks/" + WeekData.getWeekFileName() + "?", "Miu Engine Anti-Crash Tool");
 				}

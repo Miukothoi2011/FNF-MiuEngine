@@ -18,6 +18,7 @@ import flixel.group.FlxGroup;
 import flixel.ui.FlxButton;
 
 import flixel.util.FlxSort;
+import flixel.util.FlxStringUtil;
 import lime.media.AudioBuffer;
 import lime.utils.Assets;
 import openfl.events.Event;
@@ -375,7 +376,7 @@ class ChartingState extends MusicBeatState
 		for (i in 0...tipTextArray.length) {
 			var tipText:FlxText = new FlxText(UI_box.x, UI_box.y + UI_box.height + 8, 0, tipTextArray[i], 20);
 			tipText.y += i * 8;
-			tipText.setFormat(Paths.font("vcr.ttf"), 12, FlxColor.WHITE, LEFT/*, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK*/);
+			tipText.setFormat(Paths.font("vcr.ttf"), 10, FlxColor.WHITE, LEFT/*, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK*/);
 			//tipText.borderSize = 2;
 			tipText.scrollFactor.set();
 			add(tipText);
@@ -386,7 +387,7 @@ class ChartingState extends MusicBeatState
 		autosaveIndicator.setGraphicSize(200, 70);
 		autosaveIndicator.alpha = 0;
 		autosaveIndicator.scrollFactor.set();
-		autosaveIndicator.antialiasing = ClientPrefs.globalAntialiasing;
+		autosaveIndicator.antialiasing = ClientPrefs.data.antialiasing;
 		add(autosaveIndicator);
 
 		addSongUI();
