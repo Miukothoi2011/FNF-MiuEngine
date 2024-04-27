@@ -386,12 +386,28 @@ class FreeplayState extends MusicBeatState
 			{
 				trace('ERROR! $e');
 
-				var errorStr:String = e.toString();
+				/*var errorStr:String = e.toString();
 				if(errorStr.startsWith('[file_contents,assets/data/')) errorStr = 'Missing file: ' + errorStr.substring(34, errorStr.length-1); //Missing chart
 				missingText.text = 'ERROR WHILE LOADING CHART:\n$errorStr';
 				missingText.screenCenter(Y);
 				missingText.visible = true;
 				missingTextBG.visible = true;
+				FlxG.sound.play(Paths.sound('cancelMenu'));
+				
+				CoolUtil.coolError("Your chart JSON name \"${PlayState.SONG.song}\" is missing");*/
+				
+				if(FileSystem.exists(Paths.inst(songLowercase, Difficulty.getString(PlayState.curDifficulty).toLowerCase())) && !FileSystem.exists(Paths.json(poop + '/' + poop))) //the json doesn't exist, but the song files do, or you put a typo in the name
+				{
+					CoolUtil.coolError("The JSON's name does not match with  " + poop + "!\nTry making them match.", "Miu Engine Anti-Crash Tool");
+				}
+				else if(FileSystem.exists(Paths.json(poop + '/' + poop)) && !FileSystem.exists(Paths.inst(songLowercase, Difficulty.getString(PlayState.curDifficulty).toLowerCase()))) //the json exists, but the song files don't
+				{
+					CoolUtil.coolError("Your song seems to not have an Inst.ogg, check the folder name in 'songs'!", "Miu Engine Anti-Crash Tool");
+				}
+				else if(!FileSystem.exists(Paths.json(poop + '/' + poop)) && !FileSystem.exists(Paths.inst(songLowercase, Difficulty.getString(PlayState.curDifficulty).toLowerCase()))) //neither the json nor the song files actually exist
+				{
+					CoolUtil.coolError("It appears that " + poop + " doesn't actually have a JSON, nor does it actually have voices/instrumental files!\nMaybe try fixing its name in weeks/" + WeekData.getWeekFileName() + "?", "Miu Engine Anti-Crash Tool");
+				}
 				FlxG.sound.play(Paths.sound('cancelMenu'));
 
 				updateTexts(elapsed);

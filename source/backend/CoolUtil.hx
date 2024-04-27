@@ -126,9 +126,9 @@ class CoolUtil
 
 	public static function coolError(message:Null<String> = null, title:Null<String> = null):Void
 	{
-		#if !linux
+		//#if !linux
 		lime.app.Application.current.window.alert(message, title);
-		#else
+		/*#else
 		trace(title + " - " + message);
 
 		var text:FlxText = new FlxText(8, 0, 1280, title + " - " + message, 24);
@@ -147,7 +147,7 @@ class CoolUtil
 				text.destroy();
 			}
 		});
-		#end
+		#end*/
 	}
 
 	inline public static function numberArray(max:Int, ?min = 0):Array<Int>

@@ -1,6 +1,6 @@
 package shaders;
 
-// STOLEN FROM HAXEFLIXEL DEMO LOL
+// STOLEN FROM HAXEFLIXEL DEMO AND FROM PSYCH ENGINE 0.5.1 WITH SHADERS LOL
 import flixel.system.FlxAssets.FlxShader;
 import openfl.display.BitmapData;
 import openfl.display.Shader;
@@ -889,6 +889,23 @@ class BloomShader extends FlxShader {
 		super();
 	}
 }
+
+/*STOLE FROM DAVE AND BAMBI
+
+I LOVE BANUUU I LOVE BANUUU
+   ________
+  /        \
+_/__________\_
+ ||  o||  o||
+ |//--  --//|
+  \____O___/
+   |      |
+   |______|
+   |   |  |
+   |___|__|
+    
+
+*/
 
 class GlitchEffect extends Effect {
 	public var shader:GlitchShader = new GlitchShader();

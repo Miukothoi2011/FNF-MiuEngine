@@ -344,7 +344,7 @@ class PlayState extends MusicBeatState
 
 	var textStuffLol:Array<String> = ['F(* $#*$#(*))', 'FUCK YOU#)(@)$@#', '*(IF@*(F*(H%G)))', 'null reference found.'];
 
-	var ratingsCounter:FlxText;
+	public var ratingsCounter:FlxText;
 	
 	// stores the last judgement object
 	public static var lastRating:FlxSprite;
@@ -703,9 +703,10 @@ class PlayState extends MusicBeatState
 		uiGroup.add(botplayTxt);
 		if(ClientPrefs.data.downScroll) botplayTxt.y = timeBar.y - 78;
 
-		ratingsCounter = new FlxText(10, FlxG.height - 10, 0, '', 28);
+		ratingsCounter = new FlxText(2, 240, 0, '', 20);
+		ratingsCounter.borderSize = 2;
 		ratingsCounter.scrollFactor.set();
-		ratingsCounter.setFormat(Paths.font('vcr.ttf'), 28, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		ratingsCounter.setFormat(Paths.font('vcr.ttf'), 20, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		ratingsCounter.visible = !ClientPrefs.data.hideHud && ClientPrefs.data.showRatingsCounter;
 		uiGroup.add(ratingsCounter);
 
@@ -1379,11 +1380,11 @@ class PlayState extends MusicBeatState
 			+= (!instakillOnMiss ? ' | Misses: ${songMisses}' : "")
 			+= (ClientPrefs.data.showNotesCounting ? ' | Combo: ${combo} (${maxCombo})' : '')
 			+= ' | Rating: ${str}';
-		} else if (practiceMode) {
+		} else if (practiceMode && !cpuControlled) {
 			tempScore = (!instakillOnMiss ? 'Misses: ${songMisses} | ' : "")
 			+= (ClientPrefs.data.showNotesCounting ? 'Combo: ${combo} (${maxCombo}) | ' : '')
 			+= 'Practice Mode';
-		} else if (cpuControlled) {
+		} else if (cpuControlled && (!practiceMode || practiceMode)) {
 			tempScore = (ClientPrefs.data.showNotesCounting ? 'Combo: ${combo} (${maxCombo}) | ' : '')
 			+= 'BOTPLAY';
 		}
@@ -2095,12 +2096,24 @@ class PlayState extends MusicBeatState
 			}
 		}
 		#end
+		
+		if (combo >= maxCombo)
+			maxCombo = combo;
+		
+		var totalHit:Int = hitsCount + oppoHits + songMisses;
+		ratingsCounter.text = 'Total Notes: ' + totalHit
+		+ '\n\nTotal Notes Hit: ' + hitsCount
+		+ '\nCombos: ' + combo + ' (' + maxCombo + ')'
+		+ '\nSicks: ' + sicks
+		+ '\nGoods: ' + goods
+		+ '\nBads: ' + bads
+		+ '\nShits: ' + shits
+		+ '\nMisses: ' + songMisses
+		+ '\n\nOpponent Hits: ' + oppoHits
+		+ '\n\nBPM: ' + Conductor.bpm;
 
 		var newPercent:Null<Float> = FlxMath.remapToRange(FlxMath.bound(healthBar.valueFunction(), healthBar.bounds.min, healthBar.bounds.max), healthBar.bounds.min, healthBar.bounds.max, 0, 100);
 		healthBar.percent = (newPercent != null ? newPercent : 0);
-		
-		if (combo > maxCombo)
-			maxCombo = combo;
 
 		setOnScripts('cameraX', camFollow.x);
 		setOnScripts('cameraY', camFollow.y);
@@ -2887,7 +2900,7 @@ class PlayState extends MusicBeatState
 		}
 
 		for (rating in ratingsData)
-			Paths.image(uiPrefix + (!cpuControlled ? rating.image : 'sick') + uiSuffix);
+			Paths.image(uiPrefix + (!cpuControlled ? rating.image : 'perfect') + uiSuffix);
 		for (i in 0...10)
 			Paths.image(uiPrefix + 'num' + i + uiSuffix);
 	}
@@ -2941,7 +2954,7 @@ class PlayState extends MusicBeatState
 		}
 		
 		if (!dontShowRatingsPopUpIfBotplay && !cpuControlled || !dontShowRatingsPopUpIfBotplay && cpuControlled) {
-		rating.loadGraphic(Paths.image(uiPrefix + (!cpuControlled ? daRating.image : 'sick') + uiSuffix));
+		rating.loadGraphic(Paths.image(uiPrefix + (!cpuControlled ? daRating.image : 'perfect') + uiSuffix));
 		rating.screenCenter();
 		rating.x = placement - 40;
 		rating.y -= 60;
@@ -3115,41 +3128,6 @@ class PlayState extends MusicBeatState
 		} else if(shouldMiss) {
 			callOnScripts('onGhostTap', [key]);
 			noteMissPress(key);
-		}
-		
-		if (ClientPrefs.data.ezSpam) { //ezSpam by JS Engine
-			var pressNotes:Array<Note> = [];
-			var notesStopped:Bool = false;
-			var sortedNotesList:Array<Note> = [];
-			if (sortedNotesList.length > 0) {
-				for (epicNote in sortedNotesList)
-				{
-					for (doubleNote in pressNotes) {
-						if (Math.abs(doubleNote.strumTime - epicNote.strumTime) < 1) {
-							if (shouldKillNotes) doubleNote.kill();
-
-							notes.remove(doubleNote, true);
-							if (shouldKillNotes) doubleNote.destroy();
-						} else {
-							notesStopped = true;
-						}
-
-						// eee jack detection before was not super good
-						if (!notesStopped) {
-							goodNoteHit(epicNote);
-							pressNotes.push(epicNote);
-						}
-						if (sortedNotesList.length > 2 && ClientPrefs.data.ezSpam) //literally all you need to allow you to spam though impossiblely hard jacks
-						{
-							var notesThatCanBeHit = sortedNotesList.length;
-							for (i in 1...Std.int(notesThatCanBeHit)) //i may consider making this hit half the notes instead
-							{
-								goodNoteHit(sortedNotesList[i]);
-							}
-						}
-					}
-				}
-			}
 		}
 
 		// Needed for the  "Just the Two of Us" achievement.

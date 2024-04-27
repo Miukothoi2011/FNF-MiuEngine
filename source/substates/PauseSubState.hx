@@ -258,72 +258,75 @@ class PauseSubState extends MusicBeatSubstate
 			}
 
 			if (menuItems == menuItemsOG) {
-			switch (daSelected)
-			{
-				case "Resume":
-					close();
-				case 'Change Difficulty':
-					menuItems = difficultyChoices;
-					deleteSkipTimeText();
-					regenMenu();
-				case 'Toggle Practice Mode':
-					PlayState.instance.practiceMode = !PlayState.instance.practiceMode;
-					PlayState.changedDifficulty = true;
-					practiceText.visible = PlayState.instance.practiceMode;
-				case "Restart Song":
-					restartSong(false); // Prevent game crash if noTrans is false
-				case "Leave Charting Mode":
-					restartSong(false);
-					PlayState.chartingMode = false;
-				case 'Skip Time':
-					if(curTime < Conductor.songPosition)
-					{
-						PlayState.startOnTime = curTime;
-						restartSong(true);
-					}
-					else
-					{
-						if (curTime != Conductor.songPosition)
-						{
-							PlayState.instance.clearNotesBefore(curTime);
-							PlayState.instance.setSongTime(curTime);
-						}
+				switch (daSelected)
+				{
+					case "Resume":
 						close();
+					case 'Change Difficulty':
+						menuItems = difficultyChoices;
+						deleteSkipTimeText();
+						regenMenu();
+					case 'Toggle Practice Mode':
+						PlayState.instance.practiceMode = !PlayState.instance.practiceMode;
+						PlayState.changedDifficulty = true;
+						practiceText.visible = PlayState.instance.practiceMode;
+					case "Restart Song":
+						restartSong(false); // Prevent game crash if noTrans is false
+					case "Leave Charting Mode":
+						restartSong(false);
+						PlayState.chartingMode = false;
+					case 'Skip Time':
+						if(curTime < Conductor.songPosition)
+						{
+							PlayState.startOnTime = curTime;
+							restartSong(true);
+						}
+						else
+						{
+							if (curTime != Conductor.songPosition)
+							{
+								PlayState.instance.clearNotesBefore(curTime);
+								PlayState.instance.setSongTime(curTime);
+							}
+							close();
+						}
+					case 'End Song':
+						close();
+						PlayState.instance.notes.clear();
+						PlayState.instance.unspawnNotes = [];
+						PlayState.instance.finishSong(true);
+					case 'Chart Editor':
+						FlxG.switchState(() -> new states.editors.ChartingState());
+						PlayState.chartingMode = true;
+					case "Change Gameplay Settings":
+						persistentUpdate = false;
+						persistentDraw = true;
+						//PlayState.instance.paused = true;
+						
+						openSubState(new GameplayChangersSubstate());
+						GameplayChangersSubstate.inThePauseMenu = true;
+					case 'Toggle Botplay':
+						PlayState.instance.cpuControlled = !PlayState.instance.cpuControlled;
+						PlayState.changedDifficulty = true;
+						PlayState.instance.botplayTxt.visible = PlayState.instance.cpuControlled;
+						PlayState.instance.botplayTxt.alpha = 1;
+						PlayState.instance.botplaySine = 0;
+					case 'Options':
+						PlayState.instance.paused = true; // For lua
+						PlayState.instance.vocals.volume = 0;
+						FlxG.switchState(() -> new OptionsState());
+						if(ClientPrefs.data.pauseMusic != 'None')
+						{
+							FlxG.sound.playMusic(Paths.music(Paths.formatToSongPath(ClientPrefs.data.pauseMusic)), pauseMusic.volume);
+							FlxTween.tween(FlxG.sound.music, {volume: 1}, 0.8);
+							FlxG.sound.music.time = pauseMusic.time;
+						}
+						OptionsState.onPlayState = true;
+					case "Exit":
+						menuItems = menuItemsExit;
+						regenMenu();
 					}
-				case 'End Song':
-					close();
-					PlayState.instance.notes.clear();
-					PlayState.instance.unspawnNotes = [];
-					PlayState.instance.finishSong(true);
-				case 'Chart Editor':
-					FlxG.switchState(() -> new states.editors.ChartingState());
-					PlayState.chartingMode = true;
-				case "Change Gameplay Settings":
-					persistentUpdate = false;
-					openSubState(new GameplayChangersSubstate());
-					GameplayChangersSubstate.inThePauseMenu = true;
-				case 'Toggle Botplay':
-					PlayState.instance.cpuControlled = !PlayState.instance.cpuControlled;
-					PlayState.changedDifficulty = true;
-					PlayState.instance.botplayTxt.visible = PlayState.instance.cpuControlled;
-					PlayState.instance.botplayTxt.alpha = 1;
-					PlayState.instance.botplaySine = 0;
-				case 'Options':
-					PlayState.instance.paused = true; // For lua
-					PlayState.instance.vocals.volume = 0;
-					FlxG.switchState(() -> new OptionsState());
-					if(ClientPrefs.data.pauseMusic != 'None')
-					{
-						FlxG.sound.playMusic(Paths.music(Paths.formatToSongPath(ClientPrefs.data.pauseMusic)), pauseMusic.volume);
-						FlxTween.tween(FlxG.sound.music, {volume: 1}, 0.8);
-						FlxG.sound.music.time = pauseMusic.time;
-					}
-					OptionsState.onPlayState = true;
-				case "Exit":
-					menuItems = menuItemsExit;
-					regenMenu();
 				}
-			}
 			if (menuItems == menuItemsExit) {
 				switch(daSelected) {
 					case "Exit to Story Menu", "Exit to Freeplay":

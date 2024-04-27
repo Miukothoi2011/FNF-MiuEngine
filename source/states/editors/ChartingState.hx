@@ -146,6 +146,7 @@ class ChartingState extends MusicBeatState
 	var value1InputText:FlxUIInputText;
 	var value2InputText:FlxUIInputText;
 	var currentSongName:String;
+	var autosaveIndicator:FlxSprite;
 
 	var zoomTxt:FlxText;
 
@@ -238,7 +239,7 @@ class ChartingState extends MusicBeatState
 
 		#if desktop
 		// Updating Discord Rich Presence
-		DiscordClient.changePresence("Chart Editor", StringTools.replace(_song.song, '-', ' '));
+		DiscordClient.changePresence("Chart Editor", "Chart Editor - Charting " + StringTools.replace(_song.song, '-', ' '), '${FlxStringUtil.formatMoney(CoolUtil.getNoteAmount(_song), false)} Notes');
 		#end
 
 		vortex = FlxG.save.data.chart_vortex;
@@ -381,6 +382,13 @@ class ChartingState extends MusicBeatState
 		}
 		add(UI_box);
 
+		autosaveIndicator = new FlxSprite(-30, FlxG.height - 90).loadGraphic(Paths.image('autosaveIndicator'));
+		autosaveIndicator.setGraphicSize(200, 70);
+		autosaveIndicator.alpha = 0;
+		autosaveIndicator.scrollFactor.set();
+		autosaveIndicator.antialiasing = ClientPrefs.globalAntialiasing;
+		add(autosaveIndicator);
+
 		addSongUI();
 		addSectionUI();
 		addNoteUI();
@@ -485,6 +493,14 @@ class ChartingState extends MusicBeatState
 		var saveEvents:FlxButton = new FlxButton(110, reloadSongJson.y, 'Save Events', function ()
 		{
 			saveEvents();
+		});
+		var saveCompressed:FlxButton = new FlxButton(110, reloadSongJson.y + 30, 'Save Compressed', function ()
+		{
+			saveLevel(true);
+		});
+		var autosaveButton:FlxButton = new FlxButton(saveEvents.x, reloadSongJson.y + 60, "Save to Autosave", function()
+		{
+			autosaveSong();
 		});
 
 		var clear_events:FlxButton = new FlxButton(320, 310, 'Clear events', function()
@@ -1560,7 +1576,7 @@ class ChartingState extends MusicBeatState
 
 			#if desktop
 			// Updating Discord Rich Presence
-			DiscordClient.changePresence("Chart Editor", StringTools.replace(_song.song, '-', ' '));
+			DiscordClient.changePresence("Chart Editor - Charting " + StringTools.replace(_song.song, '-', ' '), '${FlxStringUtil.formatMoney(CoolUtil.getNoteAmount(_song), false)} Notes');
 			#end
 		}
 		super.closeSubState();
@@ -1913,7 +1929,7 @@ class ChartingState extends MusicBeatState
 			}
 			if (FlxG.keys.justPressed.ENTER #if android || virtualPad.buttonA.justPressed #end)
 			{
-				autosaveSong();
+				if (CoolUtil.getNoteAmount(_song) <= 1000000) autosaveSong();
 				FlxG.mouse.visible = false;
 				PlayState.SONG = _song;
 				FlxG.sound.music.stop();
@@ -2265,7 +2281,8 @@ class ChartingState extends MusicBeatState
 		"\n\nBeat: " + Std.string(curDecBeat).substring(0,4) +
 		"\n\nStep: " + curStep +
 		"\n\nBeat Snap: " + quantization + "th" +
-		"\n\nNote Count: ";
+		"\n\n" + FlxStringUtil.formatMoney(CoolUtil.getNoteAmount(_song), false) + ' Notes' +
+		"\n\nSection Notes: " + FlxStringUtil.formatMoney(_song.notes[curSec].sectionNotes.length, false);
 
 		var playedSound:Array<Bool> = [false, false, false, false]; //Prevents ouchy GF sex sounds
 		curRenderedNotes.forEachAlive(function(note:Note) {
@@ -3305,6 +3322,12 @@ class ChartingState extends MusicBeatState
 		FlxG.save.data.autosave = haxe.Json.stringify({
 			"song": _song
 		});
+		trace('Chart saved!');
+		FlxTween.tween(autosaveIndicator, {alpha: 1}, 1, {ease: FlxEase.backInOut, type: ONESHOT});
+		
+		new FlxTimer().start(3, function(tmr:FlxTimer) {
+			FlxTween.tween(autosaveIndicator, {alpha: 0}, 1, {ease: FlxEase.backInOut, type: ONESHOT});
+		});
 		FlxG.save.flush();
 	}
 
@@ -3313,21 +3336,19 @@ class ChartingState extends MusicBeatState
 		updateGrid();
 	}
 
-	private function saveLevel()
+	private function saveLevel(?compressed:Bool = false)
 	{
-		if (CoolUtil.getNoteAmount(_song) > 1000000) 
-		{
-			Paths.gc(true);
-			cpp.vm.Gc.enable(false);
-		}
+		Paths.gc(true);
+		if (CoolUtil.getNoteAmount(_song) > 1000000) cpp.vm.Gc.enable(false);
 		if(_song.events != null && _song.events.length > 1) _song.events.sort(sortByTime);
-		var json = {
+		
+		final json = {
 			"song": _song
 		};
 
-		var data:String = haxe.Json.stringify(json, "\t");
+		final data:String = !compressed ? haxe.Json.stringify(json, "\t") : haxe.Json.stringify(json);
 
-		if ((data != null) && (data.length > 0))
+		if (data != null && data.length > 0)
 		{
 			_file = new FileReference();
 			_file.addEventListener(Event.COMPLETE, onSaveComplete);

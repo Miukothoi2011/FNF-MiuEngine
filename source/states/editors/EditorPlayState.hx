@@ -56,9 +56,13 @@ class EditorPlayState extends MusicBeatSubstate
 	var ratingPercent:Float;
 	var ratingFC:String;
 	
-	var showCombo:Bool = false;
+	var showCombo:Bool = ClientPrefs.data.showUnusedCombo;
 	var showComboNum:Bool = true;
 	var showRating:Bool = true;
+	
+	var hitsCount:Int = 0;
+	
+	var cpuControlled:Bool = false;
 
 	// Originals
 	var startOffset:Float = 0;
@@ -167,12 +171,14 @@ class EditorPlayState extends MusicBeatSubstate
 			return;
 		}
 
-		if(controls.PAUSE || FlxG.keys.justPressed.ENTER)
+		if (controls.PAUSE)
 		{
-			paused = true;
 			pauseSong();
-			super.update(elapsed);
-			return;
+		}
+		
+		if (FlxG.keys.justPressed.SIX) {
+			if (!cpuControlled) cpuControlled = !cpuControlled;
+			else cpuControlled = false;
 		}
 		
 		if (startingSong)
@@ -494,6 +500,7 @@ class EditorPlayState extends MusicBeatSubstate
 
 	public function pauseSong()
 	{
+		paused = true;
 		persistentUpdate = false;
 		persistentDraw = false;
 		if(FlxG.sound.music != null)
@@ -549,7 +556,7 @@ class EditorPlayState extends MusicBeatSubstate
 		var pixelShitPart1:String = "";
 		var pixelShitPart2:String = '';
 
-		rating.loadGraphic(Paths.image(pixelShitPart1 + daRating.image + pixelShitPart2));
+		rating.loadGraphic(Paths.image(pixelShitPart1 + (!cpuControlled ? daRating.image : 'perfect') + pixelShitPart2));
 		rating.screenCenter();
 		rating.x = coolText.x - 40;
 		rating.y -= 60;
@@ -845,8 +852,9 @@ class EditorPlayState extends MusicBeatSubstate
 
 		if (!note.isSustainNote)
 		{
+			hitsCount++;
 			combo++;
-			if(combo > 9999) combo = 9999;
+			//if(combo > 9999) combo = 9999;
 			popUpScore(note);
 		}
 

@@ -87,7 +87,7 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 		return null;
 	}
 
-	public function new()
+	public function new(?pause:MusicBeatSubstate = null)
 	{
 		super();
 		
