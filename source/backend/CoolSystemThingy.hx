@@ -5,11 +5,11 @@ import haxe.macro.Compiler;
 class SussySystem
 {
 	// Variable.
-	inline public static var getHaxeVer(get, never):Dynamic;
-	inline public static var getOpenFLVer(get, never):Dynamic;
-	inline public static var getLimeVer(get, never):Dynamic;
-	inline public static var getUser(get, never):String;
-	inline public static var getUserPath(get, never):String;
+	public static var getHaxeVer(get, never):Dynamic;
+	public static var getOpenFLVer(get, never):Dynamic;
+	public static var getLimeVer(get, never):Dynamic;
+	public static var getUser(get, never):String;
+	public static var getUserPath(get, never):String;
 
 	// Methods.
 	// wait what why not have any method here? -?
