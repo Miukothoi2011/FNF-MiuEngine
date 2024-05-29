@@ -8,9 +8,6 @@ import openfl.display.ShaderInput;
 import openfl.utils.Assets;
 import openfl.Lib;
 
-import shaders.WiggleEffect;
-import shaders.WiggleEffect.WiggleEffectType;
-
 using StringTools;
 
 typedef ShaderEffect = {
@@ -1205,21 +1202,10 @@ class PulseShader extends FlxShader {
 	}
 }
 
-class WiggleEffectLUA extends Effect
-{
-	public var shader:WiggleEffect = new WiggleEffect();
-
-	public function new(effectType:WiggleEffectType, waveSpeed:Float, waveFrequency:Float, waveAmplitude:Float):Void {
-		shader.effectType = effectType;
-		shader.waveSpeed = waveSpeed;
-		shader.waveFrequency = waveFrequency;
-		shader.waveAmplitude = waveAmplitude;
-		PlayState.instance.shaderUpdates.push(shader.update);
-	}
-}
+typedef WiggleEffect = shaders.WiggleEffect;
 
 class Effect {
 	public function setValue(shader:FlxShader, variable:String, value:Float) {
-		Reflect.setProperty(Reflect.getProperty(shader, 'variable'), 'value', [value]);
+		Reflect.setProperty(Reflect.getProperty(shader, variable), 'value', [value]);
 	}
 }

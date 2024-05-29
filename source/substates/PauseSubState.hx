@@ -179,7 +179,8 @@ class PauseSubState extends MusicBeatSubstate
 			return;
 		}
 
-		updateSkipTextStuff();
+		if (menuItems != menuItemsExit && menuItems.contains('Skip Time')) updateSkipTextStuff(); // fix crash game by go to exit menu during charting modes.
+
 		if (controls.UI_UP_P)
 		{
 			changeSelection(-1);

@@ -236,6 +236,6 @@ class ReflectionFunctions
 
 		funcToRun = cast obj;
 		//trace('end: $obj');
-		return funcToRun != null ? Reflect.callMethod(obj, /*Reflect.field(obj, funcToRun)*/funcToRun, args) : null; // This is the consequence of not learning Haxe Reflect function. (https://haxe.org/manual/std-reflection.html)
+		return funcToRun != null ? Reflect.callMethod(obj, funcToRun, args) : null;
 	}
 }

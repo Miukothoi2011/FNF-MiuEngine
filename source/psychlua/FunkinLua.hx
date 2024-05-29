@@ -48,7 +48,8 @@ import flixel.input.gamepad.FlxGamepadInputID;
 
 import haxe.Json;
 
-class FunkinLua {
+class FunkinLua
+{
 	public static var Function_Stop:Dynamic = "##PSYCHLUA_FUNCTIONSTOP";
 	public static var Function_Continue:Dynamic = "##PSYCHLUA_FUNCTIONCONTINUE";
 	public static var Function_StopLua:Dynamic = "##PSYCHLUA_FUNCTIONSTOPLUA";
@@ -1526,8 +1527,29 @@ class FunkinLua {
 			Lib.application.window.x = x;
 			Lib.application.window.y = y;
 		});
-		Lua_helper.add_callback(lua, 'changeResolution', function(wid:Int = 1280, hei:Int = 720) {
-			changeResolution(wid, hei);
+		Lua_helper.add_callback(lua, 'changeResolution', function(res:String = '1280x720') {
+			#if desktop
+			var resolutionValue = cast(res, String); // Assuming 'ClientPrefs.data.resolution' holds the selected resolution
+
+			if (resolutionValue != null) {
+				var parts = resolutionValue.split('x');
+		
+				if (parts.length == 2) {
+					var width = Std.parseInt(parts[0]);
+					var height = Std.parseInt(parts[1]);
+			
+					if (width != null && height != null) {
+						CoolUtil.resetResScale(width, height);
+						FlxG.resizeWindow(width, height);
+						FlxG.resizeGame(width, height);
+						lime.app.Application.current.window.width = width;
+						lime.app.Application.current.window.height = height;
+						
+						ClientPrefs.data.resolution = res;
+					}
+				}
+			}
+			#end
 		});
 		
 		// fps text format thing.
@@ -1654,9 +1676,13 @@ class FunkinLua {
 	public function set(variable:String, data:Dynamic) {
 		#if LUA_ALLOWED
 		if(lua == null) return;
-
-		Convert.toLua(lua, data);
-		Lua.setglobal(lua, variable);
+		
+		if(Type.typeof(data) == TFunction)
+			Lua_helper.add_callback(lua, variable, data);
+		} else {
+			Convert.toLua(lua, data);
+			Lua.setglobal(lua, variable);
+		}
 		#end
 	}
 
@@ -1664,9 +1690,7 @@ class FunkinLua {
 		#if LUA_ALLOWED
 		closed = true;
 
-		if(lua == null) {
-			return;
-		}
+		if(lua == null) return;
 		Lua.close(lua);
 		lua = null;
 		#if HSCRIPT_ALLOWED
@@ -1707,24 +1731,6 @@ class FunkinLua {
 		return 'unknown';
 		#end
 	}
-	
-	#if desktop
-	public static function changeResolution(width:Int = 1280, height:Int = 720) {
-		var defaultWidthRes = 1280;
-		var defaultHeightRes = 720;
-		
-		function limeAppCurRes(wid:Int = 1280, hei:Int = 720) {
-			Application.current.window.width = wid;
-			Application.current.window.height = hei;
-		}
-		
-		if (width != defaultWidthRes && height != defaultHeightRes) {
-			CoolUtil.resetResScale(width, height);
-			FlxG.resizeGame(width, height);
-			limeAppCurRes(width, height);
-        }
-	}
-	#end
 
 	function oldTweenFunction(tag:String, vars:String, tweenValue:Any, duration:Float, ease:String, funcName:String)
 	{

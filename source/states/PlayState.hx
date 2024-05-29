@@ -42,7 +42,6 @@ import openfl.filters.ShaderFilter;
 import openfl.filters.BitmapFilter;
 import openfl.display.Shader;
 import shaders.Shaders;
-import shaders.WiggleEffect;
 
 // rendering mode by .cabfile (from lua, old ver by hrk.exex)
 import openfl.Lib;
@@ -238,7 +237,7 @@ class PlayState extends MusicBeatState
 	public var guitarHeroSustains:Bool = false;
 	public var instakillOnMiss:Bool = false;
 	public var cpuControlled(default, set):Bool = false;
-	inline function set_cpuControlled(value:Bool){
+	inline function set_cpuControlled(value:Bool) {
 		cpuControlled = value;
 		if (botplayTxt != null) // this assures it'll always show up
 			botplayTxt.visible = (!ClientPrefs.data.hideHud) ? cpuControlled : false;
@@ -457,7 +456,7 @@ class PlayState extends MusicBeatState
 		GameOverSubstate.resetVariables();
 		songName = Paths.formatToSongPath(SONG.song);
 		if(SONG.stage == null || SONG.stage.length < 1) SONG.stage = StageData.vanillaSongStage(songName);
-		curStage = SONG.stage;
+		curStage = (ClientPrefs.data.charsAndBG ? SONG.stage : '');
 
 		var stageData:StageFile = StageData.getStageFile(curStage);
 		if(stageData == null) //Stage couldn't be found, create a dummy stage for preventing a crash
@@ -514,32 +513,27 @@ class PlayState extends MusicBeatState
 		add(dadGroup);
 		add(boyfriendGroup);
 
-		#if LUA_ALLOWED
+		#if (LUA_ALLOWED || HSCRIPT_ALLOWED)
 		luaDebugGroup = new FlxTypedGroup<DebugLuaText>();
 		luaDebugGroup.cameras = [camOther];
 		add(luaDebugGroup);
-		#end
 
 		// "GLOBAL" SCRIPTS
-		#if LUA_ALLOWED
 		for (folder in Mods.directoriesWithFile(Paths.getSharedPath(), 'scripts/'))
 			for (file in FileSystem.readDirectory(folder))
 			{
+				#if LUA_ALLOWED
 				if(file.toLowerCase().endsWith('.lua'))
 					new FunkinLua(folder + file);
 					if(file.toLowerCase() == 'extra keys hscript.lua')
 						usingEkFile = true; // yea i do this for extra key chart with no problem or error or not work.
+				#end
+				
+				#if HSCRIPT_ALLOWED
 				if(file.toLowerCase().endsWith('.hx'))
 					initHScript(folder + file);
+				#end
 			}
-		#elseif HSCRIPT_ALLOWED
-		for (folder in Mods.directoriesWithFile(Paths.getSharedPath(), 'scripts/'))
-			for (file in FileSystem.readDirectory(folder))
-			{
-				if(file.toLowerCase().endsWith('.hx'))
-					initHScript(folder + file);
-			}
-		#end
 
 		// STAGE SCRIPTS
 		#if LUA_ALLOWED
@@ -549,26 +543,47 @@ class PlayState extends MusicBeatState
 		#if HSCRIPT_ALLOWED
 		startHScriptsNamed('stages/' + curStage + '.hx');
 		#end
+		#end
 
-		if (!stageData.hide_girlfriend)
-		{
-			if(SONG.gfVersion == null || SONG.gfVersion.length < 1) SONG.gfVersion = 'gf'; //Fix for the Chart Editor
-			gf = new Character(0, 0, SONG.gfVersion);
-			startCharacterPos(gf);
-			gf.scrollFactor.set(0.95, 0.95);
-			gfGroup.add(gf);
-			startCharacterScripts(gf.curCharacter);
+		if (ClientPrefs.data.charsAndBG) {
+			if (!stageData.hide_girlfriend)
+			{
+				if(SONG.gfVersion == null || SONG.gfVersion.length < 1) SONG.gfVersion = 'gf'; //Fix for the Chart Editor
+				gf = new Character(0, 0, SONG.gfVersion);
+				startCharacterPos(gf);
+				gf.scrollFactor.set(0.95, 0.95);
+				gfGroup.add(gf);
+				startCharacterScripts(gf.curCharacter);
+			}
+
+			dad = new Character(0, 0, SONG.player2);
+			startCharacterPos(dad, true);
+			dadGroup.add(dad);
+			startCharacterScripts(dad.curCharacter);
+
+			boyfriend = new Character(0, 0, SONG.player1, true);
+			startCharacterPos(boyfriend);
+			boyfriendGroup.add(boyfriend);
+			startCharacterScripts(boyfriend.curCharacter);
+		} else {
+			if (!stageData.hide_girlfriend)
+			{
+				gf = new Character(0, 0, '');
+				gfGroup.add(gf);
+				startCharacterScripts('gf');
+			}
+
+			dad = new Character(0, 0, SONG.player2);
+			dadGroup.add(dad);
+			startCharacterScripts('dad');
+
+			boyfriend = new Character(0, 0, SONG.player1, true);
+			boyfriendGroup.add(boyfriend);
+			startCharacterScripts('bf');
+		
+			for (i in [gf, dad, boyfriend])
+				i.visible = false;
 		}
-
-		dad = new Character(0, 0, SONG.player2);
-		startCharacterPos(dad, true);
-		dadGroup.add(dad);
-		startCharacterScripts(dad.curCharacter);
-
-		boyfriend = new Character(0, 0, SONG.player1, true);
-		startCharacterPos(boyfriend);
-		boyfriendGroup.add(boyfriend);
-		startCharacterScripts(boyfriend.curCharacter);
 
 		var camPos:FlxPoint = FlxPoint.get(girlfriendCameraOffset[0], girlfriendCameraOffset[1]);
 		if(gf != null)
@@ -755,9 +770,9 @@ class PlayState extends MusicBeatState
 
 		//PRECACHING MISS SOUNDS BECAUSE I THINK THEY CAN LAG PEOPLE AND FUCK THEM UP IDK HOW HAXE WORKS
 		if(ClientPrefs.data.hitsoundVolume > 0) precacheList.set('hitsound', 'sound');
-		precacheList.set('missnote1', 'sound');
-		precacheList.set('missnote2', 'sound');
-		precacheList.set('missnote3', 'sound');
+			precacheList.set('missnote1', 'sound');
+			precacheList.set('missnote2', 'sound');
+			precacheList.set('missnote3', 'sound');
 
 		if (PauseSubState.songName != null) {
 			precacheList.set(PauseSubState.songName, 'music');
@@ -999,7 +1014,7 @@ class PlayState extends MusicBeatState
 					Reflect.setProperty(modchartSprites.get(cam), "shader", effect.shader);
 				} else if (modchartTexts.exists(cam)) {
 					Reflect.setProperty(modchartTexts.get(cam), "shader", effect.shader);
-				} else {
+				} else { // yeah you can use this function for hardcode object.
 					var OBJ = Reflect.getProperty(PlayState.instance, cam);
 					Reflect.setProperty(OBJ, "shader", effect.shader);
 				}
@@ -1400,21 +1415,22 @@ class PlayState extends MusicBeatState
 
 	public dynamic function fullComboFunction()
 	{
-		if (!cpuControlled) {
-			if(!ClientPrefs.data.noPerfectJudge)
-			{
-				perfects = ratingsData[0].hits;
-				sicks = ratingsData[1].hits;
-				goods = ratingsData[2].hits;
-				bads = ratingsData[3].hits;
-				shits = ratingsData[4].hits;
-			} else {
-				sicks = ratingsData[0].hits;
-				goods = ratingsData[1].hits;
-				bads = ratingsData[2].hits;
-				shits = ratingsData[3].hits;
-			}
+		if (cpuControlled) return;
+		
+		if(!ClientPrefs.data.noPerfectJudge)
+		{
+			perfects = ratingsData[0].hits;
+			sicks = ratingsData[1].hits;
+			goods = ratingsData[2].hits;
+			bads = ratingsData[3].hits;
+			shits = ratingsData[4].hits;
+		} else {
+			sicks = ratingsData[0].hits;
+			goods = ratingsData[1].hits;
+			bads = ratingsData[2].hits;
+			shits = ratingsData[3].hits;
 		}
+
 
 		ratingFC = "";
 		if(songMisses == 0) {
@@ -1903,9 +1919,7 @@ class PlayState extends MusicBeatState
 	override public function update(elapsed:Float)
 	{
 		if (FlxG.keys.justPressed.NINE) // add back the swap bf icon to old.
-		{
 			iconP1.swapOldIcon();
-		}
 		
 		if (ffmpegMode) elapsed = 1 / ClientPrefs.data.targetFPS;
 
@@ -1981,7 +1995,7 @@ class PlayState extends MusicBeatState
 			else if(ClientPrefs.data.timeBarType == 'Song Name + Time')
 				timeTxt.text = SONG.song + ' (' + FlxStringUtil.formatTime(Conductor.songPosition) + ' / ' + FlxStringUtil.formatTime(songLength) + ')';
 			else if(ClientPrefs.data.timeBarType == 'Time Left/Elapsed')
-				timeTxt.text = FlxStringUtil.formatTime(Conductor.songPosition, false) + ' / ' + FlxStringUtil.formatTime(songLength, false);
+				timeTxt.text = FlxStringUtil.formatTime(Conductor.songPosition) + ' / ' + FlxStringUtil.formatTime(songLength);
 		}
 		if(ffmpegMode) {
 			if(!endingSong && Conductor.songPosition >= FlxG.sound.music.length - 20) {
@@ -3596,28 +3610,28 @@ class PlayState extends MusicBeatState
 
 		/*
 			this place is using for icon bounce, if you want add/modified icon bounce,
-			find "function updateIconsScale(elapsed:Float)" first, for update icon scale (if not having icon bounce update
-			Icons Scale, skip it), and find here "function beatHit()" and add own
-			icon bounce in "switch (ClientPrefs.data.iconBounce)" and add this like here: "case '(your own icon bonuce)': //your icon bounce code here"
+			find "function updateIconsScale" first, for update icon scale (if not having icon bounce update Icons Scale, skip it),
+			and find here "function beatHit()" and add own icon bounce in "switch (ClientPrefs.data.iconBounce.toLowerCase())"
+			and add this like here: case '(your own icon bonuce)': //your icon bounce code here
 			
 			-Miukothoi2011
 		*/
-		switch (ClientPrefs.data.iconBounce) {
-			case 'New Psych':
+		switch (ClientPrefs.data.iconBounce.toLowerCase()) {
+			case 'new psych':
 				iconP1.scale.set(1.2, 1.2);
 				iconP2.scale.set(1.2, 1.2);
 
 				iconP1.updateHitbox();
 				iconP2.updateHitbox();
 			
-			case 'Old Psych': // THIS CODE IS FROM PSYCH 0.4.2.
+			case 'old psych': // THIS CODE IS FROM PSYCH 0.4.2.
 				iconP1.setGraphicSize(Std.int(iconP1.width + 30));
 				iconP2.setGraphicSize(Std.int(iconP2.width + 30));
 
 				iconP1.updateHitbox();
 				iconP2.updateHitbox();
 
-			case 'Golden Apple':
+			case 'golden apple':
 				if (curBeat % gfSpeed == 0) {
 					curBeat % (gfSpeed * 2) == 0 * playbackRate ? {
 						iconP1.scale.set(1.1, 0.8);
@@ -3639,7 +3653,7 @@ class PlayState extends MusicBeatState
 					iconP2.updateHitbox();
 				}
 			
-			case 'Default':
+			case 'default':
 				if (curBeat % gfSpeed == 0) {
 					curBeat % (gfSpeed * 2) == 0 * playbackRate ? {
 						iconP1.scale.set(1.1, 0.8);
@@ -3659,7 +3673,7 @@ class PlayState extends MusicBeatState
 					FlxTween.tween(iconP2, {'scale.x': 1 * scaleThing, 'scale.y': 1 * scaleThing}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
 				}
 			
-			case 'OS Engine':
+			case 'os engine':
 				iconP1.scale.set(1.2, 1.2);
 				iconP2.scale.set(1.2, 1.2);
 				
@@ -3672,7 +3686,7 @@ class PlayState extends MusicBeatState
 				iconP1.updateHitbox();
 				iconP2.updateHitbox();
 			
-			case 'Strident Crisis':
+			case 'strident crisis':
 				var funny:Float = (healthBar.percent * 0.01) + 0.01;
 		
 				//health icon bounce but epic

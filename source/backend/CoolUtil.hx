@@ -31,13 +31,11 @@ class CoolUtil
 	inline public static function capitalize(text:String)
 		return text.charAt(0).toUpperCase() + text.substr(1).toLowerCase();
 
-	inline public static function boundTo(value:Float, min:Float, max:Float):Float {
+	inline public static function boundTo(value:Float, min:Float, max:Float):Float
 		return Math.max(min, Math.min(max, value));
-	}
 
-	inline public static function clamp(value:Float, min:Float, max:Float):Float { // WAIT WHAT???? IT WAS SAME LIKE boundTo() ?????!?!?!?!?!
+	inline public static function clamp(value:Float, min:Float, max:Float):Float // WAIT WHAT???? IT WAS SAME LIKE boundTo() ?????!?!?!?!?!
 		return Math.max(min, Math.min(max, value));
-	}
 
 	inline public static function coolTextFile(path:String):Array<String>
 	{
@@ -91,7 +89,7 @@ class CoolUtil
 		return newValue / tempMult;
 	}
 
-	inline public static function dominantColor(sprite:flixel.FlxSprite):Int
+	inline public static function dominantColor(sprite:FlxSprite):Int
 	{
 		var countByColor:Map<Int, Int> = [];
 		for (col in 0...sprite.frameWidth)
@@ -124,7 +122,7 @@ class CoolUtil
 		return maxKey;
 	}
 
-	public static function coolError(message:Null<String> = null, title:Null<String> = null):Void
+	inline public static function coolError(message:String = '', title:String = ''):Void
 	{
 		//#if !linux
 		lime.app.Application.current.window.alert(message, title);
@@ -159,7 +157,7 @@ class CoolUtil
 		return dumbArray;
 	}
 
-	public static function browserLoad(site:String)
+	inline public static function browserLoad(site:String)
 	{
 		#if linux
 		Sys.command('/usr/bin/xdg-open', [site]);
@@ -168,7 +166,7 @@ class CoolUtil
 		#end
 	}
 
-	public static function getNoteAmount(song:SwagSong):Int {
+	inline public static function getNoteAmount(song:SwagSong):Int {
 		var total:Int = 0;
 		for (section in song.notes) {
 			total += section.sectionNotes.length;
@@ -186,11 +184,8 @@ class CoolUtil
 		if (folder.endsWith('/'))
 			folder.substr(0, folder.length - 1);
 
-		#if linux
-		var command:String = '/usr/bin/xdg-open';
-		#else
-		var command:String = 'explorer.exe';
-		#end
+		var command:String = #if linux  '/usr/bin/xdg-open' #elseif windows 'explorer.exe' #end; 
+
 		Sys.command(command, [folder]);
 		trace('$command $folder');
 		#else
@@ -205,8 +200,8 @@ class CoolUtil
 	 * [`Format`, `Divisor`]
 	 */
 	public static var byte_formats:Array<Array<Dynamic>> = [
-		["$bytes B",  1.0],
-		["$bytes KB", 1024.0],
+		["$bytes Bytes",  1.0],
+		["$bytes kB", 1024.0],
 		["$bytes MB", 1048576.0],
 		["$bytes GB", 1073741824.0],
 		["$bytes TB", 1099511627776.0],
@@ -222,7 +217,7 @@ class CoolUtil
 	 * ```
 	 * 1024 = '1 kb'
 	 * 1536 = '1.5 kb'
-	 * 1048576 = '2 mb'
+	 * 1048576 = '1 mb'
 	 * ```
 	 * 
 	 * @param bytes Amount of bytes to format and return.
@@ -230,7 +225,7 @@ class CoolUtil
 	 * @param precision (Optional, Default = `2`) The precision of the decimal value of bytes. (ex: `1 -> 1.5, 2 -> 1.53, etc`).
 	 * @return Formatted byte string.
 	**/
-	public static function formatBytes(bytes:Float, onlyValue:Bool = false, precision:Int = 2):String {
+	public static function formatBytes(bytes:Float = 0.0, onlyValue:Bool = false, precision:Int = 2):String {
 		var formatted_bytes:String = "?";
 
 		for (i in 0...byte_formats.length) {
@@ -252,18 +247,17 @@ class CoolUtil
 		return formatted_bytes;
 	}
 
-	public static function getSizeLabel(num:UInt):String {
-		var size:Float = num;
+	inline public static function getSizeLabel(size:Float=0):String {
 		var data = 0;
-		var dataTexts = ["B", "KB", "MB", "GB", "TB", "PB"]; // IS THAT A QT MOD REFERENCE!!!??!!111!!11???
+		var dataTexts = ["Bytes", "kB", "MB", "GB", "TB", "PB"]; // IS THAT A QT MOD REFERENCE!!!??!!111!!11???
 		while(size > 1024 && data < dataTexts.length - 1)
 		{
-			data++;
 			size = size / 1024;
+			data++;
 		}
 		
 		size = Math.round(size * 100) / 100;
-		return size + " " + dataTexts[data];
+		return size +" "+ dataTexts[data];
 	}
 
 	public static function floatToStringPrecision(n:Float, prec:Int) { // used for rendering mode sec per 1 frame count.

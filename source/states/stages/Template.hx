@@ -9,7 +9,7 @@ class Template extends BaseStage
 
 	override function create()
 	{
-		// Spawn your stage sprites here. Ex: var stage = new FlxSprite();
+		// Spawn your stage sprites here. Ex: var bg:BGSprite = new BGSprite('image-here', 0, 0, 0, 0);
 		// Characters are not ready yet on this function, so you can't add things above them yet.
 		// Use createPost() if that's what you want to do.
 	}

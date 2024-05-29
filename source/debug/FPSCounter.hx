@@ -1,14 +1,16 @@
 package debug;
 
 import flixel.FlxG;
+import flixel.util.FlxStringUtil;
 import openfl.text.TextField;
 import openfl.text.TextFormat;
 import openfl.system.System;
+import lime.system.System;
 
 import states.MainMenuState;
+import backend.CoolSystemThingy;
 
 import Main;
-import flixel.util.FlxColor;
 
 #if cpp
 import external.memory.Memory;
@@ -29,7 +31,11 @@ class FPSCounter extends TextField
 		The current memory usage (WARNING: this is NOT your total program memory usage, rather it shows the garbage collector memory)
 	**/
 	public var memoryMegas(get, never):Float;
-	public var memoryLeakMegas(get, null):Float; // memory leak
+	#if cpp
+	public var memoryLeakMegas(get, never):Float; // memory leak
+	#else
+	public var memoryLeakMegas(default, null):Float = 0; // memory leak
+	#end
 
 	@:noCompletion private var cacheCount:Int;
 	@:noCompletion private var currentTime:Float;
@@ -45,11 +51,7 @@ class FPSCounter extends TextField
 		currentFPS = 0;
 		selectable = false;
 		mouseEnabled = false;
-		#if mobile
-		defaultTextFormat = new TextFormat("_sans", 14, color);
-		#else
-		defaultTextFormat = new TextFormat("_sans", 12, color);
-		#end
+		defaultTextFormat = new TextFormat(Paths.font('vcr.ttf'), #if mobile 14 #else 12 #end, color);
 		autoSize = LEFT;
 		multiline = true;
 		text = "FPS: ";
@@ -68,7 +70,7 @@ class FPSCounter extends TextField
 
 	// Event Handlers
 	@:noCompletion
-	private #if !flash override #end function __enterFrame(deltaTime:Float):Void
+	private override function __enterFrame(deltaTime:Float):Void
 	{
 		currentTime += deltaTime;
 		times.push(currentTime);
@@ -81,7 +83,7 @@ class FPSCounter extends TextField
 		var currentCount = times.length;
 		currentFPS = Math.round((currentCount + cacheCount) / 2);
 		if (currentFPS > ClientPrefs.data.framerate) currentFPS = ClientPrefs.data.framerate;
-		if(currentCount != cacheCount) updateText(); // Psych Dev mistake remove the 'if (currentCount != cacheCount)' so i fix this
+		if(currentCount != cacheCount) updateText(); // Psych Dev remove the 'if(currentCount != cacheCount)' so i back this
 
 		deltaTimeout += deltaTime;
 		colorInterp += deltaTime / 330; // Division so that it doesn't give you a seizure on 60 FPS
@@ -89,25 +91,32 @@ class FPSCounter extends TextField
 		cacheCount = currentCount;
 	}
 
-	public dynamic function updateText():Void { // so people can override it in hscript
+	public dynamic function updateText():Void { // so people can override it in hscript, here: Main.fpsVar.updateText = function() { ... }
 		if (ClientPrefs.data.showFPS)
-			text = 'FPS: ${currentFPS}';
-		if (ClientPrefs.data.ffmpegMode) text += ' (Rendering Mode)';
+			text = 'FPS: ${currentFPS}' + (ClientPrefs.data.ffmpegMode ? ' (Rendering Mode)' : '');
 
 		if (ClientPrefs.data.showMemory) {
-			text += '\nMemory: ${flixel.util.FlxStringUtil.formatBytes(memoryMegas)}';
-			if (ClientPrefs.data.showMemoryLeak) text += ' / ${flixel.util.FlxStringUtil.formatBytes(memoryLeakMegas)}';
+			#if !cpp
+			if(memoryMegas > memoryLeakMegas)
+				memoryLeakMegas = memoryMegas;
+			#end
+
+			text += '\nMemory: ${FlxStringUtil.formatBytes(memoryMegas)}'
+			+ (ClientPrefs.data.showMemoryLeak ? ' / ${FlxStringUtil.formatBytes(memoryLeakMegas)}' : '');
 		}
 
 		if (ClientPrefs.data.showEngineVersion)
-			text += '\nMiu Engine ' + MainMenuState.miuEngineVersion + " (PE " + MainMenuState.psychEngineVersion + ")"; // Inspired by SB Engine by Stefan2008 (https://github.com/Stefan2008Git)
+			text += '\nMiu Engine ${MainMenuState.miuEngineVersion} (Modified PE ${MainMenuState.psychEngineVersion})'; // Inspired by SB Engine by Stefan2008 (https://github.com/Stefan2008Git)
 		
 		if (ClientPrefs.data.showDebugInfo) {
-			text += "\nOS: " + '${lime.system.System.platformLabel} ${lime.system.System.platformVersion}';
+			text += '\nOS: ${System.platformLabel} ${System.platformVersion}';
 			text += '\nState: ${Type.getClassName(Type.getClass(FlxG.state))}';
 			if (FlxG.state.subState != null)
 				text += '\nSubstate: ${Type.getClassName(Type.getClass(FlxG.state.subState))}';
-			text += "\nFlixel: " + FlxG.VERSION;
+			text += '\nHaxe ' + CoolSystemThingy.getHaxeVer;
+			text += '\nOpenFL ' + CoolSystemThingy.getOpenFLVer;
+			text += '\nLime ' + CoolSystemThingy.getLimeVer;
+			text += '\nFlixel ' + FlxG.VERSION;
 		}
 		
 		if (ClientPrefs.data.showRainbowFPS) {
@@ -164,8 +173,16 @@ class FPSCounter extends TextField
 	}
 
 	inline function get_memoryMegas():Float
+		#if cpp
 		return Memory.getCurrentUsage();
+		#else
+		return cast(System.totalMemory, UInt);
+		#end
 
-	inline function get_memoryLeakMegas():Float
-		return Memory.getPeakUsage();
+	#if cpp
+	inline function get_memoryLeakMegas():Float return Memory.getPeakUsage();
+	#end
+
+	public function getText():String // Main.fpsVar.getText();
+		return text;
 }

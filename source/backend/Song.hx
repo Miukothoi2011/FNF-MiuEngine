@@ -118,7 +118,7 @@ class Song
 				rawJson = File.getContent(path).trim();
 			else
 			#end
-				rawJson = Assets.getText(Paths.json(formattedFolder + '/' + formattedSong)).trim();
+				rawJson = Assets.getText(path).trim();
 		}
 
 		while (!rawJson.endsWith("}"))

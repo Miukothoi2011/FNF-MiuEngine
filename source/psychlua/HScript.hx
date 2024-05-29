@@ -240,6 +240,7 @@ class HScript extends SScript
 			else FunkinLua.luaTrace('createCallback ($name): 3rd argument is null', false, false, FlxColor.RED);
 		});
 
+		// This function is unnecessary because import already exists in SScript as a native feature
 		set('addHaxeLibrary', function(libName:String, ?libPackage:String = '') {
 			try {
 				var str:String = '';

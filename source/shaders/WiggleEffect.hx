@@ -20,9 +20,14 @@ class WiggleEffect
 	public var waveFrequency(default, set):Float = 0;
 	public var waveAmplitude(default, set):Float = 0;
 
-	public function new():Void
+	public function new(effectType:String, waveSpeed:Float, waveFrequency:Float, waveAmplitude:Float):Void
 	{
 		shader.uTime.value = [0];
+		this.waveSpeed = waveSpeed;
+		this.waveFrequency = waveFrequency;
+		this.waveAmplitude = waveAmplitude;
+		this.effectType = effectTypeFromString(effectType);
+		PlayState.instance.shaderUpdates.push(update);
 	}
 
 	public function update(elapsed:Float):Void
@@ -33,6 +38,17 @@ class WiggleEffect
 	public function setValue(value:Float):Void
 	{
 		shader.uTime.value[0] = value;
+	}
+	
+	function effectTypeFromString(effectType:String):WiggleEffectType {
+		switch(effectType.toLowerCase()) {
+			case 'dreamy': return DREAMY;
+			case 'wavy': return WAVY;
+			case 'horizontal' | 'heat_wave_horizontal' | 'heat wave horizontal': return HEAT_WAVE_HORIZONTAL;
+			case 'vertical' | 'heat_wave_vertical' | 'heat wave vertical': return HEAT_WAVE_VERTICAL;
+			case 'flag': return FLAG;
+			default: return;
+		}
 	}
 
 	function set_effectType(v:WiggleEffectType):WiggleEffectType
