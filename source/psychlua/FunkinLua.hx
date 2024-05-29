@@ -1677,12 +1677,13 @@ class FunkinLua
 		#if LUA_ALLOWED
 		if(lua == null) return;
 		
-		if(Type.typeof(data) == TFunction)
+		if(Reflect.isFunction(data)) { // unfinished.
 			Lua_helper.add_callback(lua, variable, data);
-		} else {
-			Convert.toLua(lua, data);
-			Lua.setglobal(lua, variable);
+			return;
 		}
+		
+		Convert.toLua(lua, data);
+		Lua.setglobal(lua, variable);
 		#end
 	}
 
