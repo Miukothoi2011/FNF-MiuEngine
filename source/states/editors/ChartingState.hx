@@ -523,12 +523,12 @@ class ChartingState extends MusicBeatState
 		clear_notes.color = FlxColor.RED;
 		clear_notes.label.color = FlxColor.WHITE;
 
-		var stepperBPM:FlxUINumericStepper = new FlxUINumericStepper(10, 70, 1, 1, 1, 100000000000000, 3);
+		var stepperBPM:FlxUINumericStepper = new FlxUINumericStepper(10, 70, 1, 1, 1, 3.40282347e+38F, 3);
 		stepperBPM.value = Conductor.bpm;
 		stepperBPM.name = 'song_bpm';
 		blockPressWhileTypingOnStepper.push(stepperBPM);
 
-		var stepperSpeed:FlxUINumericStepper = new FlxUINumericStepper(10, stepperBPM.y + 35, 0.1, 1, 0.1, 100000000000000, 2);
+		var stepperSpeed:FlxUINumericStepper = new FlxUINumericStepper(10, stepperBPM.y + 35, 0.1, 1, 0.1, 3.40282347e+38F, 2);
 		stepperSpeed.value = _song.speed;
 		stepperSpeed.name = 'song_speed';
 		blockPressWhileTypingOnStepper.push(stepperSpeed);
@@ -648,6 +648,7 @@ class ChartingState extends MusicBeatState
 		tab_group_song.add(clear_events);
 		tab_group_song.add(clear_notes);
 		tab_group_song.add(saveButton);
+		tab_group_song.add(saveCompressed);
 		tab_group_song.add(saveEvents);
 		tab_group_song.add(reloadSong);
 		tab_group_song.add(reloadSongJson);
@@ -688,7 +689,7 @@ class ChartingState extends MusicBeatState
 
 	function addSectionUI():Void
 	{
-		var tab_group_section = new FlxUI(null, UI_box);
+		/*var tab_group_section = new FlxUI(null, UI_box);
 		tab_group_section.name = 'Section';
 
 		check_mustHitSection = new FlxUICheckBox(10, 15, null, null, "Must hit section", 100);
@@ -942,6 +943,459 @@ class ChartingState extends MusicBeatState
 		tab_group_section.add(duetButton);
 		tab_group_section.add(mirrorButton);
 
+		UI_box.addGroup(tab_group_section);*/
+		
+		var tab_group_section = new FlxUI(null, UI_box);
+		tab_group_section.name = 'Section';
+
+		check_mustHitSection = new FlxUICheckBox(10, 15, null, null, "Must hit section", 100);
+		check_mustHitSection.name = 'check_mustHit';
+		check_mustHitSection.checked = (_song.notes[curSec] != null ? _song.notes[curSec].mustHitSection : true);
+
+		check_gfSection = new FlxUICheckBox(10, check_mustHitSection.y + 22, null, null, "GF section", 100);
+		check_gfSection.name = 'check_gf';
+		check_gfSection.checked = (_song.notes[curSec] != null ? _song.notes[curSec].gfSection : false);
+		// _song.needsVoices = check_mustHit.checked;
+
+		check_altAnim = new FlxUICheckBox(check_gfSection.x + 120, check_gfSection.y, null, null, "Alt Animation", 100);
+		check_altAnim.checked = (_song.notes[curSec] != null ? _song.notes[curSec].altAnim : false);
+
+		stepperBeats = new FlxUINumericStepper(10, 100, 1, 4, 1, 8192, 2); //idk why youd need 8k beats in a single section but ok i guess??
+		stepperBeats.value = getSectionBeats();
+		stepperBeats.name = 'section_beats';
+		blockPressWhileTypingOnStepper.push(stepperBeats);
+		check_altAnim.name = 'check_altAnim';
+
+		check_changeBPM = new FlxUICheckBox(10, stepperBeats.y + 30, null, null, 'Change BPM', 100);
+		check_changeBPM.checked = (_song.notes[curSec] != null ? _song.notes[curSec].changeBPM : false);
+		check_changeBPM.name = 'check_changeBPM';
+
+		stepperSectionBPM = new FlxUINumericStepper(10, check_changeBPM.y + 20, 1, Conductor.bpm, 0, 999999, 1);
+		if(check_changeBPM.checked) {
+			stepperSectionBPM.value = _song.notes[curSec].bpm;
+		} else {
+			stepperSectionBPM.value = Conductor.bpm;
+		}
+		stepperSectionBPM.name = 'section_bpm';
+		blockPressWhileTypingOnStepper.push(stepperSectionBPM);
+
+		var check_eventsSec:FlxUICheckBox = null;
+		var check_notesSec:FlxUICheckBox = null;
+		var copyButton:FlxButton = new FlxButton(10, 190, "Copy Section", function()
+		{
+			notesCopied = [];
+			sectionToCopy = curSec;
+			for (i in 0..._song.notes[curSec].sectionNotes.length)
+			{
+				var note:Array<Dynamic> = _song.notes[curSec].sectionNotes[i];
+				notesCopied.push(note);
+			}
+
+			var startThing:Float = sectionStartTime();
+			var endThing:Float = sectionStartTime(1);
+			for (event in _song.events)
+			{
+				var strumTime:Float = event[0];
+				if(endThing > event[0] && event[0] >= startThing)
+				{
+					var copiedEventArray:Array<Dynamic> = [];
+					for (i in 0...event[1].length)
+					{
+						var eventToPush:Array<Dynamic> = event[1][i];
+						copiedEventArray.push([eventToPush[0], eventToPush[1], eventToPush[2]]);
+					}
+					notesCopied.push([strumTime, -1, copiedEventArray]);
+				}
+			}
+		});
+
+		var pasteButton:FlxButton = new FlxButton(copyButton.x + 100, copyButton.y, "Paste Section", function()
+		{
+			if(notesCopied == null || notesCopied.length < 1)
+			{
+				return;
+			}
+
+			var addToTime:Float = Conductor.stepCrochet * (getSectionBeats() * 4 * (curSec - sectionToCopy));
+			//trace('Time to add: ' + addToTime);
+
+			for (note in notesCopied)
+			{
+				var copiedNote:Array<Dynamic> = [];
+				var newStrumTime:Float = note[0] + addToTime;
+				if(note[1] < 0)
+				{
+					if(check_eventsSec.checked)
+					{
+						var copiedEventArray:Array<Dynamic> = [];
+						for (i in 0...note[2].length)
+						{
+							var eventToPush:Array<Dynamic> = note[2][i];
+							copiedEventArray.push([eventToPush[0], eventToPush[1], eventToPush[2]]);
+						}
+						_song.events.push([newStrumTime, copiedEventArray]);
+					}
+				}
+				else
+				{
+					if(check_notesSec.checked)
+					{
+						if(note[4] != null) {
+							copiedNote = [newStrumTime, note[1], note[2], note[3], note[4]];
+						} else {
+							copiedNote = [newStrumTime, note[1], note[2], note[3]];
+						}
+						_song.notes[curSec].sectionNotes.push(copiedNote);
+					}
+				}
+			}
+			updateGrid(false);
+		});
+
+		var clearSectionButton:FlxButton = new FlxButton(pasteButton.x + 100, pasteButton.y, "Clear", function()
+		{
+			if(check_notesSec.checked)
+			{
+				_song.notes[curSec].sectionNotes = [];
+			}
+
+			if(check_eventsSec.checked)
+			{
+				var i:Int = _song.events.length - 1;
+				var startThing:Float = sectionStartTime();
+				var endThing:Float = sectionStartTime(1);
+				while(i > -1) {
+					var event:Array<Dynamic> = _song.events[i];
+					if(event != null && endThing > event[0] && event[0] >= startThing)
+					{
+						_song.events.remove(event);
+					}
+					--i;
+				}
+			}
+			updateGrid(false);
+			updateNoteUI();
+		});
+		clearSectionButton.color = FlxColor.RED;
+		clearSectionButton.label.color = FlxColor.WHITE;
+		
+		check_notesSec = new FlxUICheckBox(10, clearSectionButton.y + 25, null, null, "Notes", 100);
+		check_notesSec.checked = true;
+		check_eventsSec = new FlxUICheckBox(check_notesSec.x + 100, check_notesSec.y, null, null, "Events", 100);
+		check_eventsSec.checked = true;
+
+		var swapSection:FlxButton = new FlxButton(10, check_notesSec.y + 40, "Swap section", function()
+		{
+			for (i in 0..._song.notes[curSec].sectionNotes.length)
+			{
+				var note:Array<Dynamic> = _song.notes[curSec].sectionNotes[i];
+				note[1] = (note[1] + 4) % 8;
+				_song.notes[curSec].sectionNotes[i] = note;
+			}
+			updateGrid(false);
+		});
+
+		var stepperCopy:FlxUINumericStepper = null;
+		var copyLastButton:FlxButton = new FlxButton(10, swapSection.y + 30, "Copy last section", function()
+		{
+			saveUndo(_song); //in case you copy from the wrong section and want to easily undo it
+			var value:Int = Std.int(stepperCopy.value);
+			if(value == 0) return;
+
+			var daSec = FlxMath.maxInt(curSec, value);
+			if (_song.notes[daSec - value] == null || _song.notes[daSec] == null) return;
+
+			if (check_notesSec.checked && _song.notes[daSec - value] != null)
+			{
+				for (note in _song.notes[daSec - value].sectionNotes)
+				{
+					var strum = note[0] + Conductor.stepCrochet * (getSectionBeats(daSec) * 4 * value);
+
+	
+					var copiedNote:Array<Dynamic> = [strum, note[1], note[2], note[3]];
+					_song.notes[daSec].sectionNotes.push(copiedNote);
+				}
+			}
+
+			if (check_eventsSec.checked && _song.notes[daSec - value] != null)
+			{
+				var startThing:Float = sectionStartTime(-value);
+				var endThing:Float = sectionStartTime(-value + 1);
+				for (event in _song.events)
+				{
+					var strumTime:Float = event[0];
+					if(endThing > event[0] && event[0] >= startThing)
+					{
+						strumTime += Conductor.stepCrochet * (getSectionBeats(daSec) * 4 * value);
+						var copiedEventArray:Array<Dynamic> = [];
+						for (i in 0...event[1].length)
+						{
+							var eventToPush:Array<Dynamic> = event[1][i];
+							copiedEventArray.push([eventToPush[0], eventToPush[1], eventToPush[2]]);
+						}
+						_song.events.push([strumTime, copiedEventArray]);
+					}
+				}
+			}
+			updateGrid(false);
+		});
+		copyLastButton.setGraphicSize(80, 30);
+		copyLastButton.updateHitbox();
+		
+		stepperCopy = new FlxUINumericStepper(copyLastButton.x + 100, copyLastButton.y, 1, 1, -999, 999, 0);
+		blockPressWhileTypingOnStepper.push(stepperCopy);
+
+		var duetButton:FlxButton = new FlxButton(10, copyLastButton.y + 45, "Duet Notes", function()
+		{
+			var duetNotes:Array<Array<Dynamic>> = [];
+			for (note in _song.notes[curSec].sectionNotes)
+			{
+				var boob = note[1];
+				if (boob>3){
+					boob -= 4;
+				}else{
+					boob += 4;
+				}
+
+				var copiedNote:Array<Dynamic> = [note[0], boob, note[2], note[3]];
+				duetNotes.push(copiedNote);
+			}
+
+			for (i in duetNotes){
+			_song.notes[curSec].sectionNotes.push(i);
+
+			}
+
+			updateGrid(false);
+		});
+		var mirrorButton:FlxButton = new FlxButton(duetButton.x + 100, duetButton.y, "Mirror Notes", function()
+		{
+			var duetNotes:Array<Array<Dynamic>> = [];
+			for (note in _song.notes[curSec].sectionNotes)
+			{
+				var boob = note[1]%4;
+				boob = 3 - boob;
+				if (note[1] > 3) boob += 4;
+
+				note[1] = boob;
+				var copiedNote:Array<Dynamic> = [note[0], boob, note[2], note[3]];
+				//duetNotes.push(copiedNote);
+			}
+
+			for (i in duetNotes){
+			//_song.notes[curSec].sectionNotes.push(i);
+
+			}
+
+			updateGrid(false);
+		});
+		var clearLeftSectionButton:FlxButton = new FlxButton(duetButton.x, duetButton.y + 30, "Clear Left Side", function()
+		{
+		saveUndo(_song); //this is really weird so im saving it as an undoable action just in case it does the wrong section
+		var removeThese = [];
+		for (noteIndex in 0..._song.notes[curSection].sectionNotes.length) {
+				if (_song.notes[curSection].sectionNotes[noteIndex][1] < 4) {
+					removeThese.push(_song.notes[curSection].sectionNotes[noteIndex]);
+				}
+		}
+		if (removeThese != []) {
+			for (x in removeThese) {
+				_song.notes[curSection].sectionNotes.remove(x);
+			}
+		}
+
+			updateGrid(false);
+			updateNoteUI();
+		});
+		var clearRightSectionButton:FlxButton = new FlxButton(clearLeftSectionButton.x + 100, clearLeftSectionButton.y, "Clear Right Side", function()
+		{
+		saveUndo(_song); //this is really weird so im saving it as an undoable action just in case it does the wrong section
+		var removeThese = [];
+		for (noteIndex in 0..._song.notes[curSection].sectionNotes.length) {
+				if (_song.notes[curSection].sectionNotes[noteIndex][1] >= 4) {
+					removeThese.push(_song.notes[curSection].sectionNotes[noteIndex]);
+				}
+		}
+		if (removeThese != []) {
+			for (x in removeThese) {
+				_song.notes[curSection].sectionNotes.remove(x);
+			}
+		}
+
+			updateGrid(false);
+			updateNoteUI();
+		});
+		clearLeftSectionButton.color = FlxColor.RED;
+		clearLeftSectionButton.label.color = FlxColor.WHITE;
+		clearRightSectionButton.color = FlxColor.RED;
+		clearRightSectionButton.label.color = FlxColor.WHITE;
+
+		var stepperSectionJump:FlxUINumericStepper = new FlxUINumericStepper(clearSectionButton.x, clearSectionButton.y + 30, 1, 0, 0, 999999, 0);
+		blockPressWhileTypingOnStepper.push(stepperSectionJump);
+
+		var jumpSection:FlxButton = new FlxButton(clearSectionButton.x, stepperSectionJump.y + 20, "Jump Section", function()
+		{
+			var value:Int = Std.int(stepperSectionJump.value);
+			changeSection(value);
+		});
+
+		var CopyNextSectionCount:FlxUINumericStepper = new FlxUINumericStepper(jumpSection.x, jumpSection.y + 60, 1, 1, -16384, 16384, 0);
+		blockPressWhileTypingOnStepper.push(CopyNextSectionCount);
+
+		CopyLastSectionCount = new FlxUINumericStepper(CopyNextSectionCount.x + 100, CopyNextSectionCount.y, 1, 1, -16384, 16384, 0);
+		blockPressWhileTypingOnStepper.push(CopyLastSectionCount);
+
+		CopyFutureSectionCount = new FlxUINumericStepper(CopyLastSectionCount.x + 70, CopyLastSectionCount.y, 1, 1, -16384, 16384, 0);
+		blockPressWhileTypingOnStepper.push(CopyFutureSectionCount);
+
+		CopyLoopCount = new FlxUINumericStepper(CopyFutureSectionCount.x - 60, CopyLastSectionCount.y + 40, 1, 1, -16384, 16384, 0);
+		blockPressWhileTypingOnStepper.push(CopyLoopCount);
+
+		copyMultiSectButton = new FlxButton(CopyFutureSectionCount.x, CopyLastSectionCount.y + 40, "Copy from the last " + Std.int(CopyFutureSectionCount.value) + " to the next " + Std.int(CopyFutureSectionCount.value) + " sections, " + Std.int(CopyLoopCount.value) + " times", function()
+		{
+			var daSec = FlxMath.maxInt(curSec, Std.int(CopyLastSectionCount.value));
+			var value1:Int = Std.int(CopyLastSectionCount.value);
+			var value2:Int = Std.int(CopyFutureSectionCount.value) * Std.int(CopyLoopCount.value);
+			if(value1 == 0) {
+			return;
+			} 
+			if(_song.notes[curSection] != null && Math.isNaN(_song.notes[daSec].sectionNotes.length)) {
+				trace ("HEY! your section doesn't have any notes! please place at least 1 note then try using this.");
+				return; //prevent a crash if the section doesn't have any notes
+			}
+			saveUndo(_song); //I don't even know why.
+
+			if (check_notesSec.checked)
+			{
+				for(i in 0...value2) {
+				for (note in _song.notes[daSec - value1].sectionNotes)
+				{
+					var strum = note[0] + Conductor.stepCrochet * (getSectionBeats(daSec - value1) * 4 * value1);
+
+
+					var copiedNote:Array<Dynamic> = [strum, note[1], note[2], note[3]];
+					inline _song.notes[daSec].sectionNotes.push(copiedNote);
+				}
+					if (curSection - value1 < 0)
+					{
+					trace ("value1's section is less than 0 LMAO");
+					break;
+					}
+					if (_song.notes[curSec + 1] == null)
+					{
+						addSection(getSectionBeats());
+					}
+					changeSection(curSec+1);
+					daSec = FlxMath.maxInt(curSec, Std.int(CopyLastSectionCount.value)-1);
+					//Feel free to comment this out.
+					trace ('Loops Remaining: ' + (value2 - i) + ', current note count: ' + FlxStringUtil.formatMoney(CoolUtil.getNoteAmount(_song), false) + ' Notes');
+				}
+			}
+		});
+		copyMultiSectButton.color = FlxColor.BLUE;
+		copyMultiSectButton.label.color = FlxColor.WHITE;
+		copyMultiSectButton.setGraphicSize(Std.int(copyMultiSectButton.width), Std.int(copyMultiSectButton.height));
+		copyMultiSectButton.updateHitbox();
+
+		var copyNextButton:FlxButton = new FlxButton(CopyNextSectionCount.x, CopyNextSectionCount.y + 20, "Copy to the next..", function()
+		{
+			var value:Int = Std.int(CopyNextSectionCount.value);
+			if(value == 0) {
+			return;
+			} 
+			if(_song.notes[curSec] == null || _song.notes[curSec] != null && _song.notes[curSec].sectionNotes.length < 1 || Math.isNaN(_song.notes[curSec].sectionNotes.length) || _song.notes[curSec].sectionNotes == null) {
+			trace ("HEY! your section doesn't have any notes! please place at least 1 note then try using this.");
+			return; //prevent a crash if the section doesn't have any notes
+			}
+			saveUndo(_song); //I don't even know why.
+
+			for(i in 0...value) {
+			changeSection(curSec+1);
+			for (note in _song.notes[curSec-1].sectionNotes)
+			{
+				var strum = note[0] + Conductor.stepCrochet * (getSectionBeats(curSec-1) * 4);
+
+
+				var copiedNote:Array<Dynamic> = [strum, note[1], note[2], note[3]];
+				_song.notes[curSec].sectionNotes.push(copiedNote);
+			}
+			}
+			updateGrid(false);
+		});
+		copyNextButton.color = FlxColor.CYAN;
+		copyNextButton.label.color = FlxColor.WHITE;
+
+		deleteSecStart = new FlxUINumericStepper(copyMultiSectButton.x + 80, CopyLastSectionCount.y, 1, 1, -16384, 16384, 0);
+		blockPressWhileTypingOnStepper.push(deleteSecStart);
+
+		deleteSecEnd = new FlxUINumericStepper(deleteSecStart.x + 60, CopyLastSectionCount.y, 1, 1, -16384, 16384, 0);
+		blockPressWhileTypingOnStepper.push(deleteSecEnd);
+
+		deleteSections = new FlxButton(deleteSecStart.x + 30, CopyLastSectionCount.y + 40, "Delete sections " + Std.int(deleteSecStart.value) + " to " + Std.int(deleteSecEnd.value), function()
+		{
+			var startSec:Int = Std.int(deleteSecStart.value);
+			var endSec:Int = Std.int(deleteSecEnd.value);
+			var sectionsToDelete:Int = endSec - startSec;
+			if(sectionsToDelete < 0) {
+			return;
+			} 
+			saveUndo(_song); //I don't even know why.
+
+			var deleteBfNotes:Bool = FlxG.keys.pressed.SHIFT;
+			var deleteOppNotes:Bool = FlxG.keys.pressed.CONTROL;
+
+			for(i in 0...sectionsToDelete) {
+				if (_song.notes[startSec + i].sectionNotes != null)
+					if (!deleteBfNotes && !deleteOppNotes) 
+						_song.notes[startSec + i].sectionNotes = [];
+					else {
+						var b = _song.notes[startSec + i].sectionNotes.length - 1;
+						while (b >= 0)
+						{
+							var note = _song.notes[startSec + i].sectionNotes[b];
+							if (note != null && deleteBfNotes && (note[1] < 4 ? _song.notes[startSec + i].mustHitSection : !_song.notes[startSec + i].mustHitSection)) _song.notes[startSec + i].sectionNotes.remove(note);
+							if (note != null && deleteOppNotes && (note[1] < 4 ? !_song.notes[startSec + i].mustHitSection : _song.notes[startSec + i].mustHitSection)) _song.notes[startSec + i].sectionNotes.remove(note);
+							b--;
+						}
+					}
+			}
+		});
+		deleteSections.color = FlxColor.YELLOW;
+		deleteSections.label.color = FlxColor.WHITE;
+		deleteSections.setGraphicSize(Std.int(deleteSections.width), Std.int(deleteSections.height));
+		deleteSections.updateHitbox();
+
+		tab_group_section.add(stepperSectionJump);
+		tab_group_section.add(jumpSection);
+		tab_group_section.add(new FlxText(stepperBeats.x, stepperBeats.y - 15, 0, 'Beats per Section:'));
+		tab_group_section.add(stepperBeats);
+		tab_group_section.add(stepperSectionBPM);
+		tab_group_section.add(check_mustHitSection);
+		tab_group_section.add(check_gfSection);
+		tab_group_section.add(check_altAnim);
+		tab_group_section.add(check_changeBPM);
+		tab_group_section.add(copyButton);
+		tab_group_section.add(pasteButton);
+		tab_group_section.add(clearRightSectionButton);
+		tab_group_section.add(clearLeftSectionButton);
+		tab_group_section.add(copyNextButton);
+		tab_group_section.add(CopyNextSectionCount);
+		tab_group_section.add(CopyLastSectionCount);
+		tab_group_section.add(CopyFutureSectionCount);
+		tab_group_section.add(CopyLoopCount);
+		tab_group_section.add(deleteSecStart);
+		tab_group_section.add(deleteSecEnd);
+		tab_group_section.add(clearSectionButton);
+		tab_group_section.add(check_notesSec);
+		tab_group_section.add(check_eventsSec);
+		tab_group_section.add(swapSection);
+		tab_group_section.add(stepperCopy);
+		tab_group_section.add(copyLastButton);
+		tab_group_section.add(duetButton);
+		tab_group_section.add(mirrorButton);
+		tab_group_section.add(copyMultiSectButton);
+		tab_group_section.add(deleteSections);
+
 		UI_box.addGroup(tab_group_section);
 	}
 
@@ -1021,6 +1475,7 @@ class ChartingState extends MusicBeatState
 	var stepperStackNum:FlxUINumericStepper;
 	var stepperStackOffset:FlxUINumericStepper;
 	var stepperStackSideOffset:FlxUINumericStepper;
+	var stepperShrinkAmount:FlxUINumericStepper;
 
 	function addNoteStackingUI():Void
 	{
@@ -1073,18 +1528,112 @@ class ChartingState extends MusicBeatState
 		stepperStackSideOffset.name = 'stack_sideways';
 		blockPressWhileTypingOnStepper.push(stepperStackSideOffset);
 
+		stepperShrinkAmount = new FlxUINumericStepper(10, stepperStackSideOffset.y + 30, 1, 1, 0, 8192, 4);
+		stepperShrinkAmount.name = 'shrinker_amount';
+		blockPressWhileTypingOnStepper.push(stepperShrinkAmount);
+
+		var doubleShrinker:FlxButton = new FlxButton(stepperShrinkAmount.x, stepperShrinkAmount.y + 20, 'x2 SH', function()
+		{
+			stepperShrinkAmount.value *= 2;
+		});
+		doubleShrinker.color = FlxColor.GREEN;
+		doubleShrinker.label.color = FlxColor.WHITE;
+
+		var halfShrinker:FlxButton = new FlxButton(doubleShrinker.x + doubleShrinker.width + 20, doubleShrinker.y, 'x0.5 SH', function()
+		{
+			stepperShrinkAmount.value /= 2;
+		});
+		halfShrinker.setGraphicSize(Std.int(halfShrinker.width), Std.int(halfShrinker.height));
+		halfShrinker.color = FlxColor.RED;
+		halfShrinker.label.color = FlxColor.WHITE;
+
+		var shrinkNotesButton:FlxButton = new FlxButton(10, doubleShrinker.y + 30, "Stretch Notes", function()
+		{
+			var minimumTime:Float = sectionStartTime();
+			var sectionEndTime:Float = sectionStartTime(1);
+			for (i in 0..._song.notes[curSec].sectionNotes.length)
+			{
+				var note:Array<Dynamic> = _song.notes[curSec].sectionNotes[i];
+				if (note[2] > 0) note[2] *= stepperShrinkAmount.value;
+       				var originalStartTime:Float = note[0]; // Original start time (in seconds)
+				originalStartTime = originalStartTime - sectionStartTime();
+
+        			var stretchedStartTime:Float = originalStartTime * stepperShrinkAmount.value;
+
+        			var newStartTime:Float = sectionStartTime() + stretchedStartTime;
+
+       				note[0] = Math.max(newStartTime, minimumTime);
+				if (note[0] < minimumTime) note[0] = minimumTime;
+				_song.notes[curSec].sectionNotes[i] = note;
+			}
+			updateGrid(false);
+		});
+
+		var stepperShiftSteps:FlxUINumericStepper = new FlxUINumericStepper(10, shrinkNotesButton.y + 30, 1, 1, -8192, 8192, 4);
+		stepperShiftSteps.name = 'shifter_amount';
+		blockPressWhileTypingOnStepper.push(stepperShiftSteps);
+
+		var shiftNotesButton:FlxButton = new FlxButton(10, stepperShiftSteps.y + 20, "Shift Notes", function()
+		{
+			for (i in 0..._song.notes[curSec].sectionNotes.length)
+			{
+				_song.notes[curSec].sectionNotes[i][0] += (stepperShiftSteps.value) * (15000/Conductor.bpm);
+			}
+			updateGrid(false);
+		});
+		shiftNotesButton.setGraphicSize(Std.int(shiftNotesButton.width), Std.int(shiftNotesButton.height));
+
+		//ok im adding way too many spamcharting features LOL
+
+		var stepperDuplicateAmount:FlxUINumericStepper = new FlxUINumericStepper(10, shiftNotesButton.y + 30, 1, 1, 0, 32, 4);
+		stepperDuplicateAmount.name = 'duplicater_amount';
+		blockPressWhileTypingOnStepper.push(stepperDuplicateAmount);
+
+		var dupeNotesButton:FlxButton = new FlxButton(10, stepperDuplicateAmount.y + 20, "Duplicate Notes", function()
+		{
+			var copiedNotes:Array<Dynamic> = [];
+			for (i in 0..._song.notes[curSec].sectionNotes.length)
+			{
+				var note:Array<Dynamic> = _song.notes[curSec].sectionNotes[i];
+				copiedNotes.push(note);
+			}
+			for (_i in 1...Std.int(stepperDuplicateAmount.value)+1)
+			{
+				for (i in 0...copiedNotes.length)
+				{
+					final copiedNote:Array<Dynamic> = [copiedNotes[i][0], copiedNotes[i][1], copiedNotes[i][2], copiedNotes[i][3]];
+					copiedNote[0] += (stepperShiftSteps.value * _i) * (15000/Conductor.bpm);
+					//yeah.. unfortunately this relies on the value of the Shift Notes stepper.. stupid but it works, so im gonna keep it this way until i find a better solution
+					_song.notes[curSec].sectionNotes.push(copiedNote);
+				}
+			}
+			_song.notes[curSec].sectionNotes.length <= 30000 ? updateGrid(false) : changeSection(curSec + 1); //if there's now more than 30,000 notes in the same section then uh.. change to the next section so you don't suffer a crash
+		});
+		dupeNotesButton.setGraphicSize(Std.int(dupeNotesButton.width), Std.int(dupeNotesButton.height));
+
 		tab_group_stacking.add(check_stackActive);
 		tab_group_stacking.add(stepperStackNum);
 		tab_group_stacking.add(stepperStackOffset);
 		tab_group_stacking.add(stepperStackSideOffset);
+		tab_group_stacking.add(stepperShrinkAmount);
+		tab_group_stacking.add(stepperShiftSteps);
+		tab_group_stacking.add(stepperDuplicateAmount);
 		tab_group_stacking.add(doubleSpamNum);
 		tab_group_stacking.add(halfSpamNum);
 		tab_group_stacking.add(doubleSpamMult);
 		tab_group_stacking.add(halfSpamMult);
+		tab_group_stacking.add(doubleShrinker);
+		tab_group_stacking.add(halfShrinker);
+		tab_group_stacking.add(shrinkNotesButton);
+		tab_group_stacking.add(shiftNotesButton);
+		tab_group_stacking.add(dupeNotesButton);
 		
 		tab_group_stacking.add(new FlxText(100, 30, 0, "Spam Count"));
 		tab_group_stacking.add(new FlxText(100, 80, 0, "Spam Multiplier"));
 		tab_group_stacking.add(new FlxText(100, 140, 0, "Spam Scroll Amount"));
+		tab_group_stacking.add(new FlxText(100, stepperShrinkAmount.y, 0, "Stretch Amount"));
+		tab_group_stacking.add(new FlxText(100, stepperShiftSteps.y, 0, "Steps to Shift By"));
+		tab_group_stacking.add(new FlxText(100, stepperDuplicateAmount.y, 0, "Amount of Duplicates"));
 
 		UI_box.addGroup(tab_group_stacking);
 	}

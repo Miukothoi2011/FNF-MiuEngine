@@ -295,7 +295,7 @@ class ShaderFunctions
 					PlayState.instance.addLuaShaderToCamera(camera, new WiggleEffect('vertical', waveSpeed, waveFrq, waveAmp));
 				}*/
 				
-				var effect = new WiggleEffect(effectType, waveSpeed, waveFrq, waveAmp);
+				var effect = new shaders.WiggleEffect(effectType, waveSpeed, waveFrq, waveAmp);
 				
 				switch (camera.toLowerCase()) {
 					case 'camhud' | 'hud':
@@ -321,9 +321,9 @@ class ShaderFunctions
 						PlayState.instance.camGame.setFilters(newCamEffects);
 					default:
 						if (modchartSprites.exists(cam)) {
-							Reflect.setProperty(modchartSprites.get(cam), "shader", effect.shader);
+							Reflect.setProperty(PlayState.instance.modchartSprites.get(cam), "shader", effect.shader);
 						} else if (modchartTexts.exists(cam)) {
-							Reflect.setProperty(modchartTexts.get(cam), "shader", effect.shader);
+							Reflect.setProperty(PlayState.instance.modchartTexts.get(cam), "shader", effect.shader);
 						} else { // yeah you can use this function for hardcode object.
 							var OBJ = Reflect.getProperty(PlayState.instance, cam);
 							Reflect.setProperty(OBJ, "shader", effect.shader);
