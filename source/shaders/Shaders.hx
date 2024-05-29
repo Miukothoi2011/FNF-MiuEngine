@@ -1202,10 +1202,10 @@ class PulseShader extends FlxShader {
 	}
 }
 
-typedef WiggleEffect = shaders.WiggleEffect;
+//typedef WiggleEffect = shaders.WiggleEffect;
 
 class Effect {
 	public function setValue(shader:FlxShader, variable:String, value:Float) {
-		Reflect.setProperty(Reflect.getProperty(shader, variable), 'value', [value]);
+		Reflect.setProperty(Reflect.getProperty(shader, 'variable'), 'value', [value]);
 	}
 }
