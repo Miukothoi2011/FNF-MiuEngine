@@ -289,45 +289,10 @@ class ShaderFunctions
 				PlayState.instance.addLuaShaderToCamera(camera, new GlitchEffect(waveSpeed, waveFrq, waveAmp));
 			});
 			Lua_helper.add_callback(lua, "addWiggleEffect", function(camera:String, effectType:String = 'dreamy', waveSpeed:Float = 0.1, waveFrq:Float = 0.1, waveAmp:Float = 0.1) {
-				/*if(effectType != 'heat_wave_both') PlayState.instance.addLuaShaderToCamera(camera, new WiggleEffect(effectType, waveSpeed, waveFrq, waveAmp));
+				if(effectType != 'heat_wave_both') PlayState.instance.addLuaShaderToCamera(camera, new WiggleEffect(effectType, waveSpeed, waveFrq, waveAmp));
 				else {
 					PlayState.instance.addLuaShaderToCamera(camera, new WiggleEffect('horizontal', waveSpeed, waveFrq, waveAmp));
 					PlayState.instance.addLuaShaderToCamera(camera, new WiggleEffect('vertical', waveSpeed, waveFrq, waveAmp));
-				}*/
-				
-				var effect = new shaders.WiggleEffect(effectType, waveSpeed, waveFrq, waveAmp);
-				
-				switch (camera.toLowerCase()) {
-					case 'camhud' | 'hud':
-						PlayState.instance.camHUDShaders.push(effect);
-						var newCamEffects:Array<BitmapFilter> = []; // IT SHUTS HAXE UP IDK WHY BUT WHATEVER IDK WHY I CANT JUST ARRAY<SHADERFILTER>
-						for (i in PlayState.instance.camHUDShaders) {
-							newCamEffects.push(new ShaderFilter(i.shader));
-						}
-						PlayState.instance.camHUD.setFilters(newCamEffects);
-					case 'camother' | 'other':
-						PlayState.instance.camOtherShaders.push(effect);
-						var newCamEffects:Array<BitmapFilter> = []; // IT SHUTS HAXE UP IDK WHY BUT WHATEVER IDK WHY I CANT JUST ARRAY<SHADERFILTER>
-						for (i in PlayState.instance.camOtherShaders) {
-							newCamEffects.push(new ShaderFilter(i.shader));
-						}
-						PlayState.instance.camOther.setFilters(newCamEffects);
-					case 'camgame' | 'game':
-						PlayState.instance.camGameShaders.push(effect);
-						var newCamEffects:Array<BitmapFilter> = []; // IT SHUTS HAXE UP IDK WHY BUT WHATEVER IDK WHY I CANT JUST ARRAY<SHADERFILTER>
-						for (i in PlayState.instance.camGameShaders) {
-							newCamEffects.push(new ShaderFilter(i.shader));
-						}
-						PlayState.instance.camGame.setFilters(newCamEffects);
-					default:
-						if (modchartSprites.exists(cam)) {
-							Reflect.setProperty(PlayState.instance.modchartSprites.get(cam), "shader", effect.shader);
-						} else if (modchartTexts.exists(cam)) {
-							Reflect.setProperty(PlayState.instance.modchartTexts.get(cam), "shader", effect.shader);
-						} else { // yeah you can use this function for hardcode object.
-							var OBJ = Reflect.getProperty(PlayState.instance, cam);
-							Reflect.setProperty(OBJ, "shader", effect.shader);
-						}
 				}
 			});
 			Lua_helper.add_callback(lua, "addPulseEffect", function(camera:String, waveSpeed:Float = 0.1, waveFrq:Float = 0.1, waveAmp:Float = 0.1) {

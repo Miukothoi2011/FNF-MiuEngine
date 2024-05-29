@@ -677,6 +677,16 @@ class ChartingState extends MusicBeatState
 		initPsychCamera().follow(camPos, LOCKON, 999);
 	}
 
+	/*var stepperBeats:FlxUINumericStepper;
+	var check_mustHitSection:FlxUICheckBox;
+	var check_gfSection:FlxUICheckBox;
+	var check_changeBPM:FlxUICheckBox;
+	var stepperSectionBPM:FlxUINumericStepper;
+	var check_altAnim:FlxUICheckBox;
+
+	var sectionToCopy:Int = 0;
+	var notesCopied:Array<Dynamic>;*/
+	
 	var stepperBeats:FlxUINumericStepper;
 	var check_mustHitSection:FlxUICheckBox;
 	var check_gfSection:FlxUICheckBox;
@@ -686,6 +696,14 @@ class ChartingState extends MusicBeatState
 
 	var sectionToCopy:Int = 0;
 	var notesCopied:Array<Dynamic>;
+	var CopyLastSectionCount:FlxUINumericStepper;
+	var CopyFutureSectionCount:FlxUINumericStepper;
+	var CopyLoopCount:FlxUINumericStepper;
+	var copyMultiSectButton:FlxButton;
+
+	var deleteSecStart:FlxUINumericStepper;
+	var deleteSecEnd:FlxUINumericStepper;
+	var deleteSections:FlxButton;
 
 	function addSectionUI():Void
 	{
@@ -3426,8 +3444,19 @@ class ChartingState extends MusicBeatState
 		}
 	}
 
-	function updateGrid():Void
+	function updateGrid(?andNext:Bool = true/*, ?onlyEvents:Bool = false*/):Void
 	{
+		if (andNext) 
+		{
+			nextRenderedNotes.forEach(event -> {
+				if (event.noteData == -1)
+				{
+					nextRenderedNotes.remove(event, true);
+					event.destroy();
+				}
+			});
+		}
+		
 		curRenderedNotes.forEachAlive(function(spr:Note) spr.destroy());
 		curRenderedNotes.clear();
 		curRenderedSustains.forEachAlive(function(spr:FlxSprite) spr.destroy());
@@ -3810,6 +3839,21 @@ class ChartingState extends MusicBeatState
 		var value:Float = strumTime / (beats * 4 * Conductor.stepCrochet);
 		return GRID_SIZE * beats * 4 * zoomList[curZoom] * value + gridBG.y;
 	}
+	
+	public function saveUndo(_song:SwagSong)
+    {
+		if (CoolUtil.getNoteAmount(_song) <= 50000 && FlxG.save.data.allowUndo) {
+			var shit = Json.stringify({ //doin this so it doesnt act as a reference
+				"song": _song
+			});
+			var song:SwagSong = Song.parseJSONshit(shit);
+
+			undos.unshift(song.notes);
+			redos = []; //Reset redos
+			if (undos.length >= 100) //if you save more than 100 times, remove the oldest undo
+				undos.remove(undos[100]);
+		}
+    }
 
 	function getNotes():Array<Dynamic>
 	{

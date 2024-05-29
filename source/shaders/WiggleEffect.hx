@@ -47,7 +47,6 @@ class WiggleEffect
 			case 'horizontal' | 'heat_wave_horizontal' | 'heat wave horizontal': return HEAT_WAVE_HORIZONTAL;
 			case 'vertical' | 'heat_wave_vertical' | 'heat wave vertical': return HEAT_WAVE_VERTICAL;
 			case 'flag': return FLAG;
-			default: return;
 		}
 	}
 
