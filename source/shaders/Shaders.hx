@@ -9,7 +9,7 @@ import openfl.utils.Assets;
 import openfl.Lib;
 
 import shaders.WiggleEffect; //.WiggleShader;
-//import shaders.WiggleEffect.WiggleEffectType;
+import shaders.WiggleEffect.WiggleEffectType;
 
 using StringTools;
 
@@ -1205,7 +1205,7 @@ class PulseShader extends FlxShader {
 	}
 }
 
-class WiggleEffect
+class WiggleEffectLUA
 {
 	public var shader(default, null):WiggleShader = new WiggleShader();
 	public var effectType(default, set):WiggleEffectType = WiggleEffectType.DREAMY;
