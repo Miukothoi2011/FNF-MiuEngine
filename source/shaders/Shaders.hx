@@ -9,7 +9,7 @@ import openfl.utils.Assets;
 import openfl.Lib;
 
 import shaders.WiggleEffect.WiggleShader;
-import shaders.WiggleEffect;
+//import shaders.WiggleEffect;
 
 using StringTools;
 
@@ -1203,6 +1203,15 @@ class PulseShader extends FlxShader {
 	public function new() {
 		super();
 	}
+}
+
+enum WiggleEffectType
+{
+	DREAMY;
+	WAVY;
+	HEAT_WAVE_HORIZONTAL;
+	HEAT_WAVE_VERTICAL;
+	FLAG;
 }
 
 class WiggleEffectLUA
