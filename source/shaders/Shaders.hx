@@ -9,7 +9,6 @@ import openfl.utils.Assets;
 import openfl.Lib;
 
 import shaders.WiggleEffect.WiggleShader;
-//import shaders.WiggleEffect;
 
 using StringTools;
 
