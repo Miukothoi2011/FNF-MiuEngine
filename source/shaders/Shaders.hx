@@ -8,8 +8,8 @@ import openfl.display.ShaderInput;
 import openfl.utils.Assets;
 import openfl.Lib;
 
-import shaders.WiggleEffect; //.WiggleShader;
-import shaders.WiggleEffect.WiggleEffectType;
+import shaders.WiggleEffect.WiggleShader;
+import shaders.WiggleEffect;
 
 using StringTools;
 
