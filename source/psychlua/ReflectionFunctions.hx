@@ -185,6 +185,61 @@ class ReflectionFunctions
 			if(className != null) retStr += '::$className';
 			return retStr;
 		});
+		
+		// getField and setField.
+		funk.set("getField", function(variable:String, allowMaps:Bool = false) {
+			var split:Array<String> = variable.split('.');
+			if(split.length > 1)
+				return LuaUtils.getVarInArray(LuaUtils.getPropertyLoop(split, true, true, allowMaps), split[split.length-1], allowMaps, true);
+			return LuaUtils.getVarInArray(LuaUtils.getTargetInstance(), variable, allowMaps, true);
+		});
+		funk.set("setField", function(variable:String, value:Dynamic, allowMaps:Bool = false) {
+			var split:Array<String> = variable.split('.');
+			if(split.length > 1) {
+				LuaUtils.setVarInArray(LuaUtils.getPropertyLoop(split, true, true, allowMaps), split[split.length-1], value, allowMaps, true);
+				return true;
+			}
+			LuaUtils.setVarInArray(LuaUtils.getTargetInstance(), variable, value, allowMaps, true);
+			return true;
+		});
+		funk.set("getFieldFromClass", function(classVar:String, variable:String, ?allowMaps:Bool = false) {
+			var myClass:Dynamic = Type.resolveClass(classVar);
+			if(myClass == null)
+			{
+				FunkinLua.luaTrace('getPropertyFromClass: Class $classVar not found', false, false, FlxColor.RED);
+				return null;
+			}
+
+			var split:Array<String> = variable.split('.');
+			if(split.length > 1) {
+				var obj:Dynamic = LuaUtils.getVarInArray(myClass, split[0], allowMaps, true);
+				for (i in 1...split.length-1)
+					obj = LuaUtils.getVarInArray(obj, split[i], allowMaps, true);
+
+				return LuaUtils.getVarInArray(obj, split[split.length-1], allowMaps, true);
+			}
+			return LuaUtils.getVarInArray(myClass, variable, allowMaps, true);
+		});
+		funk.set("setFieldFromClass", function(classVar:String, variable:String, value:Dynamic, ?allowMaps:Bool = false) {
+			var myClass:Dynamic = Type.resolveClass(classVar);
+			if(myClass == null)
+			{
+				FunkinLua.luaTrace('getPropertyFromClass: Class $classVar not found', false, false, FlxColor.RED);
+				return null;
+			}
+
+			var split:Array<String> = variable.split('.');
+			if(split.length > 1) {
+				var obj:Dynamic = LuaUtils.getVarInArray(myClass, split[0], allowMaps, true);
+				for (i in 1...split.length-1)
+					obj = LuaUtils.getVarInArray(obj, split[i], allowMaps, true);
+
+				LuaUtils.setVarInArray(obj, split[split.length-1], value, allowMaps, true);
+				return value;
+			}
+			LuaUtils.setVarInArray(myClass, variable, value, allowMaps, true);
+			return value;
+		});
 	}
 
 	static function parseInstances(args:Array<Dynamic>)
@@ -195,20 +250,22 @@ class ReflectionFunctions
 			if(myArg != null && myArg.length > instanceStr.length)
 			{
 				var index:Int = myArg.indexOf('::');
-				if(index > -1)
+				if(index <= -1)
 				{
-					myArg = myArg.substring(index+2);
-					//trace('Op1: $myArg');
-					var lastIndex:Int = myArg.lastIndexOf('::');
+					return [];
+				}
+				
+				myArg = myArg.substring(index+2);
+				//trace('Op1: $myArg');
+				var lastIndex:Int = myArg.lastIndexOf('::');
 
-					var split:Array<String> = myArg.split('.');
-					args[i] = (lastIndex > -1) ? Type.resolveClass(myArg.substring(0, lastIndex)) : PlayState.instance;
-					for (j in 0...split.length)
-					{
-						//trace('Op2: ${Type.getClass(args[i])}, ${split[j]}');
-						args[i] = LuaUtils.getVarInArray(args[i], split[j].trim());
-						//trace('Op3: ${args[i] != null ? Type.getClass(args[i]) : null}');
-					}
+				var split:Array<String> = myArg.split('.');
+				args[i] = (lastIndex > -1) ? Type.resolveClass(myArg.substring(0, lastIndex)) : PlayState.instance;
+				for (j in 0...split.length)
+				{
+					//trace('Op2: ${Type.getClass(args[i])}, ${split[j]}');
+					args[i] = LuaUtils.getVarInArray(args[i], split[j].trim());
+					//trace('Op3: ${args[i] != null ? Type.getClass(args[i]) : null}');
 				}
 			}
 		}

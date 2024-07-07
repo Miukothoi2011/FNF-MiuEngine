@@ -20,7 +20,7 @@ typedef LuaTweenOptions = {
 
 class LuaUtils
 {
-	public static function getLuaTween(options:Dynamic)
+	public static function getLuaTween(options:Dynamic):LuaTweenOptions
 	{
 		return {
 			type: getTweenTypeByString(options.type),
@@ -33,7 +33,7 @@ class LuaUtils
 		};
 	}
 
-	public static function setVarInArray(instance:Dynamic, variable:String, value:Dynamic, allowMaps:Bool = false):Any
+	public static function setVarInArray(instance:Dynamic, variable:String, value:Dynamic, allowMaps:Bool = false, ?isField:Bool = false):Any
 	{
 		var splitProps:Array<String> = variable.split('[');
 		if(splitProps.length > 1)
@@ -45,7 +45,7 @@ class LuaUtils
 				if(retVal != null)
 					target = retVal;
 			}
-			else target = Reflect.getProperty(instance, splitProps[0]);
+			else target = (!isField ? Reflect.getProperty(instance, splitProps[0]) : Reflect.field(instance, splitProps[0]));
 
 			for (i in 1...splitProps.length)
 			{
@@ -70,10 +70,10 @@ class LuaUtils
 			PlayState.instance.variables.set(variable, value);
 			return value;
 		}
-		Reflect.setProperty(instance, variable, value);
+		(!isField ? Reflect.setProperty(instance, variable, value) : Reflect.setField(instance, variable, value));
 		return value;
 	}
-	public static function getVarInArray(instance:Dynamic, variable:String, allowMaps:Bool = false):Any
+	public static function getVarInArray(instance:Dynamic, variable:String, allowMaps:Bool = false, ?isField:Bool = false):Any
 	{
 		var splitProps:Array<String> = variable.split('[');
 		if(splitProps.length > 1)
@@ -86,7 +86,7 @@ class LuaUtils
 					target = retVal;
 			}
 			else
-				target = Reflect.getProperty(instance, splitProps[0]);
+				target = (!isField ? Reflect.getProperty(instance, splitProps[0]) : Reflect.field(instance, splitProps[0]));
 
 			for (i in 1...splitProps.length)
 			{
@@ -108,7 +108,7 @@ class LuaUtils
 			if(retVal != null)
 				return retVal;
 		}
-		return Reflect.getProperty(instance, variable);
+		return (!isField ? Reflect.getProperty(instance, variable) : Reflect.field(instance, variable));
 	}
 
 	public static function getModSetting(saveTag:String, ?modName:String = null)
@@ -182,7 +182,7 @@ class LuaUtils
 		return null;
 	}
 	
-	public static function isMap(variable:Dynamic)
+	public static function isMap(variable:Dynamic):Bool
 	{
 		/*switch(Type.typeof(variable)){
 			case ValueType.TClass(haxe.ds.StringMap) | ValueType.TClass(haxe.ds.ObjectMap) | ValueType.TClass(haxe.ds.IntMap) | ValueType.TClass(haxe.ds.EnumValueMap):

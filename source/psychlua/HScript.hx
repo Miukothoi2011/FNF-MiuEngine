@@ -385,7 +385,7 @@ class HScript extends SScript
 			{
 				try {
 					if (c != null)
-						funk.hscript.set(libName, c);
+						funk.hscript.set(libName, c, true);
 				}
 				catch (e:Dynamic) {
 					FunkinLua.luaTrace(funk.hscript.origin + ":" + funk.lastCalledFunction + " - " + e, false, false, FlxColor.RED);

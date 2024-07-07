@@ -31,11 +31,7 @@ class FPSCounter extends TextField
 		The current memory usage (WARNING: this is NOT your total program memory usage, rather it shows the garbage collector memory)
 	**/
 	public var memoryMegas(get, never):Float;
-	#if cpp
 	public var memoryLeakMegas(get, never):Float; // memory leak
-	#else
-	public var memoryLeakMegas(default, null):Float = 0; // memory leak
-	#end
 
 	@:noCompletion private var cacheCount:Int;
 	@:noCompletion private var currentTime:Float;
@@ -70,7 +66,7 @@ class FPSCounter extends TextField
 
 	// Event Handlers
 	@:noCompletion
-	private override function __enterFrame(deltaTime:Float):Void
+	private #if !flash override #end function __enterFrame(deltaTime:Float):Void
 	{
 		currentTime += deltaTime;
 		times.push(currentTime);
@@ -83,7 +79,9 @@ class FPSCounter extends TextField
 		var currentCount = times.length;
 		currentFPS = Math.round((currentCount + cacheCount) / 2);
 		if (currentFPS > ClientPrefs.data.framerate) currentFPS = ClientPrefs.data.framerate;
-		if(currentCount != cacheCount) updateText(); // Psych Dev remove the 'if(currentCount != cacheCount)' so i back this
+		if (currentCount != cacheCount) {
+			updateText(); // Psych Dev remove the 'if(currentCount != cacheCount)' so i back this
+		}
 
 		deltaTimeout += deltaTime;
 		colorInterp += deltaTime / 330; // Division so that it doesn't give you a seizure on 60 FPS
@@ -96,11 +94,6 @@ class FPSCounter extends TextField
 			text = 'FPS: ${currentFPS}' + (ClientPrefs.data.ffmpegMode ? ' (Rendering Mode)' : '');
 
 		if (ClientPrefs.data.showMemory) {
-			#if !cpp
-			if(memoryMegas > memoryLeakMegas)
-				memoryLeakMegas = memoryMegas;
-			#end
-
 			text += '\nMemory: ${FlxStringUtil.formatBytes(memoryMegas)}'
 			+ (ClientPrefs.data.showMemoryLeak ? ' / ${FlxStringUtil.formatBytes(memoryLeakMegas)}' : '');
 		}
@@ -110,13 +103,13 @@ class FPSCounter extends TextField
 		
 		if (ClientPrefs.data.showDebugInfo) {
 			text += '\nOS: ${System.platformLabel} ${System.platformVersion}';
-			text += '\nState: ${Type.getClassName(Type.getClass(FlxG.state))}';
+			text += '\nState: ' + Type.getClassName(Type.getClass(FlxG.state));
 			if (FlxG.state.subState != null)
-				text += '\nSubstate: ${Type.getClassName(Type.getClass(FlxG.state.subState))}';
+				text += '\nSubstate: ' + Type.getClassName(Type.getClass(FlxG.state.subState));
 			text += '\nHaxe ' + CoolSystemThingy.getHaxeVer;
 			text += '\nOpenFL ' + CoolSystemThingy.getOpenFLVer;
 			text += '\nLime ' + CoolSystemThingy.getLimeVer;
-			text += '\nFlixel ' + FlxG.VERSION;
+			text += FlxG.VERSION;
 		}
 		
 		if (ClientPrefs.data.showRainbowFPS) {
@@ -173,15 +166,11 @@ class FPSCounter extends TextField
 	}
 
 	inline function get_memoryMegas():Float
-		#if cpp
 		return Memory.getCurrentUsage();
-		#else
-		return cast(System.totalMemory, UInt);
-		#end
 
-	#if cpp
-	inline function get_memoryLeakMegas():Float return Memory.getPeakUsage();
-	#end
+	inline function get_memoryLeakMegas():Float
+		return Memory.getPeakUsage();
+
 
 	public function getText():String // Main.fpsVar.getText();
 		return text;

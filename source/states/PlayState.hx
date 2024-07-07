@@ -341,7 +341,7 @@ class PlayState extends MusicBeatState
 	var disableTheTextAt:Int;
 	var textIsGoing:Bool = false;
 
-	var textStuffLol:Array<String> = ['F(* $#*$#(*))', 'FUCK YOU#)(@)$@#', '*(IF@*(F*(H%G)))', 'null reference found.'];
+	var textStuffLol:Array<String> = [''];
 
 	public var ratingsCounter:FlxText;
 	
@@ -387,11 +387,12 @@ class PlayState extends MusicBeatState
 		//trace('Playback Rate: ' + playbackRate);
 
 		Gc.enable(ClientPrefs.data.enableGC || ffmpegMode); //lagspike prevention
-		Paths.clearStoredMemory();
 
 		#if sys
 		openfl.system.System.gc();
 		#end
+		
+		Paths.clearStoredMemory();
 
 		startCallback = startCountdown;
 		endCallback = endSong;
@@ -607,7 +608,7 @@ class PlayState extends MusicBeatState
 		add(uiGroup);
 
 		Conductor.songPosition = -5000 / Conductor.songPosition;
-		var showTime:Bool = (ClientPrefs.data.timeBarType != 'Disabled');
+		var showTime:Bool = ClientPrefs.data.timeBarType != 'Disabled';
 		timeTxt = new FlxText(STRUM_X + (FlxG.width / 2) - 248, 19, 400, "", 32);
 		timeTxt.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		timeTxt.scrollFactor.set();
@@ -697,17 +698,17 @@ class PlayState extends MusicBeatState
 		watermarkTxt.scrollFactor.set();
 		watermarkTxt.setFormat(Paths.font("vcr.ttf"), 18, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		watermarkTxt.updateHitbox();
-		watermarkTxt.alpha = 1;
+		watermarkTxt.alpha = 0.5;
 		watermarkTxt.visible = !ClientPrefs.data.hideHud && !ClientPrefs.data.hideWatermarkTxt;
 		uiGroup.add(watermarkTxt);
 
-		screwYouTxt = new FlxText(10, FlxG.height - 28, 0, (SONG.screwYou != null ? SONG.screwYou : ''), 74);
+		screwYouTxt = new FlxText(10, FlxG.height - 28, 0, (SONG.screwYou != null || SONG.screwYou != '' ? SONG.screwYou : ''), 74);
 		screwYouTxt.scrollFactor.set();
 		screwYouTxt.setFormat(Paths.font("vcr.ttf"), 18, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		screwYouTxt.updateHitbox();
-		screwYouTxt.alpha = 1;
+		screwYouTxt.alpha = 0.5;
 		screwYouTxt.visible = !ClientPrefs.data.hideHud && !ClientPrefs.data.hideWatermarkTxt && SONG.screwYou != null;
-		if(SONG.screwYou != null) watermarkTxt.y = FlxG.height - 50;
+		if(SONG.screwYou != null || SONG.screwYou != '') watermarkTxt.y = FlxG.height - 50;
 		uiGroup.add(screwYouTxt);
 
 		botplayTxt = new FlxText(400, timeBar.y + 55, FlxG.width - 800, "BOTPLAY", 32);
@@ -1431,7 +1432,6 @@ class PlayState extends MusicBeatState
 			shits = ratingsData[3].hits;
 		}
 
-
 		ratingFC = "";
 		if(songMisses == 0) {
 			if (bads > 0 || shits > 0) ratingFC = 'FC';
@@ -1991,11 +1991,13 @@ class PlayState extends MusicBeatState
 			if(secondsTotal < 0) secondsTotal = 0;
 
 			if(ClientPrefs.data.timeBarType != 'Song Name')
-				timeTxt.text = FlxStringUtil.formatTime(secondsTotal, false);		
-			else if(ClientPrefs.data.timeBarType == 'Song Name + Time')
-				timeTxt.text = SONG.song + ' (' + FlxStringUtil.formatTime(Conductor.songPosition) + ' / ' + FlxStringUtil.formatTime(songLength) + ')';
-			else if(ClientPrefs.data.timeBarType == 'Time Left/Elapsed')
-				timeTxt.text = FlxStringUtil.formatTime(Conductor.songPosition) + ' / ' + FlxStringUtil.formatTime(songLength);
+			{
+				if(ClientPrefs.data.timeBarType == 'Song Name + Time')
+					timeTxt.text = SONG.song + ' (' + FlxStringUtil.formatTime(Conductor.songPosition) + ' / ' + FlxStringUtil.formatTime(songLength) + ')';
+				else if(ClientPrefs.data.timeBarType == 'Time Left/Elapsed')
+					timeTxt.text = FlxStringUtil.formatTime(Conductor.songPosition) + ' / ' + FlxStringUtil.formatTime(songLength);
+				else timeTxt.text = FlxStringUtil.formatTime(secondsTotal, false);
+			}
 		}
 		if(ffmpegMode) {
 			if(!endingSong && Conductor.songPosition >= FlxG.sound.music.length - 20) {
@@ -2166,7 +2168,7 @@ class PlayState extends MusicBeatState
 				iconP2.scale.set(mult, mult);
 				iconP2.updateHitbox();
 			
-			case 'Old Psych': // THIS CODE IS FROM PSYCH 0.4.2, NOT A COPY OF DENPA ENGINE.
+			case 'Old Psych':
 				iconP1.setGraphicSize(Std.int(FlxMath.lerp(150, iconP1.width, CoolUtil.boundTo(1 - (elapsed * 30), 0, 1))));
 				iconP2.setGraphicSize(Std.int(FlxMath.lerp(150, iconP2.width, CoolUtil.boundTo(1 - (elapsed * 30), 0, 1))));
 
@@ -2967,7 +2969,8 @@ class PlayState extends MusicBeatState
 			antialias = !isPixelStage;
 		}
 		
-		if (!dontShowRatingsPopUpIfBotplay && !cpuControlled || !dontShowRatingsPopUpIfBotplay && cpuControlled) {
+		if (!dontShowRatingsPopUpIfBotplay)
+		{
 		rating.loadGraphic(Paths.image(uiPrefix + (!cpuControlled ? daRating.image : 'perfect') + uiSuffix));
 		rating.screenCenter();
 		rating.x = placement - 40;
@@ -3405,7 +3408,12 @@ class PlayState extends MusicBeatState
 		note.hitByOpponent = true;
 		
 		var result:Dynamic = callOnLuas('opponentNoteHitPost', [notes.members.indexOf(note), Math.abs(note.noteData), note.noteType, note.isSustainNote]);
-		if(result != FunkinLua.Function_Stop && result != FunkinLua.Function_StopHScript && result != FunkinLua.Function_StopAll) callOnHScript('opponentNoteHitPost', [note]);
+		if(result != FunkinLua.Function_Stop && result != FunkinLua.Function_StopHScript && result != FunkinLua.Function_StopAll)
+			callOnHScript('opponentNoteHitPost', [note]);
+		
+		var result:Dynamic = callOnLuas('opponentNoteHitPre', [notes.members.indexOf(note), Math.abs(note.noteData), note.noteType, note.isSustainNote]);
+		if(result != FunkinLua.Function_Stop && result != FunkinLua.Function_StopHScript && result != FunkinLua.Function_StopAll)
+			callOnHScript('opponentNoteHitPre', [note]);
 
 		if(ClientPrefs.data.opponentNoteSplashes && !note.isSustainNote) spawnNoteSplashOnNote(true, note, note.gfNote);
 		if(!note.isSustainNote) invalidateNote(note);
@@ -3496,6 +3504,11 @@ class PlayState extends MusicBeatState
 		var result:Dynamic = callOnLuas('goodNoteHitPost', [notes.members.indexOf(note), leData, leType, isSus]);
 		if(result != FunkinLua.Function_Stop && result != FunkinLua.Function_StopHScript && result != FunkinLua.Function_StopAll)
 			callOnHScript('goodNoteHitPost', [note]);
+
+		var result:Dynamic = callOnLuas('goodNoteHitPre', [notes.members.indexOf(note), leData, leType, isSus]);
+		if(result != FunkinLua.Function_Stop && result != FunkinLua.Function_StopHScript && result != FunkinLua.Function_StopAll)
+			callOnHScript('goodNoteHitPre', [note]);
+
 		if(!note.isSustainNote) invalidateNote(note);
 	}
 
@@ -4043,7 +4056,9 @@ class PlayState extends MusicBeatState
 							break;
 						}
 			}
-			if (!cpuControlled) fullComboFunction();
+			if (!cpuControlled) {
+				fullComboFunction();
+			}
 		}
 		updateScore(badHit); // score will only update after rating is calculated, if it's a badHit, it shouldn't bounce
 		setOnScripts('rating', ratingPercent);

@@ -21,7 +21,7 @@ class MainMenuState extends MusicBeatState
 		#if MODS_ALLOWED 'mods', #end
 		#if ACHIEVEMENTS_ALLOWED 'awards', #end
 		'credits',
-		#if !switch 'donate', #end
+		//#if !switch 'donate', #end // you can uncomment if you replace donate link to you own or smth.
 		'options'
 	];
 
@@ -149,7 +149,7 @@ class MainMenuState extends MusicBeatState
 				FlxG.sound.play(Paths.sound('confirmMenu'));
 				if (optionShit[curSelected] == 'donate')
 				{
-					CoolUtil.browserLoad('https://ninja-muffin24.itch.io/funkin');
+					//CoolUtil.browserLoad('https://ninja-muffin24.itch.io/funkin'); // you can uncomment if you replace donate link to you own or smth.
 				}
 				else
 				{
@@ -165,7 +165,7 @@ class MainMenuState extends MusicBeatState
 							case 'story_mode':
 								FlxG.switchState(() -> new StoryMenuState());
 							case 'freeplay':
-								FlxG.switchState(new FreeplayState());
+								FlxG.switchState(() -> new FreeplayState());
 
 							#if MODS_ALLOWED
 							case 'mods':

@@ -21,6 +21,8 @@ import states.StoryMenuState;
 import states.OutdatedState;
 import states.MainMenuState;
 
+import shaders.Shaders.GlitchEffect;
+
 typedef TitleData =
 {
 	titlex:Float,
@@ -30,6 +32,10 @@ typedef TitleData =
 	gfx:Float,
 	gfy:Float,
 	backgroundSprite:String,
+	?backgroundShaderEnable:Bool,
+	?waveSpeed:Float,
+	?waveFrequency:Float,
+	?waveAmplitude:Float,
 	bpm:Float
 }
 
@@ -67,6 +73,8 @@ class TitleState extends MusicBeatState
 	var titleJSON:TitleData;
 
 	public static var updateVersion:String = '';
+	
+	public var effect:GlitchEffect;
 
 	override public function create():Void
 	{
@@ -92,7 +100,7 @@ class TitleState extends MusicBeatState
 		#if CHECK_FOR_UPDATES
 		if(ClientPrefs.data.checkForUpdates && !closedState) {
 			trace('checking for update');
-			var http = new haxe.Http("https://raw.githubusercontent.com/Miuthoi123/FNF-MiuEngine/main/gitVersion.txt");
+			var http = new haxe.Http("https://raw.githubusercontent.com/Miukothoi2011/FNF-MiuEngine/main/gitVersion.txt");
 
 			http.onData = function (data:String)
 			{
@@ -116,7 +124,7 @@ class TitleState extends MusicBeatState
 		Highscore.load();
 
 		// IGNORE THIS!!!
-		titleJSON = haxe.Json.parse(Paths.getTextFromFile('images/gfDanceTitle.json'));
+		titleJSON = tjson.TJSON.parse(Paths.getTextFromFile('images/gfDanceTitle.json'));
 
 		#if TITLE_SCREEN_EASTER_EGG
 		if (FlxG.save.data.psychDevsEasterEgg == null) FlxG.save.data.psychDevsEasterEgg = ''; //Crash prevention
@@ -195,9 +203,18 @@ class TitleState extends MusicBeatState
 		var bg:FlxSprite = new FlxSprite();
 		bg.antialiasing = ClientPrefs.data.antialiasing;
 
-		if (titleJSON.backgroundSprite != null && titleJSON.backgroundSprite.length > 0 && titleJSON.backgroundSprite != "none"){
+		if (titleJSON.backgroundSprite != null && titleJSON.backgroundSprite.length > 0 && titleJSON.backgroundSprite != "none")
+		{
 			bg.loadGraphic(Paths.image(titleJSON.backgroundSprite));
-		}else{
+		
+			if (titleJSON.backgroundShaderEnable != null && titleJSON.backgroundShaderEnable == true)
+			{
+				effect = new GlitchEffect(titleJSON.waveSpeed ?? 2, titleJSON.waveFrequency ?? 5, titleJSON.waveAmplitude ?? 0.1, false);
+				bg.shader = effect.shader;
+			}
+		}
+		else
+		{
 			bg.makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
 		}
 
@@ -483,6 +500,11 @@ class TitleState extends MusicBeatState
 		{
 			if(controls.UI_LEFT) swagShader.hue -= elapsed * 0.1;
 			if(controls.UI_RIGHT) swagShader.hue += elapsed * 0.1;
+		}
+		
+		if (titleJSON.backgroundShaderEnable != null && titleJSON.backgroundShaderEnable == true)
+		{
+			effect.update(elapsed);
 		}
 
 		super.update(elapsed);

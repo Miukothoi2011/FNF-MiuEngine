@@ -1142,7 +1142,7 @@ class FunkinLua
 			luaTrace('setGraphicSize: Couldnt find object: ' + obj, false, false, FlxColor.RED);
 		});
 		Lua_helper.add_callback(lua, "scaleObject", function(obj:String, x:Float, y:Float, updateHitbox:Bool = true) {
-			if(game.getLuaObject(obj)!=null) {
+			if(game.getLuaObject(obj) != null) {
 				var shit:FlxSprite = game.getLuaObject(obj);
 				shit.scale.set(x, y);
 				if(updateHitbox) shit.updateHitbox();
@@ -1677,7 +1677,7 @@ class FunkinLua
 		#if LUA_ALLOWED
 		if(lua == null) return;
 		
-		if(Reflect.isFunction(data)) { // unfinished.
+		if(Reflect.isFunction(data)) {
 			Lua_helper.add_callback(lua, variable, data);
 			return;
 		}

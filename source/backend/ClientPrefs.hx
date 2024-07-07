@@ -3,6 +3,7 @@ package backend;
 import flixel.util.FlxSave;
 import flixel.input.keyboard.FlxKey;
 import flixel.input.gamepad.FlxGamepadInputID;
+import lime.app.Application;
 
 import states.TitleState;
 
@@ -212,14 +213,14 @@ class ClientPrefs {
 		FlxG.log.add("Settings saved!");
 	}
 
-	public static var widthMod:Int = 0;
-	public static var heightMod:Int = 0;
 	public static function loadPrefs() {
 		#if ACHIEVEMENTS_ALLOWED Achievements.load(); #end
 
 		for (key in Reflect.fields(data))
+		{
 			if (key != 'gameplaySettings' && Reflect.hasField(FlxG.save.data, key))
 				Reflect.setField(data, key, Reflect.field(FlxG.save.data, key));
+		}
 		
 		if(Main.fpsVar != null)
 			Main.fpsVar.visible = data.showFPS;
@@ -246,26 +247,32 @@ class ClientPrefs {
 		
 		if (FlxG.save.data.resolution != null) {
 			#if desktop
-    		var resolutionValue = cast(ClientPrefs.data.resolution, String);
+			function doChangeRes()
+			{
+				var resolutionValue = cast(data.resolution, String);
 
-    		if (resolutionValue != null) {
-        		var parts = resolutionValue.split('x');
-        
-        		if (parts.length == 2) {
-					var width = Std.parseInt(parts[0]);
-            		var height = Std.parseInt(parts[1]);
-            	
-            		if (width != null && height != null) {
-						CoolUtil.resetResScale(width, height);
-                		FlxG.resizeGame(width, height);
-						lime.app.Application.current.window.width = width;
-						lime.app.Application.current.window.height = height;
-
-						widthMod = width;
-						heightMod = height;
-            		}
-        		}
-    		}
+				if (resolutionValue != null) {
+					var parts = resolutionValue.split('x');
+			
+					if (parts.length == 2) {
+						var width = Std.parseInt(parts[0]);
+						var height = Std.parseInt(parts[1]);
+						
+						if (width == Application.current.window.width && height == Application.current.window.height)
+						{
+							return;
+						}
+					
+						if (width != null && height != null) {
+							CoolUtil.resetResScale(width, height);
+							FlxG.resizeGame(width, height);
+							Application.current.window.width = width;
+							Application.current.window.height = height;
+						}
+					}
+				}
+			}
+			doChangeRes();
 			#end
 		}
 

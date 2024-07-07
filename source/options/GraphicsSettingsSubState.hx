@@ -109,7 +109,7 @@ class GraphicsSettingsSubState extends BaseOptionsMenu
 	}
 	
 	function onChangeResolution() {
-	#if desktop
+		#if desktop
 		var resolutionValue = cast(ClientPrefs.data.resolution, String); // Assuming 'ClientPrefs.data.resolution' holds the selected resolution
 
 		if (resolutionValue != null) {
@@ -127,6 +127,6 @@ class GraphicsSettingsSubState extends BaseOptionsMenu
 				}
 			}
 		}
-	#end
+		#end
 	}
 }
