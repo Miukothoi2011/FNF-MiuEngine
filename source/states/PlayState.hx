@@ -2155,7 +2155,7 @@ class PlayState extends MusicBeatState
 		}
 		takenTime = haxe.Timer.stamp();
 		
-		if (ClientPrefs.data.healthIsOnZeroOnPractice && practice)
+		if (ClientPrefs.data.healthIsOnZeroOnPractice && practiceMode)
 		{
 			if (health < 0) health = 0;
 		}

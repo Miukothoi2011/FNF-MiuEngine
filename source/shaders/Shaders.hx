@@ -8,9 +8,6 @@ import openfl.display.ShaderInput;
 import openfl.utils.Assets;
 import openfl.Lib;
 
-// UNFINISHED. DON'T UNCOMMENT THIS!
-//import shaders.WiggleEffect.WiggleShader;
-
 using StringTools;
 
 typedef ShaderEffect = {
@@ -1217,9 +1214,9 @@ enum WiggleEffectType
 	FLAG;
 }
 
-class WiggleEffect extends Effect
+class WiggleEffectLUA extends Effect
 {
-	public var shader(default, null):WiggleShader = new WiggleShader();
+	public var shader:WiggleShader = new WiggleShader();
 	public var effectType(default, set):WiggleEffectType = DREAMY;
 	public var waveSpeed(default, set):Float = 0;
 	public var waveFrequency(default, set):Float = 0;
@@ -1249,14 +1246,6 @@ class WiggleEffect extends Effect
 	}*/
 	
 	private function effectTypeFromString(effectType:String):WiggleEffectType {
-		/*switch(effectType.trim().toLowerCase()) {
-			case 'dreamy': return DREAMY;
-			case 'wavy': return WAVY;
-			case 'horizontal' | 'heat_wave_horizontal' | 'heatwavehorizontal': return HEAT_WAVE_HORIZONTAL;
-			case 'vertical' | 'heat_wave_vertical' | 'heatwavevertical': return HEAT_WAVE_VERTICAL;
-			case 'flag': return FLAG;
-		}
-		return DREAMY;*/
 		return switch(effectType.trim().toLowerCase()) {
 			case 'dreamy': DREAMY;
 			case 'wavy': WAVY;
