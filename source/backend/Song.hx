@@ -22,15 +22,15 @@ typedef SwagSong =
 	var credit:String;
 	var screwYou:String;
 
-	@:optional var gameOverChar:String;
-	@:optional var gameOverSound:String;
-	@:optional var gameOverLoop:String;
-	@:optional var gameOverEnd:String;
+	var ?gameOverChar:String;
+	var ?gameOverSound:String;
+	var ?gameOverLoop:String;
+	var ?gameOverEnd:String;
 	
-	@:optional var disableNoteRGB:Bool;
+	var ?disableNoteRGB:Bool;
 
-	@:optional var arrowSkin:String;
-	@:optional var splashSkin:String;
+	var ?arrowSkin:String;
+	var ?splashSkin:String;
 }
 
 class Song
@@ -86,6 +86,15 @@ class Song
 					}
 					else i++;
 				}
+			}
+		}
+		
+		if (songJson.credit == null)
+		{
+			if (songJson.songCredit != null && songJson.songCredit.length > 0)
+			{
+				songJson.credit = songJson.songCredit;
+				songJson.songCredit = null;
 			}
 		}
 	}

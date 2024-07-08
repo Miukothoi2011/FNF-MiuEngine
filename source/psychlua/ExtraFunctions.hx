@@ -12,15 +12,60 @@ class ExtraFunctions
 	public static function implement(funk:FunkinLua)
 	{
 		var lua:State = funk.lua;
+		final numberToAlphabetNumber:Map<String, String> = [
+			'0' => 'ZERO',
+			'1' => 'ONE',
+			'2' => 'TWO',
+			'3' => 'THREE',
+			'4' => 'FOUR',
+			'5' => 'FIVE',
+			'6' => 'SIX',
+			'7' => 'SEVEN',
+			'8' => 'EIGHT',
+			'9' => 'NINE'
+		];
 		
 		// Keyboard & Gamepads
-		Lua_helper.add_callback(lua, "keyboardJustPressed", function(name:String) return Reflect.getProperty(FlxG.keys.justPressed, name));
-		Lua_helper.add_callback(lua, "keyboardPressed", function(name:String) return Reflect.getProperty(FlxG.keys.pressed, name));
-		Lua_helper.add_callback(lua, "keyboardReleased", function(name:String) return Reflect.getProperty(FlxG.keys.justReleased, name));
+		Lua_helper.add_callback(lua, "keyboardJustPressed", function(name:String)
+		{
+			name = name.toUpperCase(); // change "name" var to upper case.
+			if (numberToAlphabetNumber.exists(name)) // for change number to alphabet number.
+			{
+				name = numberToAlphabetNumber.get(name);
+			}
+			return Reflect.getProperty(FlxG.keys.justPressed, name);
+		});
+		Lua_helper.add_callback(lua, "keyboardPressed", function(name:String)
+		{
+			name = name.toUpperCase(); // change "name" var to upper case.
+			if (numberToAlphabetNumber.exists(name)) // for change number to alphabet number.
+			{
+				name = numberToAlphabetNumber.get(name);
+			}
+			return Reflect.getProperty(FlxG.keys.pressed, name);
+		});
+		Lua_helper.add_callback(lua, "keyboardReleased", function(name:String)
+		{
+			name = name.toUpperCase(); // change "name" var to upper case.
+			if (numberToAlphabetNumber.exists(name)) // for change number to alphabet number.
+			{
+				name = numberToAlphabetNumber.get(name);
+			}
+			return Reflect.getProperty(FlxG.keys.released, name)
+		});
+		Lua_helper.add_callback(lua, "keyboardJustReleased", function(name:String)
+		{
+			name = name.toUpperCase(); // change "name" var to upper case.
+			if (numberToAlphabetNumber.exists(name)) // for change number to alphabet number.
+			{
+				name = numberToAlphabetNumber.get(name);
+			}
+			return Reflect.getProperty(FlxG.keys.justReleased, name)
+		});
 
-		Lua_helper.add_callback(lua, "anyGamepadJustPressed", function(name:String) return FlxG.gamepads.anyJustPressed(name));
-		Lua_helper.add_callback(lua, "anyGamepadPressed", function(name:String) FlxG.gamepads.anyPressed(name));
-		Lua_helper.add_callback(lua, "anyGamepadReleased", function(name:String) return FlxG.gamepads.anyJustReleased(name));
+		Lua_helper.add_callback(lua, "anyGamepadJustPressed", function(name:String) return FlxG.gamepads.anyJustPressed(name.toUpperCase()));
+		Lua_helper.add_callback(lua, "anyGamepadPressed", function(name:String) FlxG.gamepads.anyPressed(name.toUpperCase()));
+		Lua_helper.add_callback(lua, "anyGamepadReleased", function(name:String) return FlxG.gamepads.anyJustReleased(name.toUpperCase()));
 
 		Lua_helper.add_callback(lua, "gamepadAnalogX", function(id:Int, ?leftStick:Bool = true)
 		{

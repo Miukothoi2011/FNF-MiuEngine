@@ -90,7 +90,7 @@ class Paths
 		}
 
 		// run the garbage collector for good measure lmfao
-		System.gc();
+		compress();
 	}
 
 	// define the locally tracked assets

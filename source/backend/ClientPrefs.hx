@@ -120,6 +120,10 @@ import states.TitleState;
 	public var safeFrames:Float = 10;
 	public var guitarHeroSustains:Bool = true;
 	public var discordRPC:Bool = true;
+	
+	public var disableMuteVocalWhenNoteMiss:Bool = false;
+	public var healthIsOnZeroOnPractice:Bool = false;
+	public var opponentNoteAlpha:Float = 0.5;
 }
 
 class ClientPrefs {
@@ -247,7 +251,7 @@ class ClientPrefs {
 		
 		if (FlxG.save.data.resolution != null) {
 			#if desktop
-			function doChangeRes()
+			function doChangeRes():Void
 			{
 				var resolutionValue = cast(data.resolution, String);
 
@@ -258,7 +262,7 @@ class ClientPrefs {
 						var width = Std.parseInt(parts[0]);
 						var height = Std.parseInt(parts[1]);
 						
-						if (width == Application.current.window.width && height == Application.current.window.height)
+						if (Application.current.window.maximized == true || FlxG.fullscreen == true)
 						{
 							return;
 						}

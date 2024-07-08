@@ -381,6 +381,15 @@ class FreeplayState extends MusicBeatState
 				if(colorTween != null) {
 					colorTween.cancel();
 				}
+				
+				if (FlxG.keys.pressed.SHIFT)
+				{
+					LoadingState.loadAndSwitchState(ChartingState.new);
+				}
+				else
+				{
+					LoadingState.loadAndSwitchState(PlayState.new);
+				}
 			}
 			catch(e:Dynamic)
 			{
@@ -415,11 +424,11 @@ class FreeplayState extends MusicBeatState
 				super.update(elapsed);
 				return;
 			}
-			LoadingState.loadAndSwitchState(() -> new PlayState());
 
 			FlxG.sound.music.volume = 0;
 					
 			destroyFreeplayVocals();
+			
 			#if (MODS_ALLOWED && cpp)
 			DiscordClient.loadModRPC();
 			#end

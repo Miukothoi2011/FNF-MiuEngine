@@ -708,7 +708,7 @@ class PlayState extends MusicBeatState
 		screwYouTxt.updateHitbox();
 		screwYouTxt.alpha = 0.5;
 		screwYouTxt.visible = !ClientPrefs.data.hideHud && !ClientPrefs.data.hideWatermarkTxt && SONG.screwYou != null;
-		if(SONG.screwYou != null || SONG.screwYou != '') watermarkTxt.y = FlxG.height - 50;
+		if (SONG.screwYou != null || SONG.screwYou.length > 0) watermarkTxt.y = FlxG.height - 50;
 		uiGroup.add(screwYouTxt);
 
 		botplayTxt = new FlxText(400, timeBar.y + 55, FlxG.width - 800, "BOTPLAY", 32);
@@ -1993,9 +1993,9 @@ class PlayState extends MusicBeatState
 			if(ClientPrefs.data.timeBarType != 'Song Name')
 			{
 				if(ClientPrefs.data.timeBarType == 'Song Name + Time')
-					timeTxt.text = SONG.song + ' (' + FlxStringUtil.formatTime(Conductor.songPosition) + ' / ' + FlxStringUtil.formatTime(songLength) + ')';
+					timeTxt.text = SONG.song + ' (' + FlxStringUtil.formatTime(Conductor.songPosition / 1000) + ' / ' + FlxStringUtil.formatTime(songLength / 1000) + ')';
 				else if(ClientPrefs.data.timeBarType == 'Time Left/Elapsed')
-					timeTxt.text = FlxStringUtil.formatTime(Conductor.songPosition) + ' / ' + FlxStringUtil.formatTime(songLength);
+					timeTxt.text = FlxStringUtil.formatTime(Conductor.songPosition / 1000) + ' / ' + FlxStringUtil.formatTime(songLength / 1000);
 				else timeTxt.text = FlxStringUtil.formatTime(secondsTotal, false);
 			}
 		}
@@ -2135,7 +2135,8 @@ class PlayState extends MusicBeatState
 		setOnScripts('cameraY', camFollow.y);
 		setOnScripts('botPlay', cpuControlled);
 		callOnScripts('onUpdatePost', [elapsed]);
-		for (i in shaderUpdates){
+		for (i in shaderUpdates)
+		{
 			i(elapsed);
 		}
 		if (!ffmpegMode) return;
@@ -2153,6 +2154,11 @@ class PlayState extends MusicBeatState
 				botplayTxt.text = CoolUtil.floatToStringPrecision(haxe.Timer.stamp() - takenTime, 3);
 		}
 		takenTime = haxe.Timer.stamp();
+		
+		if (ClientPrefs.data.healthIsOnZeroOnPractice && practice)
+		{
+			if (health < 0) health = 0;
+		}
 	}
 
 	// Health icon updaters
@@ -3362,7 +3368,7 @@ class PlayState extends MusicBeatState
 				gf.specialAnim = true;
 			}
 		}
-		vocals.volume = 0;
+		if (!ClientPrefs.data.disableMuteVocalWhenNoteMiss) vocals.volume = 0;
 	}
 
 	function opponentNoteHit(note:Note):Void

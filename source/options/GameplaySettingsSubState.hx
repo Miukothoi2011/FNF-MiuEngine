@@ -107,15 +107,27 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 		option.changeValue = 0.1;
 		addOption(option);
 		
-		var option:Option = new Option('More Spammable Inputs',
+		/*var option:Option = new Option('More Spammable Inputs',
 			'If checked, the input system is more spammable.',
 			'ezSpam',
 			'bool');
-		addOption(option);
+		addOption(option);*/
 
 		var option:Option = new Option('Sustains as One Note',
 			"If checked, Hold Notes can't be pressed if you miss,\nand count as a single Hit/Miss.\nUncheck this if you prefer the old Input System.",
 			'guitarHeroSustains',
+			'bool');
+		addOption(option);
+		
+		var option:Option = new Option('Disable Mute Vocal When Note is Missed',
+			"If checked, Miss Note can't be mute Vocals.",
+			'disableMuteVocalWhenNoteMiss',
+			'bool');
+		addOption(option);
+		
+		var option:Option = new Option('Health is on at 0 if enable Pratice Modes.',
+			"If checked, Health is on at 0 if you enable Pratice Modes\nwhen you miss note.",
+			'healthIsOnZeroOnPractice',
 			'bool');
 		addOption(option);
 
