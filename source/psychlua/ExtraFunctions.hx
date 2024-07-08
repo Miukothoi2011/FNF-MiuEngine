@@ -51,7 +51,7 @@ class ExtraFunctions
 			{
 				name = numberToAlphabetNumber.get(name);
 			}
-			return Reflect.getProperty(FlxG.keys.released, name)
+			return Reflect.getProperty(FlxG.keys.released, name);
 		});
 		Lua_helper.add_callback(lua, "keyboardJustReleased", function(name:String)
 		{
@@ -60,7 +60,7 @@ class ExtraFunctions
 			{
 				name = numberToAlphabetNumber.get(name);
 			}
-			return Reflect.getProperty(FlxG.keys.justReleased, name)
+			return Reflect.getProperty(FlxG.keys.justReleased, name);
 		});
 
 		Lua_helper.add_callback(lua, "anyGamepadJustPressed", function(name:String) return FlxG.gamepads.anyJustPressed(name.toUpperCase()));
