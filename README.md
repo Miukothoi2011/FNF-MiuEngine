@@ -1,11 +1,10 @@
 # Friday Night Funkin' - Miu Engine
-[![Star History Chart](https://api.star-history.com/svg?repos=Miuthoi123/FNF-MiuEngine&type=Timeline)](https://star-history.com/#Miuthoi123/FNF-MiuEngine&Timeline)
 
 Engine are fork from Psych Engine (0.7.2h)
 
 ### NOTE: This engine is in ALPHA stage, so some feature doesn't (not) work properly because i not have beta tester, coder, assistant and helper guy :((( only me.
 
-If you want downloads build, go to ["Actions"](https://github.com/Miuthoi123/FNF-MiuEngine/actions) tabs or go to ["Releases"](https://github.com/Miuthoi123/FNF-MiuEngine/releases) (REQUIRE NEED GITHUB ACC) (i to lazy to upload on Releases pls don't mad it)
+If you want downloads build, go to ["Actions"](https://github.com/Miuthoi123/FNF-MiuEngine/actions) (REQUIRE NEED GITHUB ACC) tabs or go to ["Releases"](https://github.com/Miuthoi123/FNF-MiuEngine/releases) (i to lazy to upload on Releases pls don't mad it)
 
 ## Installation:
 
