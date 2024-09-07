@@ -209,7 +209,7 @@ class PlayState extends MusicBeatState
 	private var displayedHealth:Float;
 	public var maxHealth:Float = 2;
 	public var combo:Int = 0;
-	var maxCombo:Int;
+	var maxCombo:Int = 0;
 
 	public var healthBar:Bar;
 	public var timeBar:Bar;
@@ -274,8 +274,7 @@ class PlayState extends MusicBeatState
 	public var songHits:Int = 0;
 	public var songMisses:Int = 0;
 	public var scoreTxt:FlxText;
-	var timeTxt:FlxText;
-	var tempScore:String;
+	public var timeTxt:FlxText;
 
 	// FlxTween thing.
 	var scoreTxtTween:FlxTween;
@@ -1186,6 +1185,8 @@ class PlayState extends MusicBeatState
 			case "constant":
 				songSpeed = ClientPrefs.getGameplaySetting('scrollspeed', 1);
 		}
+
+		updateScore(false);
 	}
 
 	var startTimer:FlxTimer;
@@ -1391,6 +1392,7 @@ class PlayState extends MusicBeatState
 			str += ' (${percent}%) - ${ratingFC}';
 		}
 	
+		var tempScore:String = "";
 		if (!practiceMode && !cpuControlled) {
 			tempScore = 'Score: ${songScore}'
 			+= (!instakillOnMiss ? ' | Misses: ${songMisses}' : "")
@@ -2113,9 +2115,10 @@ class PlayState extends MusicBeatState
 		}
 		#end
 		
-		if (combo >= maxCombo)
+		if (combo > maxCombo)
+		{
 			maxCombo = combo;
-		
+		}
 		var totalHit:Int = hitsCount + oppoHits + songMisses;
 		ratingsCounter.text = 'Total Notes: ' + totalHit
 		+ '\n\nTotal Notes Hit: ' + hitsCount
@@ -2181,7 +2184,7 @@ class PlayState extends MusicBeatState
 				iconP1.updateHitbox();
 				iconP2.updateHitbox();
 			
-			case 'Golden Apple':
+			/*case 'Golden Apple':
 				iconP1.centerOffsets();
 				iconP2.centerOffsets();
 				iconP1.scale.y = (iconP1.scale.y - 1) / -1 + 1;
@@ -2189,6 +2192,7 @@ class PlayState extends MusicBeatState
 				
 				iconP1.y = 450 + (iconP1.scale.y * 113);
 				iconP2.y = 450 + (iconP2.scale.y * 113);
+			*/
 
 			case 'Default':
 				/*iconP1.scale.y = (iconP1.scale.y - 1) / -1 + 1;
