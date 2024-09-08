@@ -1,3 +1,5 @@
+### NOTE: This repo are archived because i move from 0.7.2h to 1.0 (Prerelease).
+
 # Friday Night Funkin' - Miu Engine
 
 Engine are fork from Psych Engine (0.7.2h)
