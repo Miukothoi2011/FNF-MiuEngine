@@ -1,4 +1,4 @@
-### NOTE: This repo are archived because i move from 0.7.2h to 1.0 (Prerelease).
+### NOTE: This repo are archived because i move from 0.7.2h to 1.0. Please go to [here](https://github.com/Miu-s-Organization/FNF-MiuEngine).
 
 # Friday Night Funkin' - Miu Engine
 
